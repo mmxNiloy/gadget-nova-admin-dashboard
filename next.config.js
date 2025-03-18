@@ -16,6 +16,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'gadget-nova-bucket.s3.ap-southeast-1.amazonaws.com',
+        pathname: '**',
+        port: ''
       }
     ]
   },
