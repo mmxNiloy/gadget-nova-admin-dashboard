@@ -54,3 +54,12 @@ export function toHTTPSString(link?: string) {
   if (!link.startsWith('http')) return `https://${link}`;
   return link.replace('http:', 'https:');
 }
+
+export function toSlug(value: string) {
+  return Array.from(value)
+    .map((ch) => {
+      if (/[a-zA-Z0-9]/.test(ch)) return ch.toLowerCase();
+      return '-';
+    })
+    .join('');
+}

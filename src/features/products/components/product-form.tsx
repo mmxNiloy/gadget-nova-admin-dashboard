@@ -39,6 +39,8 @@ import updateProduct from '@/app/(server)/actions/updateProduct';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/ui/rich-text-editor';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { Textarea } from '@/components/ui/textarea';
+import { toSlug } from '@/lib/utils';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -201,7 +203,7 @@ export default function ProductForm({
       if (key !== 'thumbnail' && key !== 'gallery') {
         if (Array.isArray(value)) {
           value.forEach((item, index) => {
-            formData.append(`${key}[${index}]`, item);
+            formData.append(`${key}`, item);
           });
         } else if (value && typeof value === 'object') {
           formData.append(key, JSON.stringify(value));
@@ -218,7 +220,7 @@ export default function ProductForm({
     if (values.gallery && values.gallery.length > 0) {
       values.gallery.forEach((file: File, index: number) => {
         if (file instanceof File) {
-          formData.append(`gallery[${index}]`, file);
+          formData.append(`gallery`, file);
         }
       });
     }
@@ -239,10 +241,14 @@ export default function ProductForm({
   };
 
   // Prepare attribute options for MultiSelect
-  const attributeOptions = attributes.map((attr) => ({
-    label: attr.id, // You might want to use a more descriptive label from your data
-    value: `${attr.attributeValue.value}, ${attr.attributeValue.attributeGroup.title}`
-  }));
+  const attributeOptions = useMemo(
+    () =>
+      attributes.map((attr) => ({
+        value: attr.id,
+        label: `${attr.attributeValue.value}, ${attr.attributeValue.attributeGroup.title}`
+      })),
+    [attributes]
+  );
 
   return (
     <>
@@ -312,8 +318,12 @@ export default function ProductForm({
                       <FormControl>
                         <Input
                           disabled={loading}
+                          value={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            form.setValue('slug', toSlug(e.target.value));
+                          }}
                           placeholder='Enter product title'
-                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -328,9 +338,11 @@ export default function ProductForm({
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
                         <Input
+                          tabIndex={-1}
                           disabled={loading}
+                          readOnly
                           placeholder='Enter product slug'
-                          {...field}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -553,12 +565,12 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Meta Description</FormLabel>
                     <FormControl>
-                      <RichTextEditor
+                      <Textarea
                         disabled={loading}
                         placeholder='Enter meta description'
-                        className='h-72'
-                        value={field.value}
-                        onChange={field.onChange}
+                        className='resize-none'
+                        rows={8}
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -594,7 +606,7 @@ export default function ProductForm({
                       <RichTextEditor
                         disabled={loading}
                         placeholder='Enter specifications'
-                        className='h-full'
+                        className='h-72'
                         value={field.value}
                         onChange={field.onChange}
                       />
