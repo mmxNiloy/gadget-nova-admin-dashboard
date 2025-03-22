@@ -46,9 +46,9 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        <ProductTableAction
+        {/* <ProductTableAction
           categories={categoriesData.ok ? categoriesData.data.payload : []}
-        />
+        /> */}
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
