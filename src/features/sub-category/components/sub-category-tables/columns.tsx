@@ -27,7 +27,7 @@ export const columns: ColumnDef<ICategory>[] = [
   {
     id: 'parent-category',
     header: 'Parent Category',
-    cell: ({ row }) => row.original.parent_category?.name ?? 'N/A'
+    cell: ({ row }) => row.original.parentCategory?.name ?? 'N/A'
   },
   {
     id: 'actions',

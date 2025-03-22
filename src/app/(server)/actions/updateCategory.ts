@@ -11,22 +11,16 @@ interface IUpdateBrandActionProps {
   };
   method: 'POST' | 'PATCH';
   id?: string;
-  asSubcategory?: boolean;
 }
 
 export default async function updateCategory({
   data,
   method,
-  id,
-  asSubcategory
+  id
 }: IUpdateBrandActionProps) {
   return await requestAPI({
     method,
-    endpoint: [
-      'category',
-      asSubcategory ? 'subcategories' : '',
-      method === 'POST' ? '' : (id ?? '')
-    ]
+    endpoint: ['category', method === 'POST' ? '' : (id ?? '')]
       .filter((str) => str.length > 0)
       .join('/'),
     authenticate: true,
