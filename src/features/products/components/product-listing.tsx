@@ -3,24 +3,34 @@ import { DataTable as ProductTable } from '@/components/ui/table/data-table';
 import { columns } from './product-tables/columns';
 import getProducts from '@/app/(server)/actions/getProducts';
 import { IProduct } from 'types/schema/product.shema';
+import getPaginatedProducts from '@/app/(server)/actions/paginated/getPaginatedProducts';
+import { IProductPaginationProps } from 'types/schema/pagination.schema';
 
 type ProductListingPage = {};
 
 export default async function ProductListingPage({}: ProductListingPage) {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
-  const search = searchParamsCache.get('q');
   const pageLimit = searchParamsCache.get('limit');
-  const categories = searchParamsCache.get('categories');
+  const sort = searchParamsCache.get('sort') as keyof IProduct;
+  const order = Number.parseInt(searchParamsCache.get('order'));
+  const title = searchParamsCache.get('title') ?? '';
+  const productCode = searchParamsCache.get('productCode') ?? '';
+  const categories = searchParamsCache.get('categories') ?? '';
+  const brands = searchParamsCache.get('brands') ?? '';
 
-  const filters = {
+  const filters: IProductPaginationProps = {
     page,
     limit: pageLimit,
-    ...(search && { search }),
-    ...(categories && { categories: categories })
+    sort,
+    order,
+    title,
+    productCode,
+    categories,
+    brands
   };
 
-  const prodData = await getProducts({ ...filters });
+  const prodData = await getPaginatedProducts({ ...filters });
 
   if (!prodData.ok) {
     // TODO: Add a proper error state table here
@@ -29,14 +39,14 @@ export default async function ProductListingPage({}: ProductListingPage) {
 
   const data = prodData.data;
 
-  const totalProducts = Math.ceil(data.payload.length / pageLimit);
   const products: IProduct[] = data.payload;
 
   return (
     <ProductTable
       columns={columns}
       data={products}
-      totalItems={totalProducts}
+      pageCount={prodData.data.meta.totalPages}
+      totalItems={prodData.data.meta.total}
     />
   );
 }

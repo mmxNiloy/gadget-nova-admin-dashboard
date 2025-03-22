@@ -19,7 +19,6 @@ export default async function updateProductAttributeGroup({
     method,
     endpoint: ['attribute-group', method === 'POST' ? '' : id].join('/'),
     authenticate: true,
-    body: JSON.stringify(data),
-    asFormData: true
+    body: JSON.stringify(data)
   });
 }

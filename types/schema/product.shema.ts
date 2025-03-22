@@ -1,7 +1,12 @@
 import { IResponseBase } from './base.schema';
+import { IPaginationBase } from './pagination.schema';
 
 export interface IProductListResponse extends IResponseBase {
   total_products?: number;
+  payload: IProduct[];
+}
+
+export interface IProductListResponse extends IResponseBase, IPaginationBase {
   payload: IProduct[];
 }
 
@@ -36,11 +41,46 @@ export interface IProduct {
   gallery: any;
   specifications: any;
   category: ICategory;
+  subcategory?: ICategory;
   brand: IBrand;
   questions: IQuestion[];
   ratings: IRating[];
   productAttributes: IProductAttribute[];
 }
+
+export const AProductKeys = [
+  'id',
+  'is_active',
+  'created_by',
+  'created_user_name',
+  'updated_by',
+  'updated_user_name',
+  'created_at',
+  'updated_at',
+  'title',
+  'slug',
+  'metaTitle',
+  'metaDescription',
+  'productCode',
+  'regularPrice',
+  'discountPrice',
+  'quantity',
+  'description',
+  'keyFeatures',
+  'stockAmount',
+  'holdAmount',
+  'soldAmount',
+  'thresholdAMount',
+  'thumbnail',
+  'gallery',
+  'specifications',
+  'category',
+  'subcategory',
+  'brand',
+  'questions',
+  'ratings',
+  'productAttributes'
+];
 
 export interface ICategory {
   id: string;
@@ -55,6 +95,8 @@ export interface ICategory {
   slug: string;
   metaTitle: string;
   metaDescription: string;
+  parent_category?: ICategory;
+  parent_category_id?: string;
 }
 
 export interface ICategoryResponse extends IResponseBase {

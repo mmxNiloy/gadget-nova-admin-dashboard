@@ -3,6 +3,7 @@
 import { searchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
+import { EPaginationOrder } from 'types/enum/pagination.enum';
 
 export const CATEGORY_OPTIONS = [
   { value: 'Electronics', label: 'Electronics' },
@@ -15,9 +16,33 @@ export const CATEGORY_OPTIONS = [
   { value: 'Beauty Products', label: 'Beauty Products' }
 ];
 export function useProductTableFilters() {
-  const [searchQuery, setSearchQuery] = useQueryState(
-    'q',
-    searchParams.q
+  const [page, setPage] = useQueryState(
+    'page',
+    searchParams.page.withDefault(1)
+  );
+
+  const [sortQuery, setSortQuery] = useQueryState(
+    'sort',
+    searchParams.sort
+      .withOptions({ shallow: false, throttleMs: 1000 })
+      .withDefault('')
+  );
+  const [orderQuery, setOrderQuery] = useQueryState(
+    'order',
+    searchParams.order
+      .withOptions({ shallow: false, throttleMs: 1000 })
+      .withDefault(`${EPaginationOrder.DESC}`)
+  );
+  const [titleQuery, setTitleQuery] = useQueryState(
+    'title',
+    searchParams.title
+      .withOptions({ shallow: false, throttleMs: 1000 })
+      .withDefault('')
+  );
+
+  const [productCodeQuery, setProductCodeQuery] = useQueryState(
+    'productCode',
+    searchParams.productCode
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
@@ -27,30 +52,50 @@ export function useProductTableFilters() {
     searchParams.categories.withOptions({ shallow: false }).withDefault('')
   );
 
-  const [page, setPage] = useQueryState(
-    'page',
-    searchParams.page.withDefault(1)
+  const [brandsFilter, setBrandsFilter] = useQueryState(
+    'brands',
+    searchParams.categories.withOptions({ shallow: false }).withDefault('')
   );
 
   const resetFilters = useCallback(() => {
-    setSearchQuery(null);
+    setSortQuery(null);
+    setOrderQuery(null);
+    setTitleQuery(null);
+    setProductCodeQuery(null);
     setCategoriesFilter(null);
+    setBrandsFilter(null);
 
     setPage(1);
-  }, [setSearchQuery, setCategoriesFilter, setPage]);
+  }, [
+    setSortQuery,
+    setOrderQuery,
+    setTitleQuery,
+    setProductCodeQuery,
+    setCategoriesFilter,
+    setBrandsFilter,
+    setPage
+  ]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!categoriesFilter;
-  }, [searchQuery, categoriesFilter]);
+    return !!titleQuery || !!categoriesFilter;
+  }, [titleQuery, categoriesFilter]);
 
   return {
-    searchQuery,
-    setSearchQuery,
     page,
     setPage,
+    orderQuery,
+    setOrderQuery,
+    sortQuery,
+    setSortQuery,
+    titleQuery,
+    setTitleQuery,
+    productCodeQuery,
+    setProductCodeQuery,
     resetFilters,
     isAnyFilterActive,
     categoriesFilter,
-    setCategoriesFilter
+    setCategoriesFilter,
+    brandsFilter,
+    setBrandsFilter
   };
 }
