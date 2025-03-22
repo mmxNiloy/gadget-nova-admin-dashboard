@@ -22,12 +22,21 @@ import { useRouter } from 'next/navigation';
 import { ICategory } from 'types/schema/product.shema';
 import updateCategory from '@/app/(server)/actions/updateCategory';
 import { MultiSelect } from '@/components/ui/multi-select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   slug: z.string().min(1, { message: 'Slug is required.' }),
-  category_ids: z.array(z.string()).optional(),
+  parent_category_id: z.string().optional().nullable(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional()
 });
@@ -63,8 +72,7 @@ export default function SubcategoryForm({
       const data = await updateCategory({
         data: values,
         method: initialData ? 'PATCH' : 'POST',
-        id: initialData?.id,
-        asSubcategory: true
+        id: initialData?.id
       });
       if (data.ok) {
         toast.success('Subcategory Update Successful!');
@@ -95,7 +103,7 @@ export default function SubcategoryForm({
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder='Enter category name'
+                        placeholder='Enter subcategory name'
                         {...field}
                       />
                     </FormControl>
@@ -112,7 +120,7 @@ export default function SubcategoryForm({
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder='Enter category slug'
+                        placeholder='Enter subcategory slug'
                         {...field}
                       />
                     </FormControl>
@@ -123,23 +131,31 @@ export default function SubcategoryForm({
 
               <FormField
                 control={form.control}
-                name='category_ids'
+                name='parent_category_id'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Categories</FormLabel>
                     <FormControl>
-                      <MultiSelect
-                        disabled={loading}
-                        options={
-                          categories?.map((cat) => ({
-                            label: cat.name,
-                            value: cat.id
-                          })) ?? []
-                        }
-                        defaultValue={field.value}
+                      <Select
+                        value={field.value ?? undefined}
                         onValueChange={field.onChange}
-                        placeholder='Select categories'
-                      />
+                        disabled={loading}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a parent category' />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Select a category</SelectLabel>
+                            {categories?.map((cat) => (
+                              <SelectItem value={cat.id} key={cat.id}>
+                                {cat.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -188,7 +204,7 @@ export default function SubcategoryForm({
             />
 
             <Button disabled={loading} type='submit'>
-              {initialData ? 'Update Category' : 'Create Category'}
+              {initialData ? 'Update Subcategory' : 'Create Subcategory'}
             </Button>
           </form>
         </Form>

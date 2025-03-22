@@ -95,7 +95,7 @@ export interface ICategory {
   slug: string;
   metaTitle: string;
   metaDescription: string;
-  parent_category?: ICategory;
+  parentCategory?: ICategory;
   parent_category_id?: string;
 }
 
