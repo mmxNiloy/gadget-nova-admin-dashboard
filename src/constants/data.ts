@@ -37,18 +37,30 @@ export const navItems: NavItem[] = [
         title: 'Product Attribute',
         url: '/dashboard/product-attribute',
         icon: 'kanban'
-      },
+      }
+    ]
+  },
+  {
+    title: 'Category',
+    url: '/dashboard/category',
+    icon: 'category',
+    items: [
       {
         title: 'Category',
         url: '/dashboard/category',
         icon: 'category'
       },
       {
-        title: 'Brand',
-        url: '/dashboard/brand',
-        icon: 'hexagon'
+        title: 'Subcategory',
+        url: '/dashboard/sub-category',
+        icon: 'category'
       }
     ]
+  },
+  {
+    title: 'Brand',
+    url: '/dashboard/brand',
+    icon: 'hexagon'
   },
   {
     title: 'Orders',

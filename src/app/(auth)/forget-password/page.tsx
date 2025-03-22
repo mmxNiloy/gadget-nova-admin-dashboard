@@ -5,15 +5,17 @@ import { Button } from '@/components/ui/button';
 import Icons from '@/components/ui/icons';
 import Image from 'next/image';
 import LoginForm from '@/features/auth/components/login-form';
+import ForgetPasswordForm from '@/features/auth/components/forget-password-form';
+import Link from 'next/link';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: SiteConfig.siteTitle.signIn,
-    description: SiteConfig.siteDescription.signIn
+    title: SiteConfig.siteTitle.forgetPassword,
+    description: SiteConfig.siteDescription.forgetPassword
   };
 }
 
-export default async function Page() {
+export default async function ForgetPasswordPage() {
   return (
     <main className='h-screen bg-gradient-to-br from-orange-550/50 to-orange-600/80'>
       {/* Auth container here */}
@@ -27,30 +29,17 @@ export default async function Page() {
             alt='Gadget Nova'
             className='w-32'
           />
-          <p className='text-h6 font-semibold'>Sign In</p>
+          <p className='text-h6 font-semibold'>Forget Password</p>
 
-          {/* Login form */}
-          <LoginForm />
+          {/* Forget Password form */}
+          <ForgetPasswordForm />
 
-          {/* Registration section */}
-          <p className='text-xs text-primary-foreground sm:text-sm'>
-            Don&apos;t have an account?
-            <Button
-              size={'sm'}
-              variant={'link'}
-              className='text-sm font-semibold text-primary-foreground'
-            >
-              Register
+          <Link href='/' passHref>
+            <Button variant={'link'} className='gap-1 text-primary-foreground'>
+              <Icons.chevronLeft />
+              Back
             </Button>
-          </p>
-
-          <p className='text-xs text-primary-foreground sm:text-sm'>
-            Or Login with
-          </p>
-          <div className='flex gap-6 *:size-8'>
-            <Icons.google />
-            <Icons.fb />
-          </div>
+          </Link>
         </div>
       </section>
     </main>

@@ -63,3 +63,37 @@ export function toSlug(value: string) {
     })
     .join('');
 }
+
+interface IToQueryArrayOptionsProps {
+  query: string;
+  paramName: string;
+  delimiter?: string;
+}
+
+/**
+ *
+ * @param options Object
+ * @param query String, Delimiter separated query string
+ * @param paramName String, expected parameter name in the query string
+ * @param delimiter String, separator/delimiter in the query string
+ * @returns String[][], returns an array of strings containing a tuple of strings [key, value] where key is the key in the query string and value is the corresponding value.
+ */
+export function toQueryArray({
+  query,
+  paramName,
+  delimiter = '.'
+}: IToQueryArrayOptionsProps) {
+  return query
+    .split(delimiter)
+    .map((q) => {
+      if (q.length > 0) return [paramName, q];
+    })
+    .filter((item) => item !== undefined);
+}
+
+export function keyToLabel(key: string) {
+  return key
+    .split(/[_$]/)
+    .map((item) => toCapCase(item))
+    .join(' ');
+}

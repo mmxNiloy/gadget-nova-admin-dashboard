@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import ProductForm from './product-form';
 import getProduct from '@/app/(server)/actions/getProduct';
 import {
+  IAttributeValueListResponse,
   IBrandListResponse,
   ICategoryListResponse,
   IProductAttributeListResponse,
@@ -12,13 +13,15 @@ interface IProductViewPageProps {
   productId: string;
   brands?: IBrandListResponse;
   categories?: ICategoryListResponse;
-  attributes?: IProductAttributeListResponse;
+  subcategories?: ICategoryListResponse;
+  attributes?: IAttributeValueListResponse;
 }
 
 export default async function ProductViewPage({
   productId,
   brands,
   categories,
+  subcategories,
   attributes
 }: IProductViewPageProps) {
   let product: IProductResponse | undefined;
@@ -43,6 +46,7 @@ export default async function ProductViewPage({
       categories={categories?.payload ?? []}
       brands={brands?.payload ?? []}
       attributes={attributes?.payload ?? []}
+      subcategories={subcategories?.payload ?? []}
     />
   );
 }

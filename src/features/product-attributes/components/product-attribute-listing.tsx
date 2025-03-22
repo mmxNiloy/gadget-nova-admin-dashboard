@@ -1,9 +1,14 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as ProductAttributeTable } from '@/components/ui/table/data-table';
 import getProducts from '@/app/(server)/actions/getProducts';
-import { IProduct, IProductAttribute } from 'types/schema/product.shema';
+import {
+  IAttributeValue,
+  IProduct,
+  IProductAttribute
+} from 'types/schema/product.shema';
 import getProductAttributes from '@/app/(server)/actions/getProductsAttributes';
 import { columns } from './product-attributes-table/columns';
+import getProductAttributeValues from '@/app/(server)/actions/getProductsAttributeValues';
 
 type ProductAttributeListingPage = {};
 
@@ -19,7 +24,7 @@ export default async function ProductAttributeListingPage({}: ProductAttributeLi
     ...(search && { search })
   };
 
-  const prodData = await getProductAttributes({ ...filters });
+  const prodData = await getProductAttributeValues({ ...filters });
 
   if (!prodData.ok) {
     // TODO: Add a proper error state table here
@@ -29,7 +34,7 @@ export default async function ProductAttributeListingPage({}: ProductAttributeLi
   const data = prodData.data;
 
   const totalProducts = Math.ceil(data.payload.length / pageLimit);
-  const attributes: IProductAttribute[] = data.payload;
+  const attributes: IAttributeValue[] = data.payload;
 
   return (
     <ProductAttributeTable

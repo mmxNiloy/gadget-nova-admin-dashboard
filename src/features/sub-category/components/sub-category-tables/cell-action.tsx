@@ -8,14 +8,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import Icons from '@/components/ui/icons';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { IAttributeValue, IProductAttribute } from 'types/schema/product.shema';
+import { IBrand } from 'types/schema/product.shema';
 
 interface CellActionProps {
-  data: IAttributeValue;
+  data: IBrand;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -44,15 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/dashboard/product/${data.id}?preview=true`)
-            }
-          >
-            <Icons.visible className='mr-2 h-4 w-4' /> Preview
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/${data.id}`)}
+            onClick={() => router.push(`/dashboard/category/${data.id}`)}
           >
             <Edit className='mr-2 h-4 w-4' /> Update
           </DropdownMenuItem>

@@ -3,23 +3,19 @@ import { ColumnDef } from '@tanstack/react-table';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
 import { AvatarPicker } from '@/components/ui/avatar-picker';
-import { IProductAttribute } from 'types/schema/product.shema';
+import { IAttributeValue, IProductAttribute } from 'types/schema/product.shema';
 import { CellAction } from './cell-action';
 
-export const columns: ColumnDef<IProductAttribute>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID'
-  },
+export const columns: ColumnDef<IAttributeValue>[] = [
   {
     id: 'attr-val',
     header: 'Attribute Value',
-    cell: ({ row }) => row.original.attributeValue.value
+    cell: ({ row }) => row.original.value
   },
   {
     id: 'attr-group',
     header: 'Attribute Group',
-    cell: ({ row }) => row.original.attributeValue.attributeGroup.title
+    cell: ({ row }) => row.original.attributeGroup.title
   },
   {
     accessorKey: 'created_at',

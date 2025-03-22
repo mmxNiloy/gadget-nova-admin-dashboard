@@ -20,7 +20,6 @@ export default async function updateProductAttribute({
     method,
     endpoint: ['product-attribute', method === 'POST' ? '' : id].join('/'),
     authenticate: true,
-    body: JSON.stringify(data),
-    asFormData: true
+    body: JSON.stringify(data)
   });
 }

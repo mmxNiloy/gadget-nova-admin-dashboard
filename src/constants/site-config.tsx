@@ -8,6 +8,7 @@ export const SiteConfig = {
   siteTitle: {
     default: _siteTitleBase,
     signIn: `${_siteTitleBase} | Sign In`,
+    forgetPassword: `${_siteTitleBase} | Forget Password`,
     dashboard: `${_siteTitleBase} | Dashboard`,
     product: {
       list: `Dashboard | Products`,
@@ -25,6 +26,10 @@ export const SiteConfig = {
       list: `Dashboard | Categories`,
       view: `Dashboard | Category View`
     },
+    subCategory: {
+      list: `Dashboard | Subcategory`,
+      view: `Dashboard | Subcategory`
+    },
     user: {
       list: `Dashboard | Users`,
       view: `Dashboard | User View`,
@@ -34,10 +39,11 @@ export const SiteConfig = {
   siteDescription: {
     default: 'Admin Panel for Gadget Nova',
     signIn:
-      'Welcome to the Admin panel for Gadget Nova. Please Sign In to continue.'
+      'Welcome to the Admin panel for Gadget Nova. Please Sign In to continue.',
+    forgetPassword: 'Forgot your password? Recover your account now.'
   },
   featureFlags: {
-    disableAuth: true,
+    disableAuth: false,
     maxFileSize: 5000000,
     acceptedImageTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
   }

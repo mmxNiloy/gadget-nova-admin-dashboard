@@ -1,4 +1,3 @@
-// File: features/products/components/product-attribute-form.tsx
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,7 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {
@@ -40,6 +39,7 @@ import {
 import updateProductAttribute from '@/app/(server)/actions/updateProductAttribute';
 import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeValue copy';
 import updateProductAttributeValue from '@/app/(server)/actions/updateProductAttributeValue';
+import Link from 'next/link';
 
 // Zod schemas
 const attributeGroupSchema = z.object({
@@ -72,14 +72,18 @@ export default function ProductAttributeForm({
 }: ProductAttributeFormProps) {
   const router = useRouter();
   const [loading, startAPICall] = useTransition();
-  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(
+    initialData?.attributeValue.attributeGroup.id || ''
+  );
   const [isGroupDialogOpen, setIsGroupDialogOpen] = useState(false);
   const [isValueDialogOpen, setIsValueDialogOpen] = useState(false);
 
   // Main form
   const form = useForm<z.infer<typeof productAttributeSchema>>({
     resolver: zodResolver(productAttributeSchema),
-    defaultValues: { attributeValue_id: '' }
+    defaultValues: {
+      attributeValue_id: initialData?.attributeValue.id || ''
+    }
   });
 
   // Attribute Group form
@@ -91,65 +95,75 @@ export default function ProductAttributeForm({
   // Attribute Value form
   const valueForm = useForm<z.infer<typeof attributeValueSchema>>({
     resolver: zodResolver(attributeValueSchema),
-    defaultValues: { value: '', attributeGroup_id: selectedGroupId }
+    defaultValues: {
+      value: '',
+      attributeGroup_id: selectedGroupId
+    }
   });
 
   const filteredValues = values.filter(
     (v) => v.attributeGroup.id === selectedGroupId
   );
 
-  const onSubmit = async (values: z.infer<typeof productAttributeSchema>) => {
-    startAPICall(async () => {
-      const data = await updateProductAttribute({
-        data: values,
-        method: initialData ? 'PATCH' : 'POST'
-      });
-      if (data.ok) {
-        toast.success('Product Attribute Created Successfully!');
-        router.push('/dashboard/product-attributes');
-      } else {
-        toast.error('Product Attribute Creation Failed!');
-      }
-    });
-  };
+  const onGroupSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent bubbling to parent form
 
-  const onGroupSubmit = async (
-    values: z.infer<typeof attributeGroupSchema>
-  ) => {
-    startAPICall(async () => {
-      const data = await updateProductAttributeGroup({
-        data: values,
-        method: 'POST'
-      });
-      if (data.ok) {
-        toast.success('Attribute Group Created!');
-        setIsGroupDialogOpen(false);
-        groupForm.reset();
-        router.refresh(); // Refresh server component
-      } else {
-        toast.error('Group Creation Failed!');
-      }
-    });
-  };
+      const values = {
+        title: groupForm.getValues('title')
+      };
 
-  const onValueSubmit = async (
-    values: z.infer<typeof attributeValueSchema>
-  ) => {
-    startAPICall(async () => {
-      const data = await updateProductAttributeValue({
-        data: values,
-        method: 'POST'
+      startAPICall(async () => {
+        const data = await updateProductAttributeGroup({
+          data: values,
+          method: 'POST'
+        });
+        if (data.ok) {
+          toast.success('Attribute Group Created!');
+          setIsGroupDialogOpen(false);
+          groupForm.reset();
+          router.refresh();
+        } else {
+          toast.error('Group Creation Failed!');
+        }
       });
-      if (data.ok) {
-        toast.success('Attribute Value Created!');
-        setIsValueDialogOpen(false);
-        valueForm.reset();
-        router.refresh(); // Refresh server component
-      } else {
-        toast.error('Value Creation Failed!');
-      }
-    });
-  };
+    },
+    [groupForm, router]
+  );
+
+  const onValueSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent bubbling to parent form
+
+      const values: z.infer<typeof attributeValueSchema> = {
+        value: valueForm.getValues('value'),
+        attributeGroup_id: valueForm.getValues('attributeGroup_id')
+      };
+
+      startAPICall(async () => {
+        const data = await updateProductAttributeValue({
+          data: values,
+          method: 'POST'
+        });
+        if (data.ok) {
+          toast.success('Attribute Value Created!');
+          setIsValueDialogOpen(false);
+          valueForm.reset();
+          router.refresh();
+        } else {
+          toast.error('Value Creation Failed!');
+        }
+      });
+    },
+    [router, valueForm]
+  );
+
+  // Update valueForm's attributeGroup_id when selectedGroupId changes
+  useEffect(() => {
+    valueForm.setValue('attributeGroup_id', selectedGroupId);
+  }, [selectedGroupId, valueForm]);
 
   return (
     <Card className='mx-auto w-full'>
@@ -160,7 +174,7 @@ export default function ProductAttributeForm({
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <div className='flex flex-col gap-8'>
             <div className='space-y-4'>
               {/* Attribute Group Selection */}
               <div className='flex items-end gap-4'>
@@ -169,7 +183,7 @@ export default function ProductAttributeForm({
                   <Select
                     onValueChange={setSelectedGroupId}
                     disabled={loading}
-                    defaultValue={initialData?.attributeValue.attributeGroup.id}
+                    value={selectedGroupId}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder='Select an attribute group' />
@@ -197,10 +211,7 @@ export default function ProductAttributeForm({
                       <DialogTitle>Create New Attribute Group</DialogTitle>
                     </DialogHeader>
                     <Form {...groupForm}>
-                      <form
-                        onSubmit={groupForm.handleSubmit(onGroupSubmit)}
-                        className='space-y-4'
-                      >
+                      <form onSubmit={onGroupSubmit} className='space-y-4'>
                         <FormField
                           control={groupForm.control}
                           name='title'
@@ -210,6 +221,7 @@ export default function ProductAttributeForm({
                               <FormControl>
                                 <Input
                                   placeholder='Enter group title'
+                                  disabled={loading}
                                   {...field}
                                 />
                               </FormControl>
@@ -218,7 +230,7 @@ export default function ProductAttributeForm({
                           )}
                         />
                         <Button type='submit' disabled={loading}>
-                          Create
+                          {loading ? 'Creating...' : 'Create'}
                         </Button>
                       </form>
                     </Form>
@@ -238,7 +250,6 @@ export default function ProductAttributeForm({
                         onValueChange={field.onChange}
                         value={field.value}
                         disabled={loading || !selectedGroupId}
-                        defaultValue={initialData?.attributeValue.id}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder='Select an attribute value' />
@@ -272,10 +283,7 @@ export default function ProductAttributeForm({
                       <DialogTitle>Create New Attribute Value</DialogTitle>
                     </DialogHeader>
                     <Form {...valueForm}>
-                      <form
-                        onSubmit={valueForm.handleSubmit(onValueSubmit)}
-                        className='space-y-4'
-                      >
+                      <form onSubmit={onValueSubmit} className='space-y-4'>
                         <FormField
                           control={valueForm.control}
                           name='value'
@@ -285,6 +293,7 @@ export default function ProductAttributeForm({
                               <FormControl>
                                 <Input
                                   placeholder='Enter attribute value'
+                                  disabled={loading}
                                   {...field}
                                 />
                               </FormControl>
@@ -298,7 +307,7 @@ export default function ProductAttributeForm({
                           value={selectedGroupId}
                         />
                         <Button type='submit' disabled={loading}>
-                          Create
+                          {loading ? 'Creating...' : 'Create'}
                         </Button>
                       </form>
                     </Form>
@@ -307,10 +316,16 @@ export default function ProductAttributeForm({
               </div>
             </div>
 
-            <Button type='submit' disabled={loading}>
-              Create Product Attribute
-            </Button>
-          </form>
+            <Link
+              href='/dashboard/product-attribute'
+              passHref
+              className='w-fit'
+            >
+              <Button type='submit' disabled={loading}>
+                {loading ? 'Saving...' : 'Done'}
+              </Button>
+            </Link>
+          </div>
         </Form>
       </CardContent>
     </Card>

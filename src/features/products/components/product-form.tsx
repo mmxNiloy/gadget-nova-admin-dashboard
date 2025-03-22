@@ -17,6 +17,7 @@ import { SiteConfig } from '@/constants/site-config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
+  IAttributeValue,
   IBrand,
   ICategory,
   IProduct,
@@ -76,7 +77,8 @@ const baseSchema = z.object({
   attribute_value_ids: z
     .array(z.string())
     .min(1, { message: 'At least one attribute is required.' }), // Updated validation
-  brand_id: z.string().optional()
+  brand_id: z.string().optional(),
+  subcategory_id: z.string().optional().nullable()
 });
 
 // File validation schema (applied conditionally)
@@ -111,6 +113,7 @@ export default function ProductForm({
   initialData,
   brands,
   categories,
+  subcategories,
   attributes,
   pageTitle
 }: {
@@ -118,7 +121,8 @@ export default function ProductForm({
   pageTitle: string;
   brands: IBrand[];
   categories: ICategory[];
-  attributes: IProductAttribute[];
+  attributes: IAttributeValue[];
+  subcategories: ICategory[];
 }) {
   // Conditional schema based on initialData
   const formSchema = initialData?.thumbnail
@@ -145,6 +149,7 @@ export default function ProductForm({
     specifications: initialData?.specifications ?? '',
     thresholdAmount: initialData?.thresholdAMount ?? undefined,
     category_id: initialData?.category.id ?? '',
+    subcategory_id: initialData?.subcategory?.id ?? undefined,
     attribute_value_ids:
       initialData?.productAttributes?.map((item) => item.id) ?? [], // Updated to use attributeValue_id
     brand_id: initialData?.brand.id ?? '',
@@ -170,28 +175,7 @@ export default function ProductForm({
     defaultValues
   });
 
-  const selectedBrandId = form.watch('brand_id');
-  const filteredCategories = useMemo(
-    () =>
-      selectedBrandId
-        ? (brands.find((brand) => brand.id === selectedBrandId)?.categories ??
-          [])
-        : categories,
-    [brands, categories, selectedBrandId]
-  );
-
   const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const currentCategoryId = form.getValues('category_id');
-    if (
-      selectedBrandId &&
-      currentCategoryId &&
-      !filteredCategories.some((cat) => cat.id === currentCategoryId)
-    ) {
-      form.setValue('category_id', '');
-    }
-  }, [selectedBrandId, filteredCategories, form]);
 
   const router = useRouter();
   const [loading, startAPICall] = useTransition();
@@ -245,10 +229,18 @@ export default function ProductForm({
     () =>
       attributes.map((attr) => ({
         value: attr.id,
-        label: `${attr.attributeValue.value}, ${attr.attributeValue.attributeGroup.title}`
+        label: `${attr.value}, ${attr.attributeGroup.title}`
       })),
     [attributes]
   );
+
+  const categoryValue = form.watch('category_id');
+
+  const filteredSubcategories = useMemo(() => {
+    return subcategories.filter(
+      (cat) => cat.parent_category_id === categoryValue
+    );
+  }, [categoryValue, subcategories]);
 
   return (
     <>
@@ -318,12 +310,8 @@ export default function ProductForm({
                       <FormControl>
                         <Input
                           disabled={loading}
-                          value={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            form.setValue('slug', toSlug(e.target.value));
-                          }}
                           placeholder='Enter product title'
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -338,11 +326,9 @@ export default function ProductForm({
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
                         <Input
-                          tabIndex={-1}
                           disabled={loading}
-                          readOnly
                           placeholder='Enter product slug'
-                          value={field.value}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -476,12 +462,37 @@ export default function ProductForm({
                     <FormItem>
                       <FormLabel>Category</FormLabel>
                       <LabelledComboBox
-                        disabled={loading || !selectedBrandId}
+                        disabled={loading}
                         className='w-full'
                         label='Select Category'
                         defaultValue={field.value}
                         onValueChange={field.onChange}
-                        items={filteredCategories.map((cat) => ({
+                        items={categories.map((cat) => ({
+                          label: cat.name,
+                          value: cat.id
+                        }))}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='subcategory_id'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subcategory</FormLabel>
+                      <LabelledComboBox
+                        disabled={
+                          loading ||
+                          !categoryValue ||
+                          filteredSubcategories.length < 1
+                        }
+                        className='w-full'
+                        label='Select Subcategory'
+                        defaultValue={field.value ?? ''}
+                        onValueChange={field.onChange}
+                        items={filteredSubcategories.map((cat) => ({
                           label: cat.name,
                           value: cat.id
                         }))}

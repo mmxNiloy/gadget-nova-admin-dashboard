@@ -6,6 +6,7 @@ import getCategories from '@/app/(server)/actions/getCategories';
 import { SiteConfig } from '@/constants/site-config';
 import ProductViewPage from '@/features/products/components/product-view-page';
 import getProductAttributes from '@/app/(server)/actions/getProductsAttributes';
+import getProductAttributeValues from '@/app/(server)/actions/getProductsAttributeValues';
 
 export const metadata = {
   title: SiteConfig.siteTitle.product.view
@@ -21,10 +22,11 @@ export default async function Page(props: PageProps) {
   const sParams = await props.searchParams;
 
   // Get all brands and categories
-  const [brands, categories, attributes] = await Promise.all([
+  const [brands, categories, subcategories, attributes] = await Promise.all([
     getBrands(),
     getCategories(),
-    getProductAttributes({})
+    getCategories({ getSubcategories: true }),
+    getProductAttributeValues({})
   ]);
 
   if (!brands.ok) {
@@ -57,6 +59,7 @@ export default async function Page(props: PageProps) {
             brands={brands.ok ? brands.data : undefined}
             categories={categories.ok ? categories.data : undefined}
             attributes={attributes.ok ? attributes.data : undefined}
+            subcategories={subcategories.ok ? subcategories.data : undefined}
           />
         </Suspense>
       </div>

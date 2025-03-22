@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
@@ -48,11 +49,16 @@ export default function LoginForm() {
           redirect: false
         });
 
-        if (result?.ok) {
+        console.log('Credentials Auth Response:', result);
+        if (!result) {
+          toast.error(
+            'Connection failed. Please check your internet connection.'
+          );
+        } else if (result.error) {
+          toast.error('Invalid Credeintials!');
+        } else {
           toast.success('Signed In Successfully!');
           router.replace(callbackUrl ?? '/dashboard');
-        } else {
-          toast.error('Invalid Credeintials!');
         }
       });
     },
@@ -122,15 +128,17 @@ export default function LoginForm() {
             )}
           />
 
-          <Button
-            disabled={loading}
-            type='button'
-            variant={'link'}
-            size={'sm'}
-            className='text-xs text-primary-foreground sm:text-sm'
-          >
-            Forget password?
-          </Button>
+          <Link href='/forget-password' passHref>
+            <Button
+              disabled={loading}
+              type='button'
+              variant={'link'}
+              size={'sm'}
+              className='text-xs text-primary-foreground sm:text-sm'
+            >
+              Forget password?
+            </Button>
+          </Link>
         </div>
 
         <Button

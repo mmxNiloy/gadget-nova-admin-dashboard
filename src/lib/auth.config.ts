@@ -28,7 +28,16 @@ const authConfig = {
           }
         );
 
-        if (!userRes.ok) return null;
+        if (!userRes.ok) {
+          console.log(
+            '[AuthConfig] Invalid Credentials >',
+            await userRes.json()
+          );
+
+          throw new Error('Invalid Credentials', {
+            cause: 'Invalid email or password.'
+          });
+        }
 
         const mData = (await userRes.json()) as IUserAuthResponse;
         if (!mData.payload) return null;

@@ -12,6 +12,7 @@ interface Props extends HTMLAttributes<HTMLInputElement> {
   required?: boolean;
   disabled?: boolean;
   minLength?: number;
+  placeholder?: string;
 }
 
 const PasswordInput = React.forwardRef<HTMLInputElement, Props>(
@@ -24,6 +25,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, Props>(
       required,
       minLength,
       disabled,
+      placeholder,
       ...props
     },
     ref
@@ -43,7 +45,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, Props>(
           minLength={minLength ?? 8}
           className={cn(className, 'w-full pr-16')}
           name={name}
-          placeholder='Password'
+          placeholder={placeholder ?? 'Password'}
           required={required}
           {...props}
         />

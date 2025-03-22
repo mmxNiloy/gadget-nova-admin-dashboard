@@ -34,14 +34,16 @@ import { parseAsInteger, useQueryState } from 'nuqs';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  totalItems: number;
+  totalItems?: number;
+  pageCount?: number;
   pageSizeOptions?: number[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  totalItems,
+  totalItems = 0,
+  pageCount = 1,
   pageSizeOptions = [10, 20, 30, 40, 50]
 }: DataTableProps<TData, TValue>) {
   const [currentPage, setCurrentPage] = useQueryState(
@@ -60,8 +62,6 @@ export function DataTable<TData, TValue>({
     pageSize: pageSize
   };
 
-  const pageCount = Math.ceil(totalItems / pageSize);
-
   const handlePaginationChange = (
     updaterOrValue:
       | PaginationState
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    pageCount: pageCount,
+    pageCount,
     state: {
       pagination: paginationState
     },
