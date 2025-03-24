@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Icons from '@/components/ui/icons';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { IProduct } from 'types/schema/product.shema';
@@ -43,15 +44,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={() =>
-              router.push(
-                `http://revolohr.com:6020/product/${data.id}?preview=true`
-              )
-            }
+          <Link
+            passHref
+            target='_blank'
+            href={`http://revolohr.com:6020/product/${data.id}?preview=true`}
           >
-            <Icons.visible className='mr-2 h-4 w-4' /> Preview
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Icons.visible className='mr-2 h-4 w-4' /> Preview
+            </DropdownMenuItem>
+          </Link>
 
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/product/${data.id}`)}

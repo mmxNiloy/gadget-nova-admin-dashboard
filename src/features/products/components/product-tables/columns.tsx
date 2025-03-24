@@ -1,6 +1,5 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { CellAction } from './cell-action';
 import { IProduct } from 'types/schema/product.shema';
 import TextCapsule from '@/components/text-capsule';
@@ -14,22 +13,22 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <div className='relative aspect-square'>
           <img
-            src={row.getValue('thumbnail')}
-            alt={row.getValue('title')}
+            src={row.original.thumbnail}
+            alt={row.original.title}
             // fill
-            className='rounded-lg'
+            className='size-16 rounded-lg bg-muted/20 object-contain object-center'
           />
         </div>
       );
     }
   },
   {
-    accessorKey: 'title',
+    accessorKey: 'metaTitle',
     header: 'Name'
   },
   {
-    accessorKey: 'description',
-    header: 'Description'
+    accessorKey: 'productCode',
+    header: 'Product Code'
   },
   {
     accessorKey: 'is_active',
