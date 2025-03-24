@@ -45,7 +45,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/dashboard/product/${data.id}?preview=true`)
+              router.push(
+                `http://revolohr.com:6020/product/${data.id}?preview=true`
+              )
             }
           >
             <Icons.visible className='mr-2 h-4 w-4' /> Preview

@@ -22,7 +22,7 @@ export default async function ForgetPasswordPage() {
       <section className='container flex h-full flex-col items-center justify-center'>
         <div className='flex max-w-screen-md flex-col items-center justify-center gap-4 rounded-lg bg-background p-8 drop-shadow-lg'>
           {/* <p className='text-h4 font-semibold'>Welcome Back</p> */}
-          <Image
+          <img
             src={'/site-logo.svg'}
             height={0}
             width={0}

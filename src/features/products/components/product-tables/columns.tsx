@@ -13,10 +13,10 @@ export const columns: ColumnDef<IProduct>[] = [
     cell: ({ row }) => {
       return (
         <div className='relative aspect-square'>
-          <Image
+          <img
             src={row.getValue('thumbnail')}
             alt={row.getValue('title')}
-            fill
+            // fill
             className='rounded-lg'
           />
         </div>

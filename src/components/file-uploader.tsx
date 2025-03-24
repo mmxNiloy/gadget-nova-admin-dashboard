@@ -279,7 +279,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
     <div className='relative flex items-center space-x-4'>
       <div className='flex flex-1 space-x-4'>
         {isFileWithPreview(file) ? (
-          <Image
+          <img
             src={file.preview}
             alt={file.name}
             width={48}

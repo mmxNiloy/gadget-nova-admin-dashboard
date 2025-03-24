@@ -37,7 +37,7 @@ import {
   IProductAttribute
 } from 'types/schema/product.shema';
 import updateProductAttribute from '@/app/(server)/actions/updateProductAttribute';
-import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeValue copy';
+import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeGroup';
 import updateProductAttributeValue from '@/app/(server)/actions/updateProductAttributeValue';
 import Link from 'next/link';
 
