@@ -9,11 +9,13 @@ import {
 interface IBrandViewPageProps {
   brandId: string;
   categories?: ICategoryListResponse;
+  subCategories?: ICategoryListResponse;
 }
 
 export default async function BrandViewPage({
   brandId,
-  categories
+  categories,
+  subCategories
 }: IBrandViewPageProps) {
   let brand: IBrandResponse | undefined;
   let pageTitle = 'Create New Brand Entry';
@@ -35,6 +37,7 @@ export default async function BrandViewPage({
       initialData={brand?.payload}
       pageTitle={pageTitle}
       categories={categories?.payload ?? []}
+      subCategories={subCategories?.payload ?? []}
     />
   );
 }

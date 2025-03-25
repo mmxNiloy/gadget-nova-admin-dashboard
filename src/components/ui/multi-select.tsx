@@ -29,6 +29,7 @@ import {
   CommandSeparator
 } from '@/components/ui/command';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { useCallback } from 'react';
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -198,6 +199,15 @@ export const MultiSelect = React.forwardRef<
       }
     };
 
+    const filterByLabel = useCallback(
+      (value: string, search: string) => {
+        const item = options.find((i) => i.value === value);
+        if (!item) return 0;
+        return item.label.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+      },
+      [options]
+    );
+
     return (
       <Popover
         open={isPopoverOpen}
@@ -297,7 +307,7 @@ export const MultiSelect = React.forwardRef<
           )}
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
-          <Command>
+          <Command filter={filterByLabel}>
             <CommandInput
               placeholder='Search...'
               onKeyDown={handleInputKeyDown}

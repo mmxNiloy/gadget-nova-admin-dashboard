@@ -40,6 +40,7 @@ import updateProductAttribute from '@/app/(server)/actions/updateProductAttribut
 import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeGroup';
 import updateProductAttributeValue from '@/app/(server)/actions/updateProductAttributeValue';
 import Link from 'next/link';
+import { LabelledComboBox } from '@/components/ui/combobox';
 
 // Zod schemas
 const attributeGroupSchema = z.object({
@@ -122,6 +123,7 @@ export default function ProductAttributeForm({
         if (data.ok) {
           toast.success('Attribute Group Created!');
           setIsGroupDialogOpen(false);
+          setSelectedGroupId('');
           groupForm.reset();
           router.refresh();
         } else {
@@ -149,6 +151,7 @@ export default function ProductAttributeForm({
         });
         if (data.ok) {
           toast.success('Attribute Value Created!');
+          setSelectedGroupId('');
           setIsValueDialogOpen(false);
           valueForm.reset();
           router.refresh();
@@ -180,22 +183,19 @@ export default function ProductAttributeForm({
               <div className='flex items-end gap-4'>
                 <FormItem className='flex-1'>
                   <FormLabel>Attribute Group</FormLabel>
-                  <Select
-                    onValueChange={setSelectedGroupId}
+
+                  <LabelledComboBox
+                    key={selectedGroupId}
                     disabled={loading}
-                    value={selectedGroupId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select an attribute group' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {groups.map((group) => (
-                        <SelectItem key={group.id} value={group.id}>
-                          {group.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    className='w-full'
+                    label='Select an attribute group'
+                    defaultValue={selectedGroupId}
+                    onValueChange={setSelectedGroupId}
+                    items={groups.map((grp) => ({
+                      label: grp.title,
+                      value: grp.id
+                    }))}
+                  />
                 </FormItem>
                 <Dialog
                   open={isGroupDialogOpen}
@@ -245,23 +245,23 @@ export default function ProductAttributeForm({
                   name='attributeValue_id'
                   render={({ field }) => (
                     <FormItem className='flex-1'>
-                      <FormLabel>Attribute Value</FormLabel>
-                      <Select
+                      <FormLabel>Attribute Values</FormLabel>
+
+                      <LabelledComboBox
+                        className='w-full'
+                        label='Select an attribute group'
+                        items={filteredValues.map((val) => ({
+                          label: val.value,
+                          value: val.id
+                        }))}
                         onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={loading || !selectedGroupId}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select an attribute value' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filteredValues.map((value) => (
-                            <SelectItem key={value.id} value={value.id}>
-                              {value.value}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        defaultValue={field.value}
+                        disabled={
+                          loading ||
+                          !selectedGroupId ||
+                          selectedGroupId.length < 1
+                        }
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

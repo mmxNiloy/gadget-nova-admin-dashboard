@@ -235,12 +235,34 @@ export default function ProductForm({
   );
 
   const categoryValue = form.watch('category_id');
+  const subcategoryValue = form.watch('subcategory_id');
 
   const filteredSubcategories = useMemo(() => {
     return subcategories.filter(
-      (cat) => cat.parent_category_id === categoryValue
+      (cat) => cat.parentCategory?.id === categoryValue
     );
   }, [categoryValue, subcategories]);
+
+  const filteredBrands = useMemo(() => {
+    return brands.filter((brn) =>
+      brn.categories?.find((cat) => cat.id === subcategoryValue)
+    );
+  }, [brands, subcategoryValue]);
+
+  // Reset subcategory and brand when category changes
+  useEffect(() => {
+    if (categoryValue) {
+      form.resetField('subcategory_id', { defaultValue: null });
+      form.resetField('brand_id', { defaultValue: '' });
+    }
+  }, [categoryValue, form]);
+
+  // Reset brand when subcategory changes
+  useEffect(() => {
+    if (subcategoryValue) {
+      form.resetField('brand_id', { defaultValue: '' });
+    }
+  }, [subcategoryValue, form]);
 
   return (
     <>
@@ -436,27 +458,6 @@ export default function ProductForm({
                 />
                 <FormField
                   control={form.control}
-                  name='brand_id'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Brand</FormLabel>
-                      <LabelledComboBox
-                        disabled={loading}
-                        className='w-full'
-                        label='Select Brand'
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                        items={brands.map((brand) => ({
-                          label: brand.name,
-                          value: brand.id
-                        }))}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name='category_id'
                   render={({ field }) => (
                     <FormItem>
@@ -483,6 +484,7 @@ export default function ProductForm({
                     <FormItem>
                       <FormLabel>Subcategory</FormLabel>
                       <LabelledComboBox
+                        key={`Subcategory-${field.value}`}
                         disabled={
                           loading ||
                           !categoryValue ||
@@ -495,6 +497,32 @@ export default function ProductForm({
                         items={filteredSubcategories.map((cat) => ({
                           label: cat.name,
                           value: cat.id
+                        }))}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='brand_id'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Brand</FormLabel>
+                      <LabelledComboBox
+                        key={`Brand-${field.value}`}
+                        disabled={
+                          loading ||
+                          !subcategoryValue ||
+                          filteredBrands.length < 1
+                        }
+                        className='w-full'
+                        label='Select Brand'
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        items={filteredBrands.map((brand) => ({
+                          label: brand.name,
+                          value: brand.id
                         }))}
                       />
                       <FormMessage />

@@ -43,6 +43,13 @@ export default async function Page(props: PageProps) {
     );
   }
 
+  if (!subcategories.ok) {
+    console.error(
+      '[Product by ID Page] > Failed to get the list of subcategories >',
+      subcategories.error
+    );
+  }
+
   if (!attributes.ok) {
     console.error(
       '[Product by ID Page] > Failed to get the list of attributes >',
