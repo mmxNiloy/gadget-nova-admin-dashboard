@@ -20,9 +20,10 @@ export default async function Page(props: PageProps) {
   const sParams = await props.searchParams;
 
   // Get all brands and categories
-  const [brands, categories] = await Promise.all([
+  const [brands, categories, subCategories] = await Promise.all([
     getBrands(),
-    getCategories()
+    getCategories(),
+    getCategories({ getSubcategories: true })
   ]);
 
   if (!brands.ok) {
@@ -39,12 +40,20 @@ export default async function Page(props: PageProps) {
     );
   }
 
+  if (!subCategories.ok) {
+    console.error(
+      '[Brand by ID Page] > Failed to get the list of subcategories >',
+      subCategories.error
+    );
+  }
+
   return (
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
           <BrandViewPage
             categories={categories.ok ? categories.data : undefined}
+            subCategories={subCategories.ok ? subCategories.data : undefined}
             brandId={params.brandId}
           />
         </Suspense>

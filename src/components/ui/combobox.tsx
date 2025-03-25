@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Popover, PopoverTrigger } from './popover';
 import { Button } from './button';
 import Icons from './icons';
@@ -115,6 +115,15 @@ const LabelledComboBox = React.forwardRef<HTMLInputElement, LabelledInputProps>(
     );
     const [open, setOpen] = useState<boolean>(false);
 
+    const filterByLabel = useCallback(
+      (value: string, search: string) => {
+        const item = items.find((i) => i.value === value);
+        if (!item) return 0;
+        return item.label.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+      },
+      [items]
+    );
+
     return (
       <>
         <Popover open={open} onOpenChange={setOpen}>
@@ -169,7 +178,7 @@ const LabelledComboBox = React.forwardRef<HTMLInputElement, LabelledInputProps>(
               contentClassName
             )}
           >
-            <Command className='max-h-72'>
+            <Command filter={filterByLabel} className='max-h-72'>
               <CommandInput placeholder={placeholder ?? 'Search...'} />
               <CommandList>
                 <CommandEmpty>No results.</CommandEmpty>
