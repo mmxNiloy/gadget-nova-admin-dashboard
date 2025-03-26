@@ -4,6 +4,7 @@ import { CellAction } from './cell-action';
 import { IProduct } from 'types/schema/product.shema';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
+import { CurrencySymbols } from '@/constants/currency-symbol';
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -31,16 +32,16 @@ export const columns: ColumnDef<IProduct>[] = [
     header: 'Product Code'
   },
   {
-    accessorKey: 'is_active',
+    accessorKey: 'isInStock',
     header: 'Status',
     cell: ({ row }) => (
       <TextCapsule
         className={cn(
-          'bg-red-500 text-white',
-          row.original.is_active && 'bg-green-500'
+          'text-nowrap bg-red-500 text-white',
+          row.original.isInStock && 'bg-green-500'
         )}
       >
-        {row.original.is_active ? 'Active' : 'Inactive'}
+        {row.original.isInStock ? 'In-stock' : 'Out-of-stock'}
       </TextCapsule>
     )
   },
@@ -50,13 +51,79 @@ export const columns: ColumnDef<IProduct>[] = [
     cell: ({ row }) => row.original.category.name
   },
   {
+    accessorKey: 'brand',
+    header: 'Brand',
+    cell: ({ row }) => row.original.brand.name
+  },
+  {
     accessorKey: 'regularPrice',
-    header: 'Regular Price'
+    header: () => <p className='text-nowrap'>Regular Price</p>,
+    cell: ({ row }) => (
+      <p className='text-nowrap'>
+        <CurrencySymbols.default /> {row.original.regularPrice}
+      </p>
+    )
   },
   {
     accessorKey: 'discountPrice',
-    header: 'Discount Price'
+    header: () => <p className='text-nowrap'>Discount Price</p>,
+    cell: ({ row }) =>
+      row.original.discountPrice ? (
+        <p className='text-nowrap'>
+          <CurrencySymbols.default /> {row.original.discountPrice}
+        </p>
+      ) : (
+        'N/A'
+      )
   },
+  // {
+  //   accessorKey: 'isFeatured',
+  //   header: 'Featured?',
+  //   cell: ({ row }) => (
+  //     <TextCapsule
+  //       className={row.original.isFeatured ? 'bg-purple-500 text-white' : ''}
+  //     >
+  //       {row.original.isFeatured ? 'Featured' : 'N/A'}
+  //     </TextCapsule>
+  //   )
+  // },
+  // {
+  //   accessorKey: 'featuredStartDate',
+  //   header: () => <p className='text-nowrap'>Featured Start Date</p>,
+  //   cell: ({ row }) =>
+  //     new Date(row.original.featuredStartDate).toLocaleDateString('en-GB')
+  // },
+  // {
+  //   accessorKey: 'featuredEndDate',
+  //   header: () => <p className='text-nowrap'>Featured End Date</p>,
+
+  //   cell: ({ row }) =>
+  //     new Date(row.original.featuredStartDate).toLocaleDateString('en-GB')
+  // },
+  // {
+  //   accessorKey: 'isTrending',
+  //   header: 'Trending?',
+  //   cell: ({ row }) => (
+  //     <TextCapsule
+  //       className={row.original.isFeatured ? 'bg-fuchsia-500 text-white' : ''}
+  //     >
+  //       {row.original.isTrending ? 'Trending' : 'N/A'}
+  //     </TextCapsule>
+  //   )
+  // },
+  // {
+  //   accessorKey: 'trendingStartDate',
+  //   header: () => <p className='text-nowrap'>Trending Start Date</p>,
+  //   cell: ({ row }) =>
+  //     new Date(row.original.trendingStartDate).toLocaleDateString('en-GB')
+  // },
+  // {
+  //   accessorKey: 'trendingEndDate',
+  //   header: () => <p className='text-nowrap'>Trending End Date</p>,
+
+  //   cell: ({ row }) =>
+  //     new Date(row.original.trendingEndDate).toLocaleDateString('en-GB')
+  // },
   {
     accessorKey: 'stockAmount',
     header: 'Stock'

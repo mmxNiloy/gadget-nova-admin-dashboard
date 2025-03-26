@@ -40,14 +40,14 @@ export const columns: ColumnDef<IBrand>[] = [
           {(row.original.categories?.length ?? 0) > 10
             ? '10+'
             : (row.original.categories?.length ?? 'No')}{' '}
-          Categor
+          Subcategor
           {(row.original.categories?.length ?? 0) < 2 ? 'y' : 'ies'}
           <Icons.chevronDown className='rotate-0 transition-all data-[state=open]:rotate-180' />
         </PopoverTrigger>
 
         <PopoverContent className='flex flex-col gap-1'>
           <p>{row.original.name}</p>
-          <p className='text-sm'>Categories</p>
+          <p className='text-sm'>Subcategories</p>
           <ul className='list-inside list-disc text-xs'>
             {row.original.categories?.map(
               (cat, index) => index < 10 && <li key={cat.id}>{cat.name}</li>

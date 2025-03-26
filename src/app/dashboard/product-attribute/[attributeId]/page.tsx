@@ -7,7 +7,7 @@ import getProductAttributeGroups from '@/app/(server)/actions/getProductsAttribu
 import ProductAttributeViewPage from '@/features/product-attributes/components/product-attribute-view-page';
 
 export const metadata = {
-  title: SiteConfig.siteTitle.product.view
+  title: SiteConfig.siteTitle.productAttribute.view
 };
 
 type PageProps = {

@@ -66,8 +66,7 @@ export const navItems: NavItem[] = [
     title: 'Orders',
     url: '/dashboard/order',
     icon: 'package',
-    isActive: false,
-    disabled: true
+    isActive: false
   },
   {
     title: 'Users',
