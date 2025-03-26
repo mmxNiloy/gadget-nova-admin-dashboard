@@ -1,3 +1,4 @@
+import { EObjectStatus } from 'types/enum/object-status.enum';
 import { IResponseBase } from './base.schema';
 import { IPaginationBase } from './pagination.schema';
 
@@ -16,17 +17,17 @@ export interface IProductResponse extends IResponseBase {
 
 export interface IProduct {
   id: string;
-  is_active: number;
-  created_by: any;
-  created_user_name: string;
-  updated_by: any;
-  updated_user_name: string;
+  is_active: EObjectStatus;
+  created_by?: string;
+  created_user_name?: string;
+  updated_by?: string;
+  updated_user_name?: string;
   created_at: string;
   updated_at: string;
   title: string;
   slug: string;
   metaTitle: string;
-  metaDescription: any;
+  metaDescription: string;
   productCode: string;
   regularPrice: string;
   discountPrice?: string;
@@ -38,8 +39,15 @@ export interface IProduct {
   soldAmount: number;
   thresholdAMount: number;
   thumbnail: string;
-  gallery: any;
-  specifications: any;
+  gallery: string[];
+  specifications: string;
+  isTrending: boolean;
+  isFeatured: boolean;
+  isInStock: boolean;
+  trendingStartDate: string;
+  trendingEndDate: string;
+  featuredStartDate: string;
+  featuredEndDate: string;
   category: ICategory;
   subcategory?: ICategory;
   brand: IBrand;

@@ -13,9 +13,11 @@ export const searchParams = {
   sort: parseAsString,
   order: parseAsString.withDefault(`${EPaginationOrder.DESC}`),
   title: parseAsString,
+  name: parseAsString,
   productCode: parseAsString,
   categories: parseAsString,
-  brands: parseAsString
+  brands: parseAsString,
+  status: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

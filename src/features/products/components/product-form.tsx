@@ -42,6 +42,7 @@ import RichTextEditor from '@/components/ui/rich-text-editor';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { toSlug } from '@/lib/utils';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -78,7 +79,14 @@ const baseSchema = z.object({
     .array(z.string())
     .min(1, { message: 'At least one attribute is required.' }), // Updated validation
   brand_id: z.string().optional(),
-  subcategory_id: z.string().optional().nullable()
+  subcategory_id: z.string().optional().nullable(),
+  isTrending: z.boolean(),
+  isFeatured: z.boolean(),
+  isInStock: z.boolean(),
+  trendingStartDate: z.string().optional(),
+  trendingEndDate: z.string().optional(),
+  featuredStartDate: z.string().optional(),
+  featuredEndDate: z.string().optional()
 });
 
 // File validation schema (applied conditionally)
@@ -167,7 +175,14 @@ export default function ProductForm({
         name: url.split('/').pop() || 'gallery',
         preview: url,
         size: 0
-      })) ?? undefined
+      })) ?? undefined,
+    isTrending: initialData?.isTrending ?? false,
+    isFeatured: initialData?.isFeatured ?? false,
+    isInStock: initialData?.isInStock ?? true,
+    trendingStartDate: initialData?.trendingStartDate ?? '',
+    trendingEndDate: initialData?.trendingEndDate ?? '',
+    featuredStartDate: initialData?.featuredStartDate ?? '',
+    featuredEndDate: initialData?.featuredEndDate ?? ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -576,6 +591,168 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+
+              <p className='text-lg font-semibold lg:text-xl'>Product Status</p>
+
+              <FormField
+                control={form.control}
+                name='isInStock'
+                render={({ field }) => (
+                  <FormItem className='space-y-3'>
+                    <FormLabel>In Stock</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === 'true')
+                        }
+                        defaultValue={field.value.toString()}
+                        className='flex space-x-4'
+                        disabled={loading}
+                      >
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='true' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>Yes</FormLabel>
+                        </FormItem>
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='false' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>No</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='isTrending'
+                render={({ field }) => (
+                  <FormItem className='space-y-3'>
+                    <FormLabel>Trending</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === 'true')
+                        }
+                        defaultValue={field.value.toString()}
+                        className='flex space-x-4'
+                        disabled={loading}
+                      >
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='true' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>Yes</FormLabel>
+                        </FormItem>
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='false' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>No</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <FormField
+                  control={form.control}
+                  name='trendingStartDate'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trending Start Date</FormLabel>
+                      <FormControl>
+                        <Input disabled={loading} type='date' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='trendingEndDate'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trending End Date</FormLabel>
+                      <FormControl>
+                        <Input disabled={loading} type='date' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name='isFeatured'
+                render={({ field }) => (
+                  <FormItem className='space-y-3'>
+                    <FormLabel>Featured</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === 'true')
+                        }
+                        defaultValue={field.value.toString()}
+                        className='flex space-x-4'
+                        disabled={loading}
+                      >
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='true' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>Yes</FormLabel>
+                        </FormItem>
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='false' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>No</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <FormField
+                  control={form.control}
+                  name='featuredStartDate'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured Start Date</FormLabel>
+                      <FormControl>
+                        <Input disabled={loading} type='date' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='featuredEndDate'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured End Date</FormLabel>
+                      <FormControl>
+                        <Input disabled={loading} type='date' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <p className='text-lg font-semibold lg:text-xl'>
                 Search Engine Optimization (SEO) Options

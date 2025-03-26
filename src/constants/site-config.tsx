@@ -34,6 +34,10 @@ export const SiteConfig = {
       list: `Dashboard | Users`,
       view: `Dashboard | User View`,
       getUserViewTitle: (user: IUserBase) => `Dashboard | ${user.name} Details`
+    },
+    order: {
+      list: `Dashboard | Orders`,
+      view: `Dashboard | Order View`
     }
   },
   siteDescription: {
