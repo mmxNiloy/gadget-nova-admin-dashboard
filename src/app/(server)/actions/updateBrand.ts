@@ -9,6 +9,7 @@ interface IUpdateBrandActionProps {
     metaTitle?: string;
     metaDescription?: string;
     category_ids?: string[];
+    category_id?: string | null;
   };
   method: 'POST' | 'PATCH';
   id?: string;
@@ -19,10 +20,17 @@ export default async function updateBrand({
   method,
   id
 }: IUpdateBrandActionProps) {
+  const mData = {
+    ...data,
+    category_ids: [...(data.category_ids ?? []), data.category_id].filter(
+      (item) => Boolean(item)
+    )
+  };
+
   return await requestAPI({
     method,
     endpoint: ['brand', method === 'POST' ? '' : id].join('/'),
     authenticate: true,
-    body: JSON.stringify(data)
+    body: JSON.stringify(mData)
   });
 }

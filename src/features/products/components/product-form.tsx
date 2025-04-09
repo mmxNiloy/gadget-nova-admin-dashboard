@@ -20,8 +20,7 @@ import {
   IAttributeValue,
   IBrand,
   ICategory,
-  IProduct,
-  IProductAttribute
+  IProduct
 } from 'types/schema/product.shema';
 import * as z from 'zod';
 import { useEffect, useMemo, useState, useTransition } from 'react';
@@ -41,7 +40,6 @@ import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/ui/rich-text-editor';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
-import { toSlug } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
@@ -225,16 +223,20 @@ export default function ProductForm({
     }
 
     startAPICall(async () => {
-      const data = await updateProduct({
-        data: formData,
-        method: initialData ? 'PATCH' : 'POST',
-        id: initialData?.id
-      });
-      if (data.ok) {
-        toast.success('Update Successful!');
-        router.push('.');
-      } else {
-        toast.error('Update Failed!');
+      try {
+        const data = await updateProduct({
+          data: formData,
+          method: initialData ? 'PATCH' : 'POST',
+          id: initialData?.id
+        });
+        if (data.ok) {
+          toast.success('Update Successful!');
+          router.push('.');
+        } else {
+          toast.error('Update Failed!');
+        }
+      } catch (error) {
+        toast.error('Something went wrong!');
       }
     });
   };
