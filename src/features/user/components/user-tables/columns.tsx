@@ -4,6 +4,7 @@ import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
 import { IUserBase } from 'types/schema/user.schema';
 import { AvatarPicker } from '@/components/ui/avatar-picker';
+import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<IUserBase>[] = [
   {
@@ -53,9 +54,9 @@ export const columns: ColumnDef<IUserBase>[] = [
         {row.original.is_active ? 'Active' : 'Inactive'}
       </TextCapsule>
     )
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <CellAction data={row.original} />
   }
-  //   {
-  //     id: 'actions',
-  //     cell: ({ row }) => <CellAction data={row.original} />
-  //   }
 ];
