@@ -34,14 +34,6 @@ export const columns: ColumnDef<IUserBase>[] = [
     header: 'Role'
   },
   {
-    accessorKey: 'created_at',
-    header: 'Joined',
-    cell: ({ row }) =>
-      row.original.created_at
-        ? new Date(row.original.created_at).toLocaleDateString('en-GB')
-        : 'N/A'
-  },
-  {
     accessorKey: 'is_active',
     header: 'Status',
     cell: ({ row }) => (

@@ -41,6 +41,7 @@ import RichTextEditor from '@/components/ui/rich-text-editor';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -177,10 +178,10 @@ export default function ProductForm({
     isTrending: initialData?.isTrending ?? false,
     isFeatured: initialData?.isFeatured ?? false,
     isInStock: initialData?.isInStock ?? true,
-    trendingStartDate: initialData?.trendingStartDate ?? '',
-    trendingEndDate: initialData?.trendingEndDate ?? '',
-    featuredStartDate: initialData?.featuredStartDate ?? '',
-    featuredEndDate: initialData?.featuredEndDate ?? ''
+    trendingStartDate: initialData?.trendingStartDate,
+    trendingEndDate: initialData?.trendingEndDate,
+    featuredStartDate: initialData?.featuredStartDate,
+    featuredEndDate: initialData?.featuredEndDate
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -861,29 +862,11 @@ export default function ProductForm({
         </CardContent>
       </Card>
 
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger className='hidden'>Show Error</AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Invalid Form</AlertDialogTitle>
-            <AlertDialogDescription>
-              The form has errors. Please resolve them before proceeding.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <p className='text-semibold'>Errors</p>
-          <ScrollArea className='max-h-52'>
-            <ul className='list-inside list-disc text-sm text-red-500'>
-              {Object.entries(form.formState.errors).map(([key, value]) => (
-                <li key={key}>{`${value.message}`}</li>
-              ))}
-            </ul>
-          </ScrollArea>
-          <AlertDialogFooter>
-            <Button onClick={() => setOpen(false)}>OK</Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <FormErrorAlertDialog
+        open={open}
+        onOpenChange={setOpen}
+        errors={form.formState.errors}
+      />
     </>
   );
 }
