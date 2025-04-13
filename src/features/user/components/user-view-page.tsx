@@ -1,22 +1,13 @@
 import { notFound } from 'next/navigation';
-import {
-  IBrandListResponse,
-  ICategoryListResponse
-} from 'types/schema/product.shema';
 import { IUserResponse } from 'types/schema/user.schema';
 import getUser from '@/app/(server)/actions/getUser';
+import UserForm from './user-form';
 
 interface IUserViewPageProps {
   userId: string;
-  brands?: IBrandListResponse;
-  categories?: ICategoryListResponse;
 }
 
-export default async function UserViewPage({
-  userId,
-  brands,
-  categories
-}: IUserViewPageProps) {
+export default async function UserViewPage({ userId }: IUserViewPageProps) {
   let user: IUserResponse | undefined;
   let pageTitle = 'Create New User';
 
@@ -32,13 +23,5 @@ export default async function UserViewPage({
     user = data.data;
   }
 
-  return (
-    // <UserForm
-    //   initialData={user?.payload}
-    //   pageTitle={pageTitle}
-    //   categories={categories?.payload ?? []}
-    //   brands={brands?.payload ?? []}
-    // />
-    <>WIP</>
-  );
+  return <UserForm initialData={user?.payload} pageTitle={pageTitle} />;
 }
