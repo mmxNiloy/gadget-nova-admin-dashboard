@@ -16,12 +16,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ICategory } from 'types/schema/product.shema';
 import updateCategory from '@/app/(server)/actions/updateCategory';
-import { MultiSelect } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -31,12 +30,15 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   slug: z.string().min(1, { message: 'Slug is required.' }),
-  parent_category_id: z.string().optional().nullable(),
+  parent_category_id: z.string({
+    message: 'A subcategory must have a parent category.'
+  }),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional()
 });
@@ -52,6 +54,8 @@ export default function SubcategoryForm({
   categories,
   pageTitle
 }: SubcategoryFormProps) {
+  const [open, setOpen] = useState<boolean>(false);
+
   const defaultValues = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -78,32 +82,110 @@ export default function SubcategoryForm({
         toast.success('Subcategory Update Successful!');
         router.push('/dashboard/sub-category'); // Redirect to categories list
       } else {
-        toast.error('Subcategory Update Failed!');
+        toast.error(`Subcategory Update Failed! Cause: ${data.error.message}`);
       }
     });
   };
 
   return (
-    <Card className='mx-auto w-full'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>
-          {pageTitle}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+    <>
+      <Card className='mx-auto w-full'>
+        <CardHeader>
+          <CardTitle className='text-left text-2xl font-bold'>
+            {pageTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, (error) => {
+                setOpen(true);
+              })}
+              className='space-y-8'
+            >
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <FormField
+                  control={form.control}
+                  name='name'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder='Enter subcategory name'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='slug'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder='Enter subcategory slug'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='parent_category_id'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categories</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value ?? undefined}
+                          onValueChange={field.onChange}
+                          disabled={loading}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select a parent category' />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Select a category</SelectLabel>
+                              {categories?.map((cat) => (
+                                <SelectItem value={cat.id} key={cat.id}>
+                                  {cat.name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <p className='text-lg font-semibold lg:text-xl'>
+                Search Engine Optimization (SEO) Options
+              </p>
               <FormField
                 control={form.control}
-                name='name'
+                name='metaTitle'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Meta Title</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder='Enter subcategory name'
+                        placeholder='Enter meta title'
                         {...field}
                       />
                     </FormControl>
@@ -113,14 +195,16 @@ export default function SubcategoryForm({
               />
               <FormField
                 control={form.control}
-                name='slug'
+                name='metaDescription'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Slug</FormLabel>
+                    <FormLabel>Meta Description</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         disabled={loading}
-                        placeholder='Enter subcategory slug'
+                        placeholder='Enter meta description'
+                        className='resize-none'
+                        rows={8}
                         {...field}
                       />
                     </FormControl>
@@ -129,86 +213,18 @@ export default function SubcategoryForm({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name='parent_category_id'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categories</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value ?? undefined}
-                        onValueChange={field.onChange}
-                        disabled={loading}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select a parent category' />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Select a category</SelectLabel>
-                            {categories?.map((cat) => (
-                              <SelectItem value={cat.id} key={cat.id}>
-                                {cat.name}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <p className='text-lg font-semibold lg:text-xl'>
-              Search Engine Optimization (SEO) Options
-            </p>
-            <FormField
-              control={form.control}
-              name='metaTitle'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder='Enter meta title'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='metaDescription'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      disabled={loading}
-                      placeholder='Enter meta description'
-                      className='resize-none'
-                      rows={8}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button disabled={loading} type='submit'>
-              {initialData ? 'Update Subcategory' : 'Create Subcategory'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              <Button disabled={loading} type='submit'>
+                {initialData ? 'Update Subcategory' : 'Create Subcategory'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+      <FormErrorAlertDialog
+        open={open}
+        onOpenChange={setOpen}
+        errors={form.formState.errors}
+      />
+    </>
   );
 }

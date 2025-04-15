@@ -23,7 +23,7 @@ import {
 import Icons from '@/components/ui/icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState, useTransition } from 'react';
+import React, { useCallback, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import {
@@ -70,7 +70,9 @@ export default function OrderStatusEditorDialog({
           if (setOpenDropdown) setOpenDropdown(false);
           router.refresh();
         } else {
-          toast.error('Order Status Update Failed!');
+          toast.error(
+            `Order Status Update Failed! Cause: ${data.error.message}`
+          );
         }
       });
     },

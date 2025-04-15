@@ -90,9 +90,10 @@ export default function UserForm({ initialData, pageTitle }: IUserFormProps) {
           toast.success('Update Successful!');
           router.push('.');
         } else {
-          toast.error('Update Failed!');
+          toast.error(`Update Failed! Cause: ${data.error.message}`);
         }
       } catch (error) {
+        console.error('Failed to update user. Error:', error);
         toast.error('Something went wrong!');
       }
     });

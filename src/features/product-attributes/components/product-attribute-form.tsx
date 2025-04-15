@@ -11,13 +11,6 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -36,7 +29,6 @@ import {
   IAttributeValue,
   IProductAttribute
 } from 'types/schema/product.shema';
-import updateProductAttribute from '@/app/(server)/actions/updateProductAttribute';
 import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeGroup';
 import updateProductAttributeValue from '@/app/(server)/actions/updateProductAttributeValue';
 import Link from 'next/link';
@@ -127,7 +119,7 @@ export default function ProductAttributeForm({
           groupForm.reset();
           router.refresh();
         } else {
-          toast.error('Group Creation Failed!');
+          toast.error(`Group Creation Failed! Cause: ${data.error.message}`);
         }
       });
     },
@@ -156,7 +148,7 @@ export default function ProductAttributeForm({
           valueForm.reset();
           router.refresh();
         } else {
-          toast.error('Value Creation Failed!');
+          toast.error(`Value Creation Failed! Cause: ${data.error.message}`);
         }
       });
     },
