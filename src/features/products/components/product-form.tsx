@@ -24,16 +24,6 @@ import {
 } from 'types/schema/product.shema';
 import * as z from 'zod';
 import { useEffect, useMemo, useState, useTransition } from 'react';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import updateProduct from '@/app/(server)/actions/updateProduct';
 import { useRouter } from 'next/navigation';
@@ -234,9 +224,10 @@ export default function ProductForm({
           toast.success('Update Successful!');
           router.push('.');
         } else {
-          toast.error('Update Failed!');
+          toast.error(`Update Failed! Cause: ${data.error.message}`);
         }
       } catch (error) {
+        console.error('Failed to update product. Error:', error);
         toast.error('Something went wrong!');
       }
     });

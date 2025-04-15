@@ -6,3 +6,5 @@ export interface IResponseBase {
   timestamp?: string;
   path?: string;
 }
+
+export interface IErrorResponseBase extends Omit<IResponseBase, 'payload'> {}

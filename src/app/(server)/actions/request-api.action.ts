@@ -2,6 +2,7 @@
 'use server';
 
 import { auth } from '@/lib/auth';
+import { IErrorResponseBase } from 'types/schema/base.schema';
 
 interface RequestAPIProps extends RequestInit {
   method:
@@ -29,7 +30,7 @@ export default async function requestAPI<T>({
   headers,
   asFormData = false
 }: RequestAPIProps): Promise<
-  { data: T; ok: true } | { ok: false; error: Error | unknown }
+  { data: T; ok: true } | { ok: false; error: IErrorResponseBase }
 > {
   const reqTime = new Date();
   try {
@@ -109,7 +110,7 @@ export default async function requestAPI<T>({
       console.warn(
         `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with an error.`
       );
-      return { error: result, ok: false };
+      return { error: result as IErrorResponseBase, ok: false };
     }
 
     console.log(
@@ -125,6 +126,6 @@ export default async function requestAPI<T>({
       `[Request ${reqTime} | ${method}] > Actions > Request API > Failed to make a request >`,
       error
     );
-    return { error, ok: false };
+    return { error: error as IErrorResponseBase, ok: false };
   }
 }

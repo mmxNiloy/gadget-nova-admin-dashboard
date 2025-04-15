@@ -16,11 +16,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ICategory } from 'types/schema/product.shema';
 import updateCategory from '@/app/(server)/actions/updateCategory';
+import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
@@ -39,6 +40,8 @@ export default function CategoryForm({
   initialData,
   pageTitle
 }: CategoryFormProps) {
+  const [open, setOpen] = useState<boolean>(false);
+
   const defaultValues = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
@@ -65,32 +68,75 @@ export default function CategoryForm({
         toast.success('Category Update Successful!');
         router.push('/dashboard/category'); // Redirect to categories list
       } else {
-        toast.error('Category Update Failed!');
+        toast.error(`Category Update Failed! Cause: ${data.error.message}`);
       }
     });
   };
 
   return (
-    <Card className='mx-auto w-full'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>
-          {pageTitle}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+    <>
+      <Card className='mx-auto w-full'>
+        <CardHeader>
+          <CardTitle className='text-left text-2xl font-bold'>
+            {pageTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit, () => setOpen(true))}
+              className='space-y-8'
+            >
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <FormField
+                  control={form.control}
+                  name='name'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder='Enter category name'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='slug'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder='Enter category slug'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <p className='text-lg font-semibold lg:text-xl'>
+                Search Engine Optimization (SEO) Options
+              </p>
               <FormField
                 control={form.control}
-                name='name'
+                name='metaTitle'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Meta Title</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
-                        placeholder='Enter category name'
+                        placeholder='Enter meta title'
                         {...field}
                       />
                     </FormControl>
@@ -100,14 +146,16 @@ export default function CategoryForm({
               />
               <FormField
                 control={form.control}
-                name='slug'
+                name='metaDescription'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Slug</FormLabel>
+                    <FormLabel>Meta Description</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         disabled={loading}
-                        placeholder='Enter category slug'
+                        placeholder='Enter meta description'
+                        className='resize-none'
+                        rows={8}
                         {...field}
                       />
                     </FormControl>
@@ -115,54 +163,19 @@ export default function CategoryForm({
                   </FormItem>
                 )}
               />
-            </div>
 
-            <p className='text-lg font-semibold lg:text-xl'>
-              Search Engine Optimization (SEO) Options
-            </p>
-            <FormField
-              control={form.control}
-              name='metaTitle'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder='Enter meta title'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='metaDescription'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      disabled={loading}
-                      placeholder='Enter meta description'
-                      className='resize-none'
-                      rows={8}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button disabled={loading} type='submit'>
-              {initialData ? 'Update Category' : 'Create Category'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              <Button disabled={loading} type='submit'>
+                {initialData ? 'Update Category' : 'Create Category'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+      <FormErrorAlertDialog
+        open={open}
+        onOpenChange={setOpen}
+        errors={form.formState.errors}
+      />
+    </>
   );
 }
