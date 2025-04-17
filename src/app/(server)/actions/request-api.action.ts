@@ -2,7 +2,8 @@
 'use server';
 
 import { auth } from '@/lib/auth';
-import { IErrorResponseBase } from 'types/schema/base.schema';
+import ActionResponseBuilder from 'types/ActionResponseBuilder';
+import { IErrorResponseBase, IResponseBase } from 'types/schema/base.schema';
 
 interface RequestAPIProps extends RequestInit {
   method:
@@ -21,7 +22,7 @@ interface RequestAPIProps extends RequestInit {
   asFormData?: boolean;
 }
 
-export default async function requestAPI<T>({
+export default async function requestAPI<T = IResponseBase>({
   method,
   endpoint,
   body,
@@ -110,7 +111,7 @@ export default async function requestAPI<T>({
       console.warn(
         `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with an error.`
       );
-      return { error: result as IErrorResponseBase, ok: false };
+      return ActionResponseBuilder.error(result).toJSON();
     }
 
     console.log(
@@ -120,12 +121,24 @@ export default async function requestAPI<T>({
       `[Request ${reqTime} | ${method}] > Actions > End Request API`
     );
 
-    return { data: result as T, ok: true };
+    return ActionResponseBuilder.success(result).toJSON();
   } catch (error) {
     console.error(
       `[Request ${reqTime} | ${method}] > Actions > Request API > Failed to make a request >`,
       error
     );
-    return { error: error as IErrorResponseBase, ok: false };
+
+    if (error instanceof Error)
+      return ActionResponseBuilder.error({
+        error: true,
+        message: error.message,
+        statusCode: 500
+      }).toJSON();
+
+    return ActionResponseBuilder.error({
+      error: true,
+      message: 'An unknown error occured.',
+      status: 500
+    }).toJSON();
   }
 }
