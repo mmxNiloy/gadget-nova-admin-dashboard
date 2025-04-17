@@ -25,6 +25,14 @@ class ActionSuccessResponse<T = IResponseBase> {
 
 export default class ActionResponseBuilder {
   public static success<T>(data: T) {
+    if (typeof data === 'string')
+      return new ActionSuccessResponse({
+        error: false,
+        message: 'Data Fetch Successful',
+        payload: data,
+        statusCode: 200
+      });
+
     return new ActionSuccessResponse(data);
   }
 
