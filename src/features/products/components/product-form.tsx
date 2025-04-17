@@ -92,7 +92,10 @@ const fileValidation = {
       `Max thumbnail size is 5MB.`
     )
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (files) =>
+        files?.[0]?.preview
+          ? true
+          : ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       '.jpg, .jpeg, .png, and .webp files are accepted.'
     ),
   gallery: z
