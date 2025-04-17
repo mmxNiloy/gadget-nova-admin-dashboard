@@ -36,6 +36,10 @@ import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
 
+interface IFileWithPreview extends File {
+  preview?: string;
+}
+
 // Base schema without thumbnail/gallery validation
 const baseSchema = z.object({
   title: z.string().min(2, { message: 'Title must be at least 2 characters.' }),
@@ -100,7 +104,9 @@ const fileValidation = {
     )
     .refine(
       (files) =>
-        files?.every((file: File) => ACCEPTED_IMAGE_TYPES.includes(file.type)),
+        files?.every((file: IFileWithPreview) =>
+          file.preview ? true : ACCEPTED_IMAGE_TYPES.includes(file.type)
+        ),
       '.jpg, .jpeg, .png, and .webp files are accepted.'
     )
     .optional()
@@ -146,7 +152,7 @@ export default function ProductForm({
     specifications: initialData?.specifications ?? '',
     thresholdAmount: initialData?.thresholdAMount ?? undefined,
     category_id: initialData?.category.id ?? '',
-    subcategory_id: initialData?.subcategory?.id ?? undefined,
+    subcategory_id: initialData?.subCategory?.id ?? undefined,
     attribute_value_ids:
       initialData?.productAttributes?.map((item) => item.id) ?? [], // Updated to use attributeValue_id
     brand_id: initialData?.brand.id ?? '',
@@ -203,6 +209,8 @@ export default function ProductForm({
 
     if (values.thumbnail && values.thumbnail[0] instanceof File) {
       formData.append('thumbnail', values.thumbnail[0]);
+    } else {
+      console.error('Thumbnail is not a file');
     }
 
     if (values.gallery && values.gallery.length > 0) {
@@ -260,18 +268,27 @@ export default function ProductForm({
 
   // Reset subcategory and brand when category changes
   useEffect(() => {
-    if (categoryValue) {
+    if (categoryValue !== initialData?.category.id) {
       form.resetField('subcategory_id', { defaultValue: null });
       form.resetField('brand_id', { defaultValue: '' });
+    } else {
+      form.resetField('subcategory_id', {
+        defaultValue: initialData.subCategory?.id ?? null
+      });
+      form.resetField('brand_id', { defaultValue: initialData.brand.id ?? '' });
     }
-  }, [categoryValue, form]);
+  }, [categoryValue, form, initialData]);
 
   // Reset brand when subcategory changes
   useEffect(() => {
-    if (subcategoryValue) {
+    if (subcategoryValue !== initialData?.subCategory?.id) {
       form.resetField('brand_id', { defaultValue: '' });
+    } else {
+      form.resetField('brand_id', {
+        defaultValue: initialData?.brand.id ?? ''
+      });
     }
-  }, [subcategoryValue, form]);
+  }, [subcategoryValue, form, initialData]);
 
   return (
     <>

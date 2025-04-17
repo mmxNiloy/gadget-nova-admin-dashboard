@@ -146,14 +146,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         resizable: false,
         HTMLAttributes: {
           class: 'tiptap-table',
-          style:
-            'border: 1px dashed rgb(66 66 66 / 0.5); width: 100%; table-layout: fixed;'
+          style: `border: ${readOnly ? 0 : 1}px dashed rgb(66 66 66 / 0.5); width: 100%; table-layout: fixed;`
         }
       }),
       TableCell.configure({
         HTMLAttributes: {
-          style:
-            'border: 1px dashed rgb(66 66 66 / 0.5); padding: 0.5rem; overflow-wrap: break-word; white-space: normal;'
+          style: `border: ${readOnly ? 0 : 1}px dashed rgb(66 66 66 / 0.5); padding: 0.5rem; overflow-wrap: break-word; white-space: normal;`
         }
       }),
       TableRow,

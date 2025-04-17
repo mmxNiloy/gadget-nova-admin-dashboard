@@ -49,7 +49,7 @@ export interface IProduct {
   featuredStartDate: string;
   featuredEndDate: string;
   category: ICategory;
-  subcategory?: ICategory;
+  subCategory?: ICategory;
   brand: IBrand;
   questions: IQuestion[];
   ratings: IRating[];

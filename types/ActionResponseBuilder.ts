@@ -8,7 +8,15 @@ class ActionErrorResponse {
   }
 
   public toJSON() {
-    return { error: { ...this._error }, ok: false };
+    let eMessage = '';
+    if (this._error?.message && typeof this._error.message === 'string') {
+      eMessage = this._error?.message ?? '';
+    } else {
+      // @ts-ignore
+      eMessage = this._error.message.message.join();
+    }
+
+    return { error: { ...this._error, message: eMessage }, ok: false };
   }
 }
 
