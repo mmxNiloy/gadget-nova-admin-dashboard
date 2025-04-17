@@ -157,7 +157,8 @@ export default function ProductForm({
     category_id: initialData?.category.id ?? '',
     subcategory_id: initialData?.subCategory?.id ?? undefined,
     attribute_value_ids:
-      initialData?.productAttributes?.map((item) => item.id) ?? [], // Updated to use attributeValue_id
+      initialData?.productAttributes?.map((item) => item.attributeValue.id) ??
+      [], // Updated to use attributeValue_id
     brand_id: initialData?.brand.id ?? '',
     thumbnail: initialData?.thumbnail
       ? [
