@@ -818,23 +818,59 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           {editor.isActive('table') && (
             <>
               <ContextMenuSeparator />
-              <ContextMenuItem
-                onClick={() => editor.chain().focus().addRowAfter().run()}
-              >
-                Add Row
-              </ContextMenuItem>
-              <ContextMenuItem
-                onClick={() => editor.chain().focus().deleteRow().run()}
-                disabled={!editor.can().deleteRow()}
-              >
-                Remove Row
-              </ContextMenuItem>
-              <ContextMenuItem
-                onClick={() => editor.chain().focus().deleteTable().run()}
-                disabled={!editor.can().deleteTable()}
-              >
-                Delete Table
-              </ContextMenuItem>
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>Table</ContextMenuSubTrigger>
+                <ContextMenuSubContent>
+                  <ContextMenuItem
+                    onClick={() => editor.chain().focus().addRowBefore().run()}
+                  >
+                    Add Row Before
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() => editor.chain().focus().addRowAfter().run()}
+                  >
+                    Add Row After
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() => editor.chain().focus().deleteRow().run()}
+                    disabled={!editor.can().deleteRow()}
+                  >
+                    Remove Row
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() =>
+                      editor.chain().focus().addColumnBefore().run()
+                    }
+                  >
+                    Add Column Before
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() =>
+                      editor.chain().focus().addColumnAfter().run()
+                    }
+                  >
+                    Add Column After
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() => editor.chain().focus().deleteColumn().run()}
+                    disabled={!editor.can().deleteColumn()}
+                  >
+                    Remove Column
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() => editor.chain().focus().deleteTable().run()}
+                    disabled={!editor.can().deleteTable()}
+                  >
+                    Delete Table
+                  </ContextMenuItem>
+                </ContextMenuSubContent>
+              </ContextMenuSub>
             </>
           )}
         </ContextMenuContent>
