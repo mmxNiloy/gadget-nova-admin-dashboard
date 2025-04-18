@@ -1,8 +1,8 @@
 import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
-import getBrands from '@/app/(server)/actions/getBrands';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getBrands from '@/app/(server)/actions/brand/get-brands.controller';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import BrandViewPage from '@/features/brands/components/brand-view-page';
 import { SiteConfig } from '@/constants/site-config';
 

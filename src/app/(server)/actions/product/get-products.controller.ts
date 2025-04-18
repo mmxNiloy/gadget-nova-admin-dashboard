@@ -1,7 +1,7 @@
 'use server';
 
 import { IProductListResponse } from 'types/schema/product.shema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 interface FilterProps {
   page?: number;

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import BrandForm from './brand-form';
-import getBrand from '@/app/(server)/actions/getBrand';
+import getBrand from '@/app/(server)/actions/brand/get-brand.controller';
 import {
   IBrandResponse,
   ICategoryListResponse

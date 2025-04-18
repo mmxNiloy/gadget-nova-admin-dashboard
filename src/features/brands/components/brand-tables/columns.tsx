@@ -1,16 +1,10 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { CellAction } from './cell-action';
 import { IBrand } from 'types/schema/product.shema';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
-import Icons from '@/components/ui/icons';
+import BrandCategoryPopover from './brand-category-popover';
 
 export const columns: ColumnDef<IBrand>[] = [
   {
@@ -33,31 +27,13 @@ export const columns: ColumnDef<IBrand>[] = [
   },
   {
     accessorKey: 'category',
-    header: 'Category',
+    header: 'Subcategory',
     cell: ({ row }) => (
-      <Popover>
-        <PopoverTrigger className='flex items-center justify-center gap-1'>
-          {(row.original.categories?.length ?? 0) > 10
-            ? '10+'
-            : (row.original.categories?.length ?? 'No')}{' '}
-          Subcategor
-          {(row.original.categories?.length ?? 0) < 2 ? 'y' : 'ies'}
-          <Icons.chevronDown className='rotate-0 transition-all data-[state=open]:rotate-180' />
-        </PopoverTrigger>
-
-        <PopoverContent className='flex flex-col gap-1'>
-          <p>{row.original.name}</p>
-          <p className='text-sm'>Subcategories</p>
-          <ul className='list-inside list-disc text-xs'>
-            {row.original.categories?.map(
-              (cat, index) => index < 10 && <li key={cat.id}>{cat.name}</li>
-            )}
-            {(row.original.categories?.length ?? 0) > 10 && (
-              <li>+${(row.original.categories?.length ?? 0) - 10} more</li>
-            )}
-          </ul>
-        </PopoverContent>
-      </Popover>
+      <BrandCategoryPopover
+        categories={row.original.categories}
+        brand={row.original}
+        filter='all'
+      />
     )
   },
   {

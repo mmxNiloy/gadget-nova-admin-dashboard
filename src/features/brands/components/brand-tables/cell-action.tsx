@@ -1,5 +1,6 @@
 'use client';
-import { AlertModal } from '@/components/modal/alert-modal';
+import deleteBrand from '@/app/(server)/actions/brand/delete-brand.controller';
+import DeleteItemAlertDialog from '@/components/delete-item-alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,9 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import Icons from '@/components/ui/icons';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Edit, MoreHorizontal } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { IBrand } from 'types/schema/product.shema';
 
@@ -19,21 +19,11 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
-
-  const onConfirm = async () => {};
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-      />
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
             <span className='sr-only'>Open menu</span>
@@ -43,14 +33,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/brand/${data.id}`)}
-          >
-            <Edit className='mr-2 h-4 w-4' /> Update
-          </DropdownMenuItem>
+          <Link href={`/dashboard/brand/${data.id}`} passHref>
+            <DropdownMenuItem>
+              <Edit className='mr-2 h-4 w-4' /> Update
+            </DropdownMenuItem>
+          </Link>
 
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className='mr-2 h-4 w-4' /> Delete
+          <DropdownMenuItem asChild>
+            <DeleteItemAlertDialog
+              itemId={data.id}
+              itemName='Brand'
+              action={deleteBrand}
+              onSuccess={() => setOpen(false)}
+            />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

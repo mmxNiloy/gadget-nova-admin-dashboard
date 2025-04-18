@@ -3,7 +3,10 @@
 import { searchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
-import { EPaginationOrder } from 'types/enum/pagination.enum';
+import {
+  EPaginationOrder,
+  EPaginationOrderString
+} from 'types/enum/pagination.enum';
 
 export const CATEGORY_OPTIONS = [
   { value: 'Electronics', label: 'Electronics' },
@@ -31,7 +34,7 @@ export function useProductTableFilters() {
     'order',
     searchParams.order
       .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault(`${EPaginationOrder.DESC}`)
+      .withDefault(EPaginationOrderString.DESC)
   );
   const [titleQuery, setTitleQuery] = useQueryState(
     'title',

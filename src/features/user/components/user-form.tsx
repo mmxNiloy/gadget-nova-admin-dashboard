@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import { toCapCase } from '@/lib/utils';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
+import { Label } from '@/components/ui/label';
 
 const userSchema = z
   .object({
@@ -228,6 +229,10 @@ export default function UserForm({ initialData, pageTitle }: IUserFormProps) {
                       <FormLabel>Account Status</FormLabel>
                       <FormControl>
                         <RadioGroup
+                          disabled={
+                            initialData?.role === 'super_admin' &&
+                            field.value == 1
+                          }
                           className='flex items-center gap-4'
                           value={field.value.toString()}
                           onValueChange={(val) =>
@@ -235,12 +240,17 @@ export default function UserForm({ initialData, pageTitle }: IUserFormProps) {
                           }
                         >
                           <div className='flex items-center gap-1'>
-                            <RadioGroupItem value='1' />
-                            <p>Active</p>
+                            <RadioGroupItem value='1' id='user-status-active' />
+                            <Label htmlFor='user-status-active'>Active</Label>
                           </div>
                           <div className='flex items-center gap-1'>
-                            <RadioGroupItem value='0' />
-                            <p>Inctive</p>
+                            <RadioGroupItem
+                              value='0'
+                              id='user-status-inactive'
+                            />
+                            <Label htmlFor='user-status-inactive'>
+                              Inctive
+                            </Label>
                           </div>
                         </RadioGroup>
                       </FormControl>

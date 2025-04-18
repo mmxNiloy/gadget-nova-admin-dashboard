@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { IUserResponse } from 'types/schema/user.schema';
-import getUser from '@/app/(server)/actions/getUser';
+import getUser from '@/app/(server)/actions/user/get-user.controller';
 import UserForm from './user-form';
 
 interface IUserViewPageProps {

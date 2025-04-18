@@ -1,7 +1,7 @@
 'use server';
 
 import { IUserResponse } from 'types/schema/user.schema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 export default async function getUser(id: string) {
   const user = await requestAPI<IUserResponse>({

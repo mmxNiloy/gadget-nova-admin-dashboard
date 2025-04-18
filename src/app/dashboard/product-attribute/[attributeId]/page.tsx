@@ -2,8 +2,8 @@ import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
 import { SiteConfig } from '@/constants/site-config';
-import getProductAttributeValues from '@/app/(server)/actions/getProductsAttributeValues';
-import getProductAttributeGroups from '@/app/(server)/actions/getProductsAttributeGroups';
+import getProductAttributeValues from '@/app/(server)/actions/attribute/value/get-products-attribute-values.controller';
+import getProductAttributeGroups from '@/app/(server)/actions/attribute/group/get-products-attribute-groups.controller';
 import ProductAttributeViewPage from '@/features/product-attributes/components/product-attribute-view-page';
 
 export const metadata = {
@@ -17,11 +17,10 @@ type PageProps = {
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
-  const sParams = await props.searchParams;
 
   const [values, groups] = await Promise.all([
-    getProductAttributeValues({}),
-    getProductAttributeGroups({})
+    getProductAttributeValues(),
+    getProductAttributeGroups()
   ]);
 
   if (!values.ok) {

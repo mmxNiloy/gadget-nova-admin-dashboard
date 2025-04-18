@@ -1,7 +1,7 @@
 'use server';
 
 import { IProductResponse } from 'types/schema/product.shema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 export default async function getProduct(id: string) {
   const prod = await requestAPI<IProductResponse>({

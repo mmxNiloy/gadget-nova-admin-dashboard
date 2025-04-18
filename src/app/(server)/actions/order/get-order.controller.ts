@@ -1,6 +1,6 @@
 'use server';
 
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 import { IOrderResponse } from 'types/schema/order.schema';
 
 export default async function getOrder(id: string) {

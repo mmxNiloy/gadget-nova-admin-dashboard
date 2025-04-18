@@ -1,7 +1,7 @@
 'use server';
 
 import { ICategoryListResponse } from 'types/schema/product.shema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 interface IGetCategoryOptions {
   getSubcategories?: boolean;

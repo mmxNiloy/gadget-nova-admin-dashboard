@@ -29,8 +29,8 @@ import {
   IAttributeValue,
   IProductAttribute
 } from 'types/schema/product.shema';
-import updateProductAttributeGroup from '@/app/(server)/actions/updateProductAttributeGroup';
-import updateProductAttributeValue from '@/app/(server)/actions/updateProductAttributeValue';
+import updateProductAttributeGroup from '@/app/(server)/actions/attribute/group/update-product-attribute-group.controller';
+import updateProductAttributeValue from '@/app/(server)/actions/attribute/value/update-product-attribute-value.controller';
 import Link from 'next/link';
 import { LabelledComboBox } from '@/components/ui/combobox';
 

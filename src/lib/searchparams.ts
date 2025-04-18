@@ -2,16 +2,19 @@ import {
   createSearchParamsCache,
   createSerializer,
   parseAsInteger,
-  parseAsString
+  parseAsString,
+  parseAsStringEnum
 } from 'nuqs/server';
-import { EPaginationOrder } from 'types/enum/pagination.enum';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
 
 export const searchParams = {
   page: parseAsInteger.withDefault(1),
   limit: parseAsInteger.withDefault(10),
   q: parseAsString,
   sort: parseAsString,
-  order: parseAsString.withDefault(`${EPaginationOrder.DESC}`),
+  order: parseAsStringEnum<EPaginationOrderString>(
+    Object.values(EPaginationOrderString)
+  ).withDefault(EPaginationOrderString.DESC),
   title: parseAsString,
   name: parseAsString,
   productCode: parseAsString,

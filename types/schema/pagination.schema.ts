@@ -1,5 +1,5 @@
-import { EPaginationOrder } from 'types/enum/pagination.enum';
-import { IProduct } from './product.shema';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
+import { IBrand, ICategory, IProduct } from './product.shema';
 import { IOrder, TOrderStatus } from './order.schema';
 
 export interface IPaginationBase {
@@ -13,22 +13,31 @@ export interface IPaginationMeta {
   totalPages: number;
 }
 
-export interface IProductPaginationProps {
+export interface IFilterBase {
   page?: number;
   limit?: number;
+  order?: EPaginationOrderString;
+  name?: string;
+}
+
+export interface IProductPaginationProps extends Omit<IFilterBase, 'name'> {
   sort?: keyof IProduct;
-  order?: EPaginationOrder;
   title?: string;
   productCode?: string;
   categories?: string;
   brands?: string;
 }
 
-export interface IOrderPaginationProps {
-  page?: number;
-  limit?: number;
+export interface ICategoryPaginationProps extends IFilterBase {
+  sort?: keyof ICategory;
+}
+
+export interface IBrandPaginationProps extends IFilterBase {
+  sort: keyof IBrand;
+  categories: string;
+}
+
+export interface IOrderPaginationProps extends IFilterBase {
   sort?: keyof IOrder;
-  order?: EPaginationOrder;
-  name?: string;
   status?: TOrderStatus;
 }

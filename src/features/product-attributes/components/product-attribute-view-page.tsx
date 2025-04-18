@@ -4,7 +4,7 @@ import {
   IAttributeValueListResponse,
   IProductAttributeResponse
 } from 'types/schema/product.shema';
-import getProductAttribute from '@/app/(server)/actions/getProductAttribute';
+import getProductAttribute from '@/app/(server)/actions/product/attribute/get-product-attribute.controller';
 import ProductAttributeForm from './product-attribute-form';
 
 interface IProductAttributeViewPageProps {

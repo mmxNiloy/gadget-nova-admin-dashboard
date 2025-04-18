@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import OrderForm from './order-form';
 import { ICategoryListResponse } from 'types/schema/product.shema';
 import { IOrderResponse } from 'types/schema/order.schema';
-import getOrder from '@/app/(server)/actions/getOrder';
+import getOrder from '@/app/(server)/actions/order/get-order.controller';
 
 interface IOrderViewPageProps {
   orderId: string;

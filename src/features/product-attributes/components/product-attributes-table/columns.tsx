@@ -2,8 +2,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
-import { AvatarPicker } from '@/components/ui/avatar-picker';
-import { IAttributeValue, IProductAttribute } from 'types/schema/product.shema';
+import { IAttributeValue } from 'types/schema/product.shema';
 import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<IAttributeValue>[] = [
@@ -19,7 +18,7 @@ export const columns: ColumnDef<IAttributeValue>[] = [
   },
   {
     accessorKey: 'created_at',
-    header: 'Joined',
+    header: 'Created At',
     cell: ({ row }) =>
       row.original.created_at
         ? new Date(row.original.created_at).toLocaleDateString('en-GB')

@@ -1,7 +1,7 @@
 'use server';
 
 import { TOrderStatus } from 'types/schema/order.schema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 interface IUpdateBrandActionProps {
   data: {

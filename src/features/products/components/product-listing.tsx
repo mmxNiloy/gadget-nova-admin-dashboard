@@ -1,10 +1,11 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as ProductTable } from '@/components/ui/table/data-table';
 import { columns } from './product-tables/columns';
-import getProducts from '@/app/(server)/actions/getProducts';
 import { IProduct } from 'types/schema/product.shema';
-import getPaginatedProducts from '@/app/(server)/actions/paginated/getPaginatedProducts';
+import getPaginatedProducts from '@/app/(server)/actions/product/get-paginated-product.controller';
 import { IProductPaginationProps } from 'types/schema/pagination.schema';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
+import { DataTableError } from '@/components/ui/table/data-table-error';
 
 type ProductListingPage = {};
 
@@ -13,7 +14,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const page = searchParamsCache.get('page');
   const pageLimit = searchParamsCache.get('limit');
   const sort = searchParamsCache.get('sort') as keyof IProduct;
-  const order = Number.parseInt(searchParamsCache.get('order'));
+  const order = searchParamsCache.get('order') ?? EPaginationOrderString.DESC;
   const title = searchParamsCache.get('title') ?? '';
   const productCode = searchParamsCache.get('productCode') ?? '';
   const categories = searchParamsCache.get('categories') ?? '';
@@ -33,8 +34,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const prodData = await getPaginatedProducts({ ...filters });
 
   if (!prodData.ok) {
-    // TODO: Add a proper error state table here
-    return <>Error Loading Data...</>;
+    return <DataTableError errorMessage={prodData.error.message} />;
   }
 
   const data = prodData.data;

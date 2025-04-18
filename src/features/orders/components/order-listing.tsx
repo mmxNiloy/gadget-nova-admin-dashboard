@@ -2,18 +2,21 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as OrderTable } from '@/components/ui/table/data-table';
 import { columns } from './order-tables/columns';
 import { IOrder, TOrderStatus } from 'types/schema/order.schema';
-import getPaginatedOrders from '@/app/(server)/actions/paginated/getPaginatedOrders';
+import getPaginatedOrders from '@/app/(server)/actions/order/get-paginated-order.controller';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
+import { DataTableError } from '@/components/ui/table/data-table-error';
+import { IOrderPaginationProps } from 'types/schema/pagination.schema';
 
 export default async function OrdersListingPage() {
   // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page');
   const pageLimit = searchParamsCache.get('limit');
   const sort = searchParamsCache.get('sort') as keyof IOrder;
-  const order = Number.parseInt(searchParamsCache.get('order'));
+  const order = searchParamsCache.get('order') ?? EPaginationOrderString.DESC;
   const name = searchParamsCache.get('name') ?? '';
   const status = searchParamsCache.get('status') as TOrderStatus | undefined;
 
-  const filters = {
+  const filters: IOrderPaginationProps = {
     page,
     limit: pageLimit,
     sort,
@@ -22,14 +25,13 @@ export default async function OrdersListingPage() {
     status
   };
 
-  const brandsData = await getPaginatedOrders(filters);
+  const orderData = await getPaginatedOrders(filters);
 
-  if (!brandsData.ok) {
-    // TODO: Add a proper error state table here
-    return <>Error Loading Data...</>;
+  if (!orderData.ok) {
+    return <DataTableError errorMessage={orderData.error.message} />;
   }
 
-  const data = brandsData.data;
+  const data = orderData.data;
 
   const orders: IOrder[] = data.payload;
 

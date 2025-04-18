@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import ProductForm from './product-form';
-import getProduct from '@/app/(server)/actions/getProduct';
+import getProduct from '@/app/(server)/actions/product/get-product.controller';
 import {
   IAttributeValueListResponse,
   IBrandListResponse,

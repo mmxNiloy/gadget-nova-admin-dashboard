@@ -5,6 +5,14 @@ import { IProduct } from 'types/schema/product.shema';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
 import { CurrencySymbols } from '@/constants/currency-symbol';
+import { AvatarPicker } from '@/components/ui/avatar-picker';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -13,19 +21,34 @@ export const columns: ColumnDef<IProduct>[] = [
     cell: ({ row }) => {
       return (
         <div className='relative aspect-square'>
-          <img
+          <AvatarPicker
             src={row.original.thumbnail}
             alt={row.original.title}
-            // fill
-            className='size-16 rounded-lg bg-muted/20 object-contain object-center'
+            skeleton={<Skeleton className='size-full' />}
+            variant='square'
+            readOnly
+            className='size-16 rounded-lg bg-muted/20 object-contain object-center p-0.5'
           />
         </div>
       );
     }
   },
   {
-    accessorKey: 'metaTitle',
-    header: 'Name'
+    accessorKey: 'title',
+    header: 'Name',
+    cell: ({ row }) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className='text-start'>
+            <p className='line-clamp-2 max-w-64 overflow-clip text-ellipsis'>
+              {row.original.title}
+            </p>
+          </TooltipTrigger>
+
+          <TooltipContent>{row.original.title}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
   },
   {
     accessorKey: 'productCode',

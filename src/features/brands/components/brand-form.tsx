@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { IBrand, ICategory } from 'types/schema/product.shema';
 import { MultiSelect } from '@/components/ui/multi-select';
-import updateBrand from '@/app/(server)/actions/updateBrand';
+import updateBrand from '@/app/(server)/actions/brand/update-brand.controller';
 import { LabelledComboBox } from '@/components/ui/combobox';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 

@@ -10,10 +10,10 @@ import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import ProductTableAction from '@/features/products/components/product-tables/product-table-action';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import { SiteConfig } from '@/constants/site-config';
 import ProductListingPage from '@/features/products/components/product-listing';
-import getBrands from '@/app/(server)/actions/getBrands';
+import getBrands from '@/app/(server)/actions/brand/get-brands.controller';
 
 export const metadata = {
   title: SiteConfig.siteTitle.product.list

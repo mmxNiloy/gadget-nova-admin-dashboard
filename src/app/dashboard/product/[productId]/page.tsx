@@ -1,12 +1,11 @@
 import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
-import getBrands from '@/app/(server)/actions/getBrands';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getBrands from '@/app/(server)/actions/brand/get-brands.controller';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import { SiteConfig } from '@/constants/site-config';
 import ProductViewPage from '@/features/products/components/product-view-page';
-import getProductAttributes from '@/app/(server)/actions/getProductsAttributes';
-import getProductAttributeValues from '@/app/(server)/actions/getProductsAttributeValues';
+import getProductAttributeValues from '@/app/(server)/actions/attribute/value/get-products-attribute-values.controller';
 
 export const metadata = {
   title: SiteConfig.siteTitle.product.view
@@ -19,14 +18,13 @@ type PageProps = {
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
-  const sParams = await props.searchParams;
 
   // Get all brands and categories
   const [brands, categories, subcategories, attributes] = await Promise.all([
     getBrands(),
     getCategories(),
     getCategories({ getSubcategories: true }),
-    getProductAttributeValues({})
+    getProductAttributeValues()
   ]);
 
   if (!brands.ok) {
