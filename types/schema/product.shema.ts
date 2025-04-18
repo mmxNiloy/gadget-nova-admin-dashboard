@@ -2,11 +2,6 @@ import { EObjectStatus } from 'types/enum/object-status.enum';
 import { IResponseBase } from './base.schema';
 import { IPaginationBase } from './pagination.schema';
 
-export interface IProductListResponse extends IResponseBase {
-  total_products?: number;
-  payload: IProduct[];
-}
-
 export interface IProductListResponse extends IResponseBase, IPaginationBase {
   payload: IProduct[];
 }
@@ -111,7 +106,7 @@ export interface ICategoryResponse extends IResponseBase {
   payload: ICategory;
 }
 
-export interface ICategoryListResponse extends IResponseBase {
+export interface ICategoryListResponse extends IResponseBase, IPaginationBase {
   payload: ICategory[];
 }
 
@@ -128,7 +123,7 @@ export interface IBrand {
   slug: string;
   metaTitle: string;
   metaDescription: string;
-  categories?: ICategory[];
+  categories: ICategory[];
 
   category_ids?: string[];
 }
@@ -137,7 +132,7 @@ export interface IBrandResponse extends IResponseBase {
   payload: IBrand;
 }
 
-export interface IBrandListResponse extends IResponseBase {
+export interface IBrandListResponse extends IResponseBase, IPaginationBase {
   payload: IBrand[];
 }
 

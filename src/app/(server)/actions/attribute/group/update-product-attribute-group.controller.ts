@@ -1,6 +1,6 @@
 'use server';
 
-import requestAPI from './request-api.action';
+import requestAPI from '../../request-api.controller';
 
 interface IUpdateProductAttributeGroupActionProps {
   data: {

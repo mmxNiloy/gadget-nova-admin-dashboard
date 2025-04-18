@@ -2,7 +2,8 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as CategoryTable } from '@/components/ui/table/data-table';
 import { ICategory } from 'types/schema/product.shema';
 import { columns } from './sub-category-tables/columns';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
+import { DataTableError } from '@/components/ui/table/data-table-error';
 
 export default async function SubcategoryListingPage() {
   // Showcasing the use of search params cache in nested RSCs
@@ -16,11 +17,11 @@ export default async function SubcategoryListingPage() {
     ...(search && { search })
   };
 
-  const subcategoryData = await getCategories({ getSubcategories: true }); // TODO: Add filters here
+  // TODO: Add filters here
+  const subcategoryData = await getCategories({ getSubcategories: true });
 
   if (!subcategoryData.ok) {
-    // TODO: Add a proper error state table here
-    return <>Error Loading Data...</>;
+    return <DataTableError errorMessage={subcategoryData.error.message} />;
   }
 
   const data = subcategoryData.data;

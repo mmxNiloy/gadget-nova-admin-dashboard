@@ -1,15 +1,15 @@
 'use server';
 
 import { IOrderPaginationProps } from 'types/schema/pagination.schema';
-import requestAPI from '../request-api.action';
+import requestAPI from '../request-api.controller';
 import { IOrderListResponse } from 'types/schema/order.schema';
-import { EPaginationOrder } from 'types/enum/pagination.enum';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
 
 export default async function getPaginatedOrders({
   page = 1,
   limit = 10,
   sort = 'created_at',
-  order = EPaginationOrder.DESC,
+  order = EPaginationOrderString.DESC,
   name = '',
   status
 }: IOrderPaginationProps) {
@@ -21,7 +21,7 @@ export default async function getPaginatedOrders({
       ['page', `${page}`],
       ['limit', `${limit}`],
       ['sort', sort],
-      ['order', `${order}`],
+      ['order', order],
       ['name', name],
       status ? ['status', status] : []
     ].filter((arr) => arr.length > 0)

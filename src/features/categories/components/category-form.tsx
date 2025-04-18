@@ -20,7 +20,7 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ICategory } from 'types/schema/product.shema';
-import updateCategory from '@/app/(server)/actions/updateCategory';
+import updateCategory from '@/app/(server)/actions/category/update-category.controller';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 
 // Zod schema for UpdateCategoryDto

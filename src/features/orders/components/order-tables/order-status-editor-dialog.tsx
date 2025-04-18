@@ -1,5 +1,5 @@
 'use client';
-import updateOrderStatus from '@/app/(server)/actions/updateOrderStatus';
+import updateOrderStatus from '@/app/(server)/actions/order/update-order-status.controller';
 import {
   AlertDialog,
   AlertDialogCancel,

@@ -1,7 +1,7 @@
 'use server';
 
 import { IBrandResponse } from 'types/schema/product.shema';
-import requestAPI from './request-api.action';
+import requestAPI from '../request-api.controller';
 
 export default async function getBrand(id: string) {
   const prod = await requestAPI<IBrandResponse>({

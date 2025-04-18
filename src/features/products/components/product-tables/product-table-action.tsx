@@ -15,7 +15,10 @@ import {
 } from 'types/schema/product.shema';
 import { keyToLabel } from '@/lib/utils';
 import { DataTableFilterSelect } from '@/components/ui/table/data-table-filter-select';
-import { EPaginationOrder } from 'types/enum/pagination.enum';
+import {
+  EPaginationOrder,
+  EPaginationOrderString
+} from 'types/enum/pagination.enum';
 import {
   Popover,
   PopoverContent,
@@ -112,15 +115,17 @@ export default function ProductTableAction({
             title='Order'
             options={[
               {
-                value: `${EPaginationOrder.DESC}`,
+                value: EPaginationOrderString.DESC,
                 label: 'Descending'
               },
               {
-                value: `${EPaginationOrder.ASC}`,
+                value: EPaginationOrderString.ASC,
                 label: 'Ascending'
               }
             ]}
-            setFilterValue={setOrderQuery}
+            setFilterValue={(val) =>
+              setOrderQuery(val as EPaginationOrderString)
+            }
             filterValue={orderQuery}
           />
           <DataTableResetFilter

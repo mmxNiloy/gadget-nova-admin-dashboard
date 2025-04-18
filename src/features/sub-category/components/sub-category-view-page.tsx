@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { ICategoryResponse } from 'types/schema/product.shema';
-import getCategory from '@/app/(server)/actions/getCategory';
+import getCategory from '@/app/(server)/actions/category/get-category.controller';
 import SubcategoryForm from './sub-category-form';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 
 interface ISubcategoryViewPageProps {
   subCategoryId: string;

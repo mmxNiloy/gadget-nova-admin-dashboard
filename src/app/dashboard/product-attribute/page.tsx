@@ -9,7 +9,7 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import getCategories from '@/app/(server)/actions/getCategories';
+import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import { SiteConfig } from '@/constants/site-config';
 import ProductAttributeListingPage from '@/features/product-attributes/components/product-attribute-listing';
 

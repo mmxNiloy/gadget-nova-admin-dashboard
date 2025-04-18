@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ICategoryResponse } from 'types/schema/product.shema';
-import getCategory from '@/app/(server)/actions/getCategory';
+import getCategory from '@/app/(server)/actions/category/get-category.controller';
 import CategoryForm from './category-form';
 
 interface IProductViewPageProps {
