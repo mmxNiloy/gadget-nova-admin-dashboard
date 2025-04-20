@@ -32,6 +32,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
+import TiptapEditor from '@/components/NextTiptap/TiptapEditor';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -594,12 +595,17 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <RichTextEditor
+                      <TiptapEditor
                         disabled={loading}
-                        placeholder='Enter product description'
-                        className='h-72'
-                        value={field.value}
-                        onChange={field.onChange}
+                        output='html'
+                        placeholder={{
+                          paragraph: 'Enter product description...',
+                          imageCaption: 'Type caption for image (optional)'
+                        }}
+                        contentMinHeight={288}
+                        contentMaxHeight={640}
+                        initialContent={field.value}
+                        onContentChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -815,12 +821,17 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Key Features</FormLabel>
                     <FormControl>
-                      <RichTextEditor
+                      <TiptapEditor
                         disabled={loading}
-                        placeholder='Enter key features'
-                        className='h-72'
-                        value={field.value}
-                        onChange={field.onChange}
+                        output='html'
+                        placeholder={{
+                          paragraph: 'Enter product key features...',
+                          imageCaption: 'Type caption for image (optional)'
+                        }}
+                        contentMinHeight={288}
+                        contentMaxHeight={640}
+                        initialContent={field.value}
+                        onContentChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -834,12 +845,17 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Specifications</FormLabel>
                     <FormControl>
-                      <RichTextEditor
+                      <TiptapEditor
                         disabled={loading}
-                        placeholder='Enter specifications'
-                        className='h-72'
-                        value={field.value}
-                        onChange={field.onChange}
+                        output='html'
+                        placeholder={{
+                          paragraph: 'Enter product specifications...',
+                          imageCaption: 'Type caption for image (optional)'
+                        }}
+                        contentMinHeight={288}
+                        contentMaxHeight={640}
+                        initialContent={field.value}
+                        onContentChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
