@@ -26,7 +26,7 @@ const InsertDropdown = () => {
       tooltip='Insert'
       disabled={!editor.isEditable}
       icon='Plus'
-      dropdownStyle={{ minWidth: '8rem' }}
+      dropdownClass={'min-w-16 flex flex-col'}
     >
       <DropdownMenuItem asChild>
         <MenuButton

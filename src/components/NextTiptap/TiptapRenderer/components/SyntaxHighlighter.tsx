@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useLayoutEffect, useState } from "react";
-import { highlight } from "../utils/highlight";
+import { useLayoutEffect, useState } from 'react';
+import { highlight } from '../utils/highlight';
 
 interface SyntaxHighlighterProps {
   content?: string;
@@ -13,7 +13,7 @@ const SyntaxHighlighter = (props: SyntaxHighlighterProps) => {
 
   useLayoutEffect(() => {
     highlight(props.content!, props.language!).then(setNodes);
-  }, []);
+  }, [props.content, props.language]);
 
   if (!nodes) return <code {...props}>{props.content}</code>;
 

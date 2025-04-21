@@ -3,7 +3,7 @@
 import { createElement, Fragment, useEffect, useState } from 'react';
 import { components } from './components/custom';
 import { createProcessor } from './utils/processor';
-import '../style.scss';
+import '../styles.css';
 
 interface TiptapRendererProps {
   children: string;

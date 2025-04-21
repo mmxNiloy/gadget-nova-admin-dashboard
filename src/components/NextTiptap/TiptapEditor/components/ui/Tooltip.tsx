@@ -1,54 +1,49 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
+import { type TooltipContentProps } from '@radix-ui/react-tooltip';
 import {
-  Tooltip as TooltipRoot,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipPortal,
+  Tooltip,
   TooltipContent,
-  type TooltipContentProps,
-} from "@radix-ui/react-tooltip";
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 type TooltipOptions = Pick<
   TooltipContentProps,
-  | "side"
-  | "align"
-  | "sideOffset"
-  | "alignOffset"
-  | "avoidCollisions"
-  | "collisionBoundary"
-  | "collisionPadding"
+  | 'side'
+  | 'align'
+  | 'sideOffset'
+  | 'alignOffset'
+  | 'avoidCollisions'
+  | 'collisionBoundary'
+  | 'collisionPadding'
 >;
 
 interface TooltipProps {
-  portal?: boolean;
   content: React.ReactNode;
   children: React.ReactNode;
   options?: TooltipOptions;
 }
 
-const Tooltip = React.forwardRef<React.ElementRef<typeof TooltipTrigger>, TooltipProps>(
-  ({ children, content, portal = false, options, ...triggerProps }, ref) => {
-    const Wrapper = portal ? TooltipPortal : React.Fragment;
-
+const TooltipWrapper = React.forwardRef<HTMLButtonElement, TooltipProps>(
+  ({ children, content, options, ...triggerProps }, ref) => {
     return (
-      <TooltipProvider delayDuration={500} skipDelayDuration={0} disableHoverableContent={false}>
-        <TooltipRoot>
-          <TooltipTrigger ref={ref} asChild={true} {...triggerProps}>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger ref={ref} asChild {...triggerProps}>
             {children}
           </TooltipTrigger>
-          <Wrapper>
-            <TooltipContent className="rte-tooltip" side={"top"} align={"center"} {...options}>
-              {content}
-            </TooltipContent>
-          </Wrapper>
-        </TooltipRoot>
+
+          <TooltipContent side={'top'} align={'center'} {...options}>
+            {content}
+          </TooltipContent>
+        </Tooltip>
       </TooltipProvider>
     );
   }
 );
 
-Tooltip.displayName = "Tooltip";
+TooltipWrapper.displayName = 'Tooltip';
 
-export default Tooltip;
+export default TooltipWrapper;

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-
-import Input from "../../ui/Input";
-import Button from "../../ui/Button";
-import Label from "../../ui/Label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import React, { useEffect, useState } from 'react';
 
 interface LinkEditProps {
   initialUrl?: string;
@@ -12,9 +11,15 @@ interface LinkEditProps {
   onApply: (url: string, text?: string) => void;
 }
 
-const LinkEdit = ({ initialUrl, initialText, isCreate, onApply, onCancel }: LinkEditProps) => {
-  const [url, setUrl] = useState(initialUrl || "");
-  const [text, setText] = useState(initialText || "");
+const LinkEdit = ({
+  initialUrl,
+  initialText,
+  isCreate,
+  onApply,
+  onCancel
+}: LinkEditProps) => {
+  const [url, setUrl] = useState(initialUrl || '');
+  const [text, setText] = useState(initialText || '');
   const [canSubmit, setCanSubmit] = useState(isCreate);
 
   const onSubmit = (event: React.FormEvent) => {
@@ -29,34 +34,40 @@ const LinkEdit = ({ initialUrl, initialText, isCreate, onApply, onCancel }: Link
     if (!isCreate) {
       setCanSubmit((url && url !== initialUrl) || text !== initialText);
     }
-  }, [text, url]);
+  }, [initialText, initialUrl, isCreate, text, url]);
 
   return (
-    <form className="rte-link__form" onSubmit={onSubmit}>
-      <Label className="rte-link__label">URL</Label>
-      <Input
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        className="rte-link__input"
-        placeholder="Paste link"
-        type="url"
-        required
-        autoFocus
-      />
+    <form className='flex w-80 flex-col gap-4 p-4' onSubmit={onSubmit}>
+      <div className='flex flex-col gap-2'>
+        <Label className='font-semibold'>URL</Label>
+        <Input
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder='Paste link'
+          type='url'
+          required
+          autoFocus
+        />
+      </div>
 
-      <Label className="rte-link__label">Display Text</Label>
-      <Input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        className="rte-link__input"
-        placeholder="Enter link text"
-      />
-
-      <div className="rte-link__actions">
-        <Button variant="secondary" onClick={onCancel}>
+      <div className='flex flex-col gap-2'>
+        <Label className='font-semibold'>Display Text</Label>
+        <Input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className='rte-link__input'
+          placeholder='Enter link text'
+        />
+      </div>
+      <div className='flex items-center justify-end gap-2'>
+        <Button variant='outline' onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!canSubmit}>
+        <Button
+          type='submit'
+          className='bg-blue-500 text-white hover:bg-blue-500 hover:text-white'
+          disabled={!canSubmit}
+        >
           Apply
         </Button>
       </div>

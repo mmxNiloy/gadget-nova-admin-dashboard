@@ -1,24 +1,28 @@
-import React, { CSSProperties, memo, useEffect, useMemo } from 'react';
-import clsx from 'clsx';
+'use client';
 
-import Tooltip from './ui/Tooltip';
+import React, { HTMLAttributes, memo, useMemo } from 'react';
+
+import TooltipWrapper from './ui/Tooltip';
 import Icon, { type IconProps } from './ui/Icon';
-import Button, { type ButtonProps } from './ui/Button';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent
-} from './ui/DropdownMenu';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/Popover';
-
 import { getShortcutKey } from '../utils/shortcut';
 import { useTiptapContext } from './Provider';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
 
-interface MenuButtonProps
-  extends Omit<ButtonProps, 'variant' | 'ref' | 'type'> {
+interface MenuButtonProps extends HTMLAttributes<HTMLButtonElement> {
   icon?: IconProps['name'];
   type?: 'button' | 'dropdown' | 'popover';
-  buttonType?: ButtonProps['type'];
+  disabled?: boolean;
   text?: string;
   active?: boolean;
   shortcuts?: string[];
@@ -26,9 +30,7 @@ interface MenuButtonProps
   hideArrow?: boolean;
   tooltip?: string | boolean;
   buttonClass?: string;
-  buttonStyle?: CSSProperties;
   dropdownClass?: string;
-  dropdownStyle?: CSSProperties;
 }
 
 const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
@@ -41,14 +43,11 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
       className,
       children,
       type,
-      buttonType,
       hideText = true,
       hideArrow = false,
       tooltip = true,
       buttonClass,
-      buttonStyle,
       dropdownClass,
-      dropdownStyle,
       disabled,
       ...props
     },
@@ -73,43 +72,41 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
     }, [tooltip, text, shortcuts]);
 
     const renderIcon = useMemo(
-      () => (icon ? <Icon name={icon} className='rte-button-icon' /> : null),
+      () => (icon ? <Icon name={icon} /> : null),
       [icon]
     );
 
     const renderButton = (
       <Button
+        autoFocus={false}
         ref={ref}
-        type={buttonType}
+        type={'button'}
         variant='ghost'
-        className={clsx('rte-menu__button', buttonClass)}
-        style={buttonStyle}
-        iconOnly={hasIconOnly}
-        slotBefore={!hasIconOnly && renderIcon}
-        slotAfter={
-          hasArrowIcon && (
-            <span className='rte-icon-arrow'>
-              <Icon name='ChevronDown' size={16} />
-            </span>
-          )
-        }
-        onFocusCapture={(e) => e.stopPropagation()}
-        data-active={(editor.isEditable && active) || undefined}
-        aria-label={typeof tooltip === 'string' ? tooltip : text}
+        className={cn(
+          'relative gap-1 px-2 text-secondary-foreground',
+          active && 'bg-muted/40 text-blue-500',
+          buttonClass
+        )}
         disabled={!editor.isEditable || disabled}
         {...props}
       >
+        {!hasIconOnly && renderIcon}
         {hasIconOnly ? renderIcon : !hideText && text}
+        {hasArrowIcon && (
+          <span className='ml-0.5 flex items-center justify-center'>
+            <Icon name='ChevronDown' size={16} />
+          </span>
+        )}
       </Button>
     );
 
     const renderContent = tooltipContent ? (
-      <Tooltip
+      <TooltipWrapper
         content={tooltipContent}
         options={{ collisionBoundary: contentElement.current?.parentElement }}
       >
         {renderButton}
-      </Tooltip>
+      </TooltipWrapper>
     ) : (
       renderButton
     );
@@ -118,11 +115,7 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
       return (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>{renderContent}</DropdownMenuTrigger>
-          <DropdownMenuContent
-            className={dropdownClass}
-            style={dropdownStyle}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-          >
+          <DropdownMenuContent className={cn('w-fit', dropdownClass)}>
             {children}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -133,11 +126,7 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
       return (
         <Popover modal={false}>
           <PopoverTrigger asChild>{renderContent}</PopoverTrigger>
-          <PopoverContent
-            className={dropdownClass}
-            style={dropdownStyle}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-          >
+          <PopoverContent className={cn('w-fit', dropdownClass)}>
             {children}
           </PopoverContent>
         </Popover>

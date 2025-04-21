@@ -602,8 +602,6 @@ export default function ProductForm({
                           paragraph: 'Enter product description...',
                           imageCaption: 'Type caption for image (optional)'
                         }}
-                        contentMinHeight={288}
-                        contentMaxHeight={640}
                         initialContent={field.value}
                         onContentChange={field.onChange}
                       />
@@ -828,8 +826,6 @@ export default function ProductForm({
                           paragraph: 'Enter product key features...',
                           imageCaption: 'Type caption for image (optional)'
                         }}
-                        contentMinHeight={288}
-                        contentMaxHeight={640}
                         initialContent={field.value}
                         onContentChange={field.onChange}
                       />
@@ -852,8 +848,6 @@ export default function ProductForm({
                           paragraph: 'Enter product specifications...',
                           imageCaption: 'Type caption for image (optional)'
                         }}
-                        contentMinHeight={288}
-                        contentMaxHeight={640}
                         initialContent={field.value}
                         onContentChange={field.onChange}
                       />
