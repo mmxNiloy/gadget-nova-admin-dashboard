@@ -30,11 +30,7 @@ const CodeDropdown = ({ value, onSelect }: CodeDropdownProps) => {
       text={options.find((item) => item.value === value)?.label}
       hideText={false}
       tooltip={false}
-      buttonStyle={{ minWidth: '6rem' }}
       dropdownClass='rte-code-dropdown'
-      dropdownStyle={{
-        minWidth: '10rem'
-      }}
     >
       <Input
         className='code-search'

@@ -55,11 +55,12 @@ export const BubbleMenu = ({
     });
 
     menuEditor.registerPlugin(plugin);
+    const currentMenuEl = menuEl.current;
     return () => {
       menuEditor.unregisterPlugin(pluginKey);
       window.requestAnimationFrame(() => {
-        if (menuEl.current.parentNode) {
-          menuEl.current.parentNode.removeChild(menuEl.current);
+        if (currentMenuEl.parentNode) {
+          currentMenuEl.parentNode.removeChild(currentMenuEl);
         }
       });
     };

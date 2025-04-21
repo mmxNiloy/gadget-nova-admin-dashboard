@@ -1,3 +1,4 @@
+'use client';
 import {
   createContext,
   HTMLAttributes,
@@ -11,7 +12,6 @@ import { EditorContent, type Editor } from '@tiptap/react';
 import useTiptapEditor, {
   type UseTiptapEditorOptions
 } from '../hooks/useTiptapEditor';
-import clsx from 'clsx';
 import CodeMirrorEditor from '@/components/NextTiptap/TiptapEditor/SourceEditor/Editor';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';

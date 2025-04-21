@@ -1,3 +1,4 @@
+'use client';
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { useEditorState } from '@tiptap/react';
 import { useTiptapContext } from '../../Provider';
@@ -31,16 +32,19 @@ export const LinkMenu = () => {
     return editor.isActive('link') && (mode.current == -1 || from !== to);
   }, []);
 
-  const applyLink = useCallback((url: string, text?: string) => {
-    editor
-      .chain()
-      .confirmEditLink({
-        href: url,
-        text: text || url
-      })
-      .run();
-    setIsEditing(false);
-  }, []);
+  const applyLink = useCallback(
+    (url: string, text?: string) => {
+      editor
+        .chain()
+        .confirmEditLink({
+          href: url,
+          text: text || url
+        })
+        .run();
+      setIsEditing(false);
+    },
+    [editor]
+  );
 
   const removeLink = useCallback(() => {
     editor.chain().focus().unsetLink().run();
