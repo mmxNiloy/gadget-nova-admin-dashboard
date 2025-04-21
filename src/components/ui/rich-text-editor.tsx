@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -144,18 +144,25 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       Color,
       Table.configure({
         resizable: false,
+        allowTableNodeSelection: false,
+
         HTMLAttributes: {
           class: 'tiptap-table',
-          style: `border: ${readOnly ? 0 : 1}px dashed rgb(66 66 66 / 0.5); width: 100%; table-layout: fixed;`
+          style: `border: ${readOnly ? 'none' : '1px solid #e5e7eb'}; width: 100%; table-layout: fixed; user-select: text; -webkit-user-select: text;`
         }
       }),
       TableCell.configure({
         HTMLAttributes: {
-          style: `border: ${readOnly ? 0 : 1}px dashed rgb(66 66 66 / 0.5); padding: 0.5rem; overflow-wrap: break-word; white-space: normal;`
+          class: 'tiptap-table-cell',
+          style: `border: ${readOnly ? 'none' : '1px solid #e5e7eb'}; padding: 0.5rem; overflow-wrap: break-word; white-space: normal; user-select: text; -webkit-user-select: text;`
         }
       }),
       TableRow,
-      TableHeader
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'tiptap-table-header'
+        }
+      })
     ],
     content: value || '',
     editable: !readOnly,
@@ -176,11 +183,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             return true;
           }
           if (key.toLowerCase() === 't') {
-            editor
-              .chain()
-              .focus()
-              .insertTable({ rows: 3, cols: 2, withHeaderRow: false })
-              .run();
+            insertTableWithStyles();
             return true;
           }
         }
@@ -201,9 +204,57 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }
         }
         return false;
+      },
+      handleDOMEvents: {
+        dragstart: (view, event) => {
+          const target = event.target as Node;
+
+          if (
+            target instanceof Element &&
+            typeof target.closest === 'function'
+          ) {
+            if (target.closest('.tiptap-table')) {
+              event.preventDefault();
+              return true;
+            }
+          }
+          return false;
+        }
       }
     }
   });
+
+  const [currentColor, setCurrentColor] = React.useState('#000000');
+  const [currentHeading, setCurrentHeading] = React.useState('paragraph');
+
+  useEffect(() => {
+    if (editor) {
+      const updateColor = () => {
+        const color = editor.getAttributes('textStyle')?.color || '#000000';
+        setCurrentColor(color);
+      };
+      const updateHeading = () => {
+        let headingValue = 'paragraph';
+        for (let level = 1; level <= 4; level++) {
+          if (editor.isActive('heading', { level })) {
+            headingValue = `h${level}`;
+            break;
+          }
+        }
+        setCurrentHeading(headingValue);
+      };
+      editor.on('selectionUpdate', updateColor);
+      editor.on('update', updateColor);
+      editor.on('selectionUpdate', updateHeading);
+      editor.on('update', updateHeading);
+      return () => {
+        editor.off('selectionUpdate', updateColor);
+        editor.off('update', updateColor);
+        editor.off('selectionUpdate', updateHeading);
+        editor.off('update', updateHeading);
+      };
+    }
+  }, [editor]);
 
   if (!editor) {
     return (
@@ -220,6 +271,34 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
     );
   }
+
+  const insertTableWithStyles = () => {
+    editor
+      .chain()
+      .focus()
+      .insertTable({ rows: 3, cols: 2, withHeaderRow: true })
+      .run();
+
+    const { tr } = editor.state;
+    editor.state.doc.descendants((node, pos) => {
+      if (node.type.name === 'tableCell' && node.attrs.row !== 0) {
+        tr.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          paragraph: {},
+          textStyle: {
+            color: node.attrs.col === 0 ? '#64748b' : '#000000'
+          }
+        });
+      } else if (node.type.name === 'tableHeader') {
+        tr.setNodeMarkup(pos, undefined, {
+          ...node.attrs,
+          heading: { level: 4 },
+          textStyle: { color: '#000000' }
+        });
+      }
+    });
+    editor.view.dispatch(tr);
+  };
 
   const handleHeadingChange = (value: string) => {
     editor.chain().focus().setParagraph().run();
@@ -245,12 +324,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <>
       <ContextMenu>
-        <ContextMenuTrigger>
+        <ContextMenuTrigger disabled={readOnly}>
           <div className={cn('flex h-full w-full flex-col', className)}>
             {toolbar && !readOnly && (
               <div className='mb-2 flex flex-wrap gap-2 rounded-t-md border-b border-gray-200 bg-gray-100 p-2'>
                 <Select
-                  defaultValue='paragraph'
+                  value={currentHeading}
                   onValueChange={handleHeadingChange}
                 >
                   <SelectTrigger className='w-36'>
@@ -391,13 +470,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 </button>
                 <button
                   type='button'
-                  onClick={() =>
-                    editor
-                      .chain()
-                      .focus()
-                      .insertTable({ rows: 3, cols: 2, withHeaderRow: false })
-                      .run()
-                  }
+                  onClick={insertTableWithStyles}
                   disabled={!editor.can().insertTable()}
                   className={buttonClass(editor.isActive('table'))}
                   title='Insert Table (Ctrl+Alt+T)'
@@ -408,9 +481,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   onValueChange={(value) =>
                     editor.chain().focus().setColor(value).run()
                   }
-                  defaultValue={
-                    editor.getAttributes('textStyle')?.color || '#000000'
-                  }
+                  value={currentColor}
                 >
                   <SelectTrigger className='w-36'>
                     <SelectValue placeholder='Text Color' />
@@ -516,7 +587,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                             </li>
                             <li>
                               <strong>Table</strong>: Insert a two-column table
-                              without headers.
+                              with headers.
                             </li>
                             <li>
                               <strong>Text Color</strong>: Change the color of
@@ -780,13 +851,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             <span className='ml-auto text-xs text-gray-500'>Ctrl+Shift+7</span>
           </ContextMenuItem>
           <ContextMenuItem
-            onClick={() =>
-              editor
-                .chain()
-                .focus()
-                .insertTable({ rows: 3, cols: 2, withHeaderRow: false })
-                .run()
-            }
+            onClick={insertTableWithStyles}
             disabled={!editor.can().insertTable()}
           >
             Insert Table
@@ -824,20 +889,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   >
                     Add Row Before
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() => editor.chain().focus().addRowAfter().run()}
                   >
                     Add Row After
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() => editor.chain().focus().deleteRow().run()}
                     disabled={!editor.can().deleteRow()}
                   >
                     Remove Row
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() =>
                       editor.chain().focus().addColumnBefore().run()
@@ -845,7 +907,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   >
                     Add Column Before
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() =>
                       editor.chain().focus().addColumnAfter().run()
@@ -853,14 +914,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   >
                     Add Column After
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() => editor.chain().focus().deleteColumn().run()}
                     disabled={!editor.can().deleteColumn()}
                   >
                     Remove Column
                   </ContextMenuItem>
-
                   <ContextMenuItem
                     onClick={() => editor.chain().focus().deleteTable().run()}
                     disabled={!editor.can().deleteTable()}
@@ -945,35 +1004,43 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           max-width: 100%;
           border-collapse: collapse;
           margin: 1rem 0;
-          border: none;
           table-layout: fixed;
+          user-select: text !important;
+          -webkit-user-select: text !important;
         }
         .tiptap-table:not(.ProseMirror[contenteditable='false']) {
-          border: 1px dashed #9ca3af;
+          border: 1px solid #e5e7eb;
         }
         .tiptap-table tr {
-          border-bottom: 1px solid #ecedef;
+          border-bottom: 1px solid #e5e7eb;
         }
-        .tiptap-table td {
+        .tiptap-table td,
+        .tiptap-table th {
           border: none;
           padding: 0.5rem;
           text-align: left;
-          font-weight: normal;
           overflow-wrap: break-word;
           white-space: normal;
-          max-width: 0; /* Ensures truncation within fixed width */
+          max-width: 0;
+          user-select: text !important;
+          -webkit-user-select: text !important;
         }
         .tiptap-table td:not(.ProseMirror[contenteditable='false']) {
-          border-right: 1px dashed #9ca3af;
+          border-right: 1px solid #e5e7eb;
         }
         .tiptap-table td:last-child:not(.ProseMirror[contenteditable='false']) {
           border-right: none;
         }
-        .tiptap-table td:nth-child(1) {
+        .tiptap-table td:nth-child(1),
+        .tiptap-table th:nth-child(1) {
           width: 30%;
         }
-        .tiptap-table td:nth-child(2) {
+        .tiptap-table td:nth-child(2),
+        .tiptap-table th:nth-child(2) {
           width: 70%;
+        }
+        .tiptap-table td p {
+          margin: 0 !important;
         }
         @media (max-width: 640px) {
           .tiptap-table {
@@ -983,7 +1050,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           .tiptap-table tr {
             display: block;
           }
-          .tiptap-table td {
+          .tiptap-table td,
+          .tiptap-table th {
             display: block;
             width: 100% !important;
             max-width: 100%;
@@ -996,6 +1064,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           .tiptap-table td:not(.ProseMirror[contenteditable='false']) {
             border-right: none;
           }
+        }
+        .tiptap-table,
+        .tiptap-table-cell,
+        .tiptap-table-header {
+          touch-action: none;
+          -webkit-user-drag: none;
+          user-drag: none;
+          -webkit-touch-callout: none;
+          -ms-user-select: none;
+          -moz-user-select: none;
+          user-select: text !important;
         }
       `}</style>
     </>
