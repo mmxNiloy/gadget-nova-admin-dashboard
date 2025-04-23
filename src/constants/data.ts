@@ -17,7 +17,6 @@ export const navItems: NavItem[] = [
     title: 'Dashboard',
     url: '/dashboard/overview',
     icon: 'dashboard',
-    isActive: false,
     shortcut: ['d', 'd'],
     items: [] // Empty array as there are no child items for Dashboard
   },
@@ -26,7 +25,6 @@ export const navItems: NavItem[] = [
     url: '/dashboard/product',
     icon: 'product',
     shortcut: ['p', 'p'],
-    isActive: false,
     items: [
       {
         title: 'Product',
@@ -65,14 +63,23 @@ export const navItems: NavItem[] = [
   {
     title: 'Orders',
     url: '/dashboard/order',
-    icon: 'package',
-    isActive: false
+    icon: 'package'
+  },
+  {
+    title: 'Web',
+    url: '/dashboard/web',
+    icon: 'globe',
+    items: [
+      {
+        title: 'Promotions',
+        url: '/dashboard/web/promotion'
+      }
+    ]
   },
   {
     title: 'Users',
     url: '/dashboard/user',
-    icon: 'user',
-    isActive: true
+    icon: 'user'
   }
 ];
 

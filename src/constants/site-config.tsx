@@ -39,6 +39,10 @@ export const SiteConfig = {
       list: `Dashboard | Orders`,
       view: `Dashboard | Order View`
     },
+    promotion: {
+      list: `Dashboard | Promotions`,
+      view: `Dashboard | Promotion View`
+    },
     notFound: `${_siteTitleBase} | Not Found`
   },
   siteDescription: {

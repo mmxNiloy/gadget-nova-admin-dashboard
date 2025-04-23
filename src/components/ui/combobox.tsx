@@ -13,21 +13,44 @@ import {
 } from './command';
 import { cn } from '@/lib/utils';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { AvatarPicker } from './avatar-picker';
+import { Skeleton } from './skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from './tooltip';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface ComboboxProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   label?: string;
   items: string[];
   onValueChange?: (value: string) => void;
   contentClassName?: string;
+  shouldFilter?: boolean;
+  onSearchChange?: (searchVal: string) => void;
+  loading?: boolean;
 }
 
-const ComboBox = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+const ComboBox = React.forwardRef<HTMLInputElement, ComboboxProps>(
+  (
+    {
+      className,
+      type,
+      shouldFilter = true,
+      onSearchChange,
+      loading,
+      value,
+      ...props
+    },
+    ref
+  ) => {
     const { label, placeholder, items, onValueChange, contentClassName } =
       props;
     const [selectedValue, setSelectedValue] = useState<string>(
-      ((props.defaultValue as string) ?? '').trim()
+      ((props.defaultValue as string) ?? value ?? '').trim()
     );
     const [open, setOpen] = useState<boolean>(false);
 
@@ -67,11 +90,20 @@ const ComboBox = React.forwardRef<HTMLInputElement, InputProps>(
             contentClassName
           )}
         >
-          <Command className='max-h-72'>
-            <CommandInput placeholder={placeholder ?? 'Search...'} />
+          <Command className='max-h-72' shouldFilter={shouldFilter}>
+            <CommandInput
+              placeholder={placeholder ?? 'Search...'}
+              onValueChange={onSearchChange}
+            />
             <CommandList>
               <CommandEmpty>No results.</CommandEmpty>
               <CommandGroup>
+                {loading && (
+                  <p className='py-2 text-center text-xs sm:text-sm'>
+                    Searching...
+                  </p>
+                )}
+
                 {items.map((item, index) => (
                   <CommandItem
                     onSelect={() => {
@@ -99,19 +131,34 @@ const ComboBox = React.forwardRef<HTMLInputElement, InputProps>(
 );
 ComboBox.displayName = 'Combobox';
 
-interface LabelledInputProps extends Omit<InputProps, 'items'> {
+export interface LabelledComboboxProps extends Omit<ComboboxProps, 'items'> {
   items: {
     label: string;
     value: string;
+    image?: string;
   }[];
 }
 
-const LabelledComboBox = React.forwardRef<HTMLInputElement, LabelledInputProps>(
-  ({ className, type, ...props }, ref) => {
+const LabelledComboBox = React.forwardRef<
+  HTMLInputElement,
+  LabelledComboboxProps
+>(
+  (
+    {
+      className,
+      type,
+      shouldFilter = true,
+      onSearchChange,
+      loading,
+      value,
+      ...props
+    },
+    ref
+  ) => {
     const { label, placeholder, items, onValueChange, contentClassName } =
       props;
     const [selectedValue, setSelectedValue] = useState<string>(
-      ((props.defaultValue as string) ?? '').trim()
+      ((props.defaultValue as string) ?? value ?? '').trim()
     );
     const [open, setOpen] = useState<boolean>(false);
 
@@ -178,11 +225,24 @@ const LabelledComboBox = React.forwardRef<HTMLInputElement, LabelledInputProps>(
               contentClassName
             )}
           >
-            <Command filter={filterByLabel} className='max-h-72'>
-              <CommandInput placeholder={placeholder ?? 'Search...'} />
+            <Command
+              filter={filterByLabel}
+              shouldFilter={shouldFilter}
+              className='max-h-72'
+            >
+              <CommandInput
+                placeholder={placeholder ?? 'Search...'}
+                onValueChange={onSearchChange}
+              />
               <CommandList>
                 <CommandEmpty>No results.</CommandEmpty>
                 <CommandGroup>
+                  {loading && (
+                    <p className='py-2 text-center text-xs sm:text-sm'>
+                      Searching...
+                    </p>
+                  )}
+
                   {items.map((item, index) => (
                     <CommandItem
                       onSelect={() => {
@@ -193,11 +253,33 @@ const LabelledComboBox = React.forwardRef<HTMLInputElement, LabelledInputProps>(
                       }}
                       key={`${item}-#${index}`}
                       value={item.value}
-                    >
-                      {selectedValue === item.value && (
-                        <Icons.check className='mr-2 size-4' />
+                      className={cn(
+                        'cursor-pointer',
+                        selectedValue === item.value &&
+                          'bg-blue-300/40 hover:bg-blue-300/50'
                       )}
-                      {item.label}
+                    >
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <div className='flex items-center gap-1 text-start'>
+                              {item.image && (
+                                <AvatarPicker
+                                  skeleton={<Skeleton className='size-full' />}
+                                  variant='square'
+                                  className='w-10 flex-shrink-0 p-0.5'
+                                  src={item.image}
+                                  readOnly
+                                />
+                              )}
+                              <p className='line-clamp-2 overflow-clip text-ellipsis'>
+                                {item.label}
+                              </p>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>{item.label}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </CommandItem>
                   ))}
                 </CommandGroup>
