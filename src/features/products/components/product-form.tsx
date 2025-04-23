@@ -27,7 +27,6 @@ import { useEffect, useMemo, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import updateProduct from '@/app/(server)/actions/product/update-product.controller';
 import { useRouter } from 'next/navigation';
-import RichTextEditor from '@/components/ui/rich-text-editor';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';

@@ -9,6 +9,7 @@ import {
   CreditCard,
   File,
   FileText,
+  GlobeIcon,
   HelpCircle,
   Image,
   Laptop,
@@ -78,6 +79,7 @@ const CategoryIcon = React.forwardRef<SVGElement, SVGAttributes>(
 CategoryIcon.displayName = 'CategoryIcon';
 
 export const Icons = {
+  globe: GlobeIcon,
   package: PackageIcon,
   dashboard: LayoutDashboardIcon,
   hexagon: HexagonIcon,

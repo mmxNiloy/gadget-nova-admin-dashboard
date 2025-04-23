@@ -1,6 +1,7 @@
 import { EPaginationOrderString } from 'types/enum/pagination.enum';
 import { IBrand, ICategory, IProduct } from './product.shema';
 import { IOrder, TOrderStatus } from './order.schema';
+import { IPromotion } from './promotion.schema';
 
 export interface IPaginationBase {
   meta: IPaginationMeta;
@@ -40,4 +41,11 @@ export interface IBrandPaginationProps extends IFilterBase {
 export interface IOrderPaginationProps extends IFilterBase {
   sort?: keyof IOrder;
   status?: TOrderStatus;
+}
+
+export interface IPromotionPaginationProps extends Omit<IFilterBase, 'name'> {
+  sort?: keyof IPromotion;
+  startDate?: string;
+  endDate?: string;
+  product_ids?: string;
 }
