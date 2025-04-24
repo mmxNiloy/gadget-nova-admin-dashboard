@@ -51,39 +51,33 @@ export interface IProduct {
   productAttributes: IProductAttribute[];
 }
 
-export const AProductKeys = [
-  'id',
-  'is_active',
-  'created_by',
-  'created_user_name',
-  'updated_by',
-  'updated_user_name',
-  'created_at',
-  'updated_at',
-  'title',
-  'slug',
-  'metaTitle',
-  'metaDescription',
-  'productCode',
-  'regularPrice',
-  'discountPrice',
-  'quantity',
-  'description',
-  'keyFeatures',
-  'stockAmount',
-  'holdAmount',
-  'soldAmount',
-  'thresholdAMount',
-  'thumbnail',
-  'gallery',
-  'specifications',
-  'category',
-  'subcategory',
-  'brand',
-  'questions',
-  'ratings',
-  'productAttributes'
-];
+export interface IPromotionalDiscount {
+  id: string;
+  is_active: EObjectStatus;
+  created_by?: string;
+  created_user_name?: string;
+  updated_by?: string;
+  updated_user_name?: string;
+  created_at?: string;
+  updated_at?: string;
+  is_percentage: number;
+  amount: number;
+  startDate: string;
+  endDate: string;
+  product_id: string;
+
+  product?: IProduct;
+}
+
+export interface IPromotionalDiscountResponse extends IResponseBase {
+  payload: IPromotionalDiscount;
+}
+
+export interface IPromotionalDiscountListResponse
+  extends IResponseBase,
+    IPaginationBase {
+  payload: IPromotionalDiscount[];
+}
 
 export interface ICategory {
   id: string;

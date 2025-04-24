@@ -35,6 +35,11 @@ export const navItems: NavItem[] = [
         title: 'Product Attribute',
         url: '/dashboard/product-attribute',
         icon: 'kanban'
+      },
+      {
+        title: 'Promotional Discount',
+        url: '/dashboard/promotional-discount',
+        icon: 'tag'
       }
     ]
   },

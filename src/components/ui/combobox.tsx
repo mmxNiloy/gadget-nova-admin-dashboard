@@ -261,7 +261,7 @@ const LabelledComboBox = React.forwardRef<
                     >
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger>
+                          <TooltipTrigger type='button'>
                             <div className='flex items-center gap-1 text-start'>
                               {item.image && (
                                 <AvatarPicker
