@@ -31,11 +31,14 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   slug: z.string().min(1, { message: 'Slug is required.' }),
+  isFeatured: z.boolean().default(false),
   parent_category_id: z.string({
     message: 'A subcategory must have a parent category.'
   }),
@@ -59,6 +62,8 @@ export default function SubcategoryForm({
   const defaultValues = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
+    isFeatured: initialData?.isFeatured ?? false,
+    parent_category_id: initialData?.parentCategory?.id ?? '',
     metaTitle: initialData?.metaTitle ?? '',
     metaDescription: initialData?.metaDescription ?? ''
   };
@@ -166,6 +171,45 @@ export default function SubcategoryForm({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='isFeatured'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Is Featured?</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          disabled={loading}
+                          value={field.value ? 'yes' : 'no'}
+                          onValueChange={(val) => {
+                            if (val === 'yes') field.onChange(true);
+                            else field.onChange(false);
+                          }}
+                        >
+                          <div className='flex flex-col gap-2'>
+                            <div className='flex gap-2'>
+                              <RadioGroupItem
+                                value='yes'
+                                id='is-featured-yes-radio'
+                              />
+                              <Label htmlFor='is-featured-yes-radio'>Yes</Label>
+                            </div>
+
+                            <div className='flex gap-2'>
+                              <RadioGroupItem
+                                value='no'
+                                id='is-featured-no-radio'
+                              />
+                              <Label htmlFor='is-featured-no-radio'>No</Label>
+                            </div>
+                          </div>
+                        </RadioGroup>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

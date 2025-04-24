@@ -1,7 +1,6 @@
 import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
-import CategoryViewPage from '@/features/categories/components/category-view-page';
 import { SiteConfig } from '@/constants/site-config';
 import SubcategoryViewPage from '@/features/sub-category/components/sub-category-view-page';
 
@@ -16,7 +15,6 @@ type PageProps = {
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
-  const sParams = await props.searchParams;
 
   return (
     <PageContainer scrollable>

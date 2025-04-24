@@ -6,6 +6,7 @@ interface IUpdateBrandActionProps {
   data: {
     name: string;
     slug: string;
+    isFeatured: boolean;
     metaTitle?: string;
     metaDescription?: string;
   };
