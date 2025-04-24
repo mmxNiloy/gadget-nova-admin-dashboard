@@ -5,7 +5,7 @@ import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 import { EPaginationOrderString } from 'types/enum/pagination.enum';
 
-export function useCategoryTableFilters() {
+export function usePromotionalDiscountTableFilters() {
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -23,32 +23,24 @@ export function useCategoryTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault(EPaginationOrderString.DESC)
   );
-  const [nameQuery, setNameQuery] = useQueryState(
-    'name',
-    searchParams.name
+  const [titleQuery, setTitleQuery] = useQueryState(
+    'title',
+    searchParams.title
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
-  );
-
-  const [isFeaturedQuery, setIsFeaturedQuery] = useQueryState(
-    'isFeatured',
-    searchParams.isFeatured
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault(false)
   );
 
   const resetFilters = useCallback(() => {
     setSortQuery(null);
     setOrderQuery(null);
-    setNameQuery(null);
-    setIsFeaturedQuery(null);
+    setTitleQuery(null);
 
     setPage(1);
-  }, [setSortQuery, setOrderQuery, setNameQuery, setIsFeaturedQuery, setPage]);
+  }, [setSortQuery, setOrderQuery, setTitleQuery, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!nameQuery || !!isFeaturedQuery || !!sortQuery || !!orderQuery;
-  }, [isFeaturedQuery, nameQuery, orderQuery, sortQuery]);
+    return !!titleQuery || !!sortQuery || !!orderQuery;
+  }, [titleQuery, orderQuery, sortQuery]);
 
   return {
     page,
@@ -57,10 +49,8 @@ export function useCategoryTableFilters() {
     setOrderQuery,
     sortQuery,
     setSortQuery,
-    nameQuery,
-    setNameQuery,
-    isFeaturedQuery,
-    setIsFeaturedQuery,
+    titleQuery,
+    setTitleQuery,
     resetFilters,
     isAnyFilterActive
   };

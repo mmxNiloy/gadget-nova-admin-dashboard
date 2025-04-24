@@ -20,16 +20,14 @@ export const columns: ColumnDef<IProduct>[] = [
     header: 'Image',
     cell: ({ row }) => {
       return (
-        <div className='relative aspect-square'>
-          <AvatarPicker
-            src={row.original.thumbnail}
-            alt={row.original.title}
-            skeleton={<Skeleton className='size-full' />}
-            variant='square'
-            readOnly
-            className='size-16 rounded-lg bg-muted/20 object-contain object-center p-0.5'
-          />
-        </div>
+        <AvatarPicker
+          src={row.original.thumbnail}
+          alt={row.original.title}
+          skeleton={<Skeleton className='size-full' />}
+          variant='square'
+          readOnly
+          className='size-16 rounded-lg bg-muted/20 object-contain object-center p-0.5'
+        />
       );
     }
   },

@@ -27,6 +27,7 @@ import {
   Settings,
   SunMedium,
   SVGAttributes,
+  TagIcon,
   Trash,
   Twitter,
   User,
@@ -79,6 +80,7 @@ const CategoryIcon = React.forwardRef<SVGElement, SVGAttributes>(
 CategoryIcon.displayName = 'CategoryIcon';
 
 export const Icons = {
+  tag: TagIcon,
   globe: GlobeIcon,
   package: PackageIcon,
   dashboard: LayoutDashboardIcon,
