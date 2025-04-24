@@ -31,6 +31,7 @@ export interface IProductPaginationProps extends Omit<IFilterBase, 'name'> {
 
 export interface ICategoryPaginationProps extends IFilterBase {
   sort?: keyof ICategory;
+  isFeatured?: boolean;
 }
 
 export interface IBrandPaginationProps extends IFilterBase {

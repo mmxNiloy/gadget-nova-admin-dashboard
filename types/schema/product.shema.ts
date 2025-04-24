@@ -88,6 +88,7 @@ export const AProductKeys = [
 export interface ICategory {
   id: string;
   is_active: number;
+  isFeatured: boolean;
   created_by: any;
   created_user_name: string;
   updated_by: any;

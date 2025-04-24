@@ -15,7 +15,7 @@ export const CATEGORY_OPTIONS = [
   { value: 'Jewelry', label: 'Jewelry' },
   { value: 'Beauty Products', label: 'Beauty Products' }
 ];
-export function useProductTableFilters() {
+export function useCategoryTableFilters() {
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -33,66 +33,32 @@ export function useProductTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault(EPaginationOrderString.DESC)
   );
-  const [titleQuery, setTitleQuery] = useQueryState(
-    'title',
-    searchParams.title
+  const [nameQuery, setNameQuery] = useQueryState(
+    'name',
+    searchParams.name
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
 
-  const [productCodeQuery, setProductCodeQuery] = useQueryState(
-    'productCode',
-    searchParams.productCode
+  const [isFeaturedQuery, setIsFeaturedQuery] = useQueryState(
+    'isFeatured',
+    searchParams.isFeatured
       .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
-  );
-
-  const [categoriesFilter, setCategoriesFilter] = useQueryState(
-    'categories',
-    searchParams.categories.withOptions({ shallow: false }).withDefault('')
-  );
-
-  const [brandsFilter, setBrandsFilter] = useQueryState(
-    'brands',
-    searchParams.categories.withOptions({ shallow: false }).withDefault('')
+      .withDefault(false)
   );
 
   const resetFilters = useCallback(() => {
     setSortQuery(null);
     setOrderQuery(null);
-    setTitleQuery(null);
-    setProductCodeQuery(null);
-    setCategoriesFilter(null);
-    setBrandsFilter(null);
+    setNameQuery(null);
+    setIsFeaturedQuery(null);
 
     setPage(1);
-  }, [
-    setSortQuery,
-    setOrderQuery,
-    setTitleQuery,
-    setProductCodeQuery,
-    setCategoriesFilter,
-    setBrandsFilter,
-    setPage
-  ]);
+  }, [setSortQuery, setOrderQuery, setNameQuery, setIsFeaturedQuery, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return (
-      !!titleQuery ||
-      !!categoriesFilter ||
-      !!sortQuery ||
-      !!orderQuery ||
-      !!productCodeQuery ||
-      !!brandsFilter
-    );
-  }, [
-    titleQuery,
-    categoriesFilter,
-    sortQuery,
-    orderQuery,
-    productCodeQuery,
-    brandsFilter
-  ]);
+    return !!nameQuery || !!isFeaturedQuery || !!sortQuery || !!orderQuery;
+  }, [isFeaturedQuery, nameQuery, orderQuery, sortQuery]);
 
   return {
     page,
@@ -101,15 +67,11 @@ export function useProductTableFilters() {
     setOrderQuery,
     sortQuery,
     setSortQuery,
-    titleQuery,
-    setTitleQuery,
-    productCodeQuery,
-    setProductCodeQuery,
+    nameQuery,
+    setNameQuery,
+    isFeaturedQuery,
+    setIsFeaturedQuery,
     resetFilters,
-    isAnyFilterActive,
-    categoriesFilter,
-    setCategoriesFilter,
-    brandsFilter,
-    setBrandsFilter
+    isAnyFilterActive
   };
 }

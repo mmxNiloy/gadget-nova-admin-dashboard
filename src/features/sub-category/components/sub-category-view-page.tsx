@@ -17,9 +17,7 @@ export default async function SubcategoryViewPage({
   const categories = await getCategories();
 
   if (subCategoryId !== 'new') {
-    const data = await getCategory(subCategoryId, {
-      getSubcategories: true
-    });
+    const data = await getCategory(subCategoryId);
     // product = data.product as Product;
     if (!data.ok) {
       console.error(

@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <Link href={`/dashboard/category/${data.id}`} passHref>
+          <Link href={`/dashboard/sub-category/${data.id}`} passHref>
             <DropdownMenuItem>
               <Edit className='mr-2 h-4 w-4' /> Update
             </DropdownMenuItem>

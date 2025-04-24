@@ -11,6 +11,17 @@ export const columns: ColumnDef<ICategory>[] = [
     header: 'Name'
   },
   {
+    accessorKey: 'is_featured',
+    header: 'Is Featured?',
+    cell: ({ row }) => (
+      <TextCapsule
+        className={cn(row.original.isFeatured && 'bg-purple-500 text-white')}
+      >
+        {row.original.isFeatured ? 'Featured' : 'No'}
+      </TextCapsule>
+    )
+  },
+  {
     accessorKey: 'is_active',
     header: 'Status',
     cell: ({ row }) => (

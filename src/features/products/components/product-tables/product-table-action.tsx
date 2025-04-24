@@ -3,22 +3,11 @@
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import {
-  CATEGORY_OPTIONS,
-  useProductTableFilters
-} from './use-product-table-filters';
-import {
-  AProductKeys,
-  IBrand,
-  ICategory,
-  IProduct
-} from 'types/schema/product.shema';
+import { useProductTableFilters } from './use-product-table-filters';
+import { IBrand, ICategory, IProduct } from 'types/schema/product.shema';
 import { keyToLabel } from '@/lib/utils';
 import { DataTableFilterSelect } from '@/components/ui/table/data-table-filter-select';
-import {
-  EPaginationOrder,
-  EPaginationOrderString
-} from 'types/enum/pagination.enum';
+import { EPaginationOrderString } from 'types/enum/pagination.enum';
 import {
   Popover,
   PopoverContent,
@@ -26,6 +15,9 @@ import {
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import Icons from '@/components/ui/icons';
+import { useMemo } from 'react';
+import { EObjectStatus } from 'types/enum/object-status.enum';
+import { Label } from '@/components/ui/label';
 
 interface IProductTableActionProps {
   categories: ICategory[];
@@ -53,6 +45,45 @@ export default function ProductTableAction({
     productCodeQuery,
     setProductCodeQuery
   } = useProductTableFilters();
+
+  const sentinelProduct = useMemo(
+    (): IProduct => ({
+      id: '',
+      is_active: EObjectStatus.ACTIVE,
+      created_at: '',
+      updated_at: '',
+      title: '',
+      slug: '',
+      metaTitle: '',
+      metaDescription: '',
+      productCode: '',
+      regularPrice: '',
+      quantity: 0,
+      description: '',
+      keyFeatures: '',
+      stockAmount: 0,
+      holdAmount: 0,
+      soldAmount: 0,
+      thresholdAMount: 0,
+      thumbnail: '',
+      gallery: [],
+      specifications: '',
+      isTrending: false,
+      isFeatured: false,
+      isInStock: false,
+      trendingStartDate: '',
+      trendingEndDate: '',
+      featuredStartDate: '',
+      featuredEndDate: '',
+      category: {} as ICategory,
+      brand: {} as IBrand,
+      questions: [],
+      ratings: [],
+      productAttributes: []
+    }),
+    []
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -69,7 +100,7 @@ export default function ProductTableAction({
         align='start'
         className='w-full max-w-screen-sm md:max-w-72'
       >
-        <div className='flex flex-wrap items-center gap-4'>
+        <div className='flex flex-col gap-4'>
           <DataTableSearch
             searchKey='title'
             searchQuery={titleQuery}
@@ -102,7 +133,7 @@ export default function ProductTableAction({
           <DataTableFilterBox
             filterKey='sort'
             title='Sort'
-            options={AProductKeys.map((item) => ({
+            options={Object.keys(sentinelProduct).map((item) => ({
               value: item,
               label: keyToLabel(item)
             }))}
@@ -110,24 +141,28 @@ export default function ProductTableAction({
             filterValue={sortQuery}
           />
 
-          <DataTableFilterSelect
-            filterKey='order'
-            title='Order'
-            options={[
-              {
-                value: EPaginationOrderString.DESC,
-                label: 'Descending'
-              },
-              {
-                value: EPaginationOrderString.ASC,
-                label: 'Ascending'
+          <div className='flex flex-col gap-2'>
+            <Label>Order</Label>
+            <DataTableFilterSelect
+              key={orderQuery}
+              filterKey='order'
+              title='Order'
+              options={[
+                {
+                  value: EPaginationOrderString.DESC,
+                  label: 'Descending'
+                },
+                {
+                  value: EPaginationOrderString.ASC,
+                  label: 'Ascending'
+                }
+              ]}
+              setFilterValue={(val) =>
+                setOrderQuery(val as EPaginationOrderString)
               }
-            ]}
-            setFilterValue={(val) =>
-              setOrderQuery(val as EPaginationOrderString)
-            }
-            filterValue={orderQuery}
-          />
+              filterValue={orderQuery}
+            />
+          </div>
           <DataTableResetFilter
             isFilterActive={isAnyFilterActive}
             onReset={resetFilters}

@@ -1,6 +1,7 @@
 import {
   createSearchParamsCache,
   createSerializer,
+  parseAsBoolean,
   parseAsInteger,
   parseAsString,
   parseAsStringEnum
@@ -20,7 +21,8 @@ export const searchParams = {
   productCode: parseAsString,
   categories: parseAsString,
   brands: parseAsString,
-  status: parseAsString
+  status: parseAsString,
+  isFeatured: parseAsBoolean
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

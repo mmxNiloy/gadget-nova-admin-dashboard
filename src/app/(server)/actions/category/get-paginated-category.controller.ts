@@ -10,7 +10,8 @@ export default async function getPaginatedCategories({
   limit = 10,
   sort = 'created_at',
   order = EPaginationOrderString.DESC,
-  name = ''
+  name = '',
+  isFeatured = false
 }: ICategoryPaginationProps) {
   return await requestAPI<ICategoryListResponse>({
     endpoint: 'category/pagination',
@@ -20,7 +21,8 @@ export default async function getPaginatedCategories({
       ['limit', `${limit}`],
       ['sort', sort],
       ['order', order],
-      ['name', name]
+      ['name', name],
+      ['isFeatured', isFeatured ? '1' : '0']
     ]
   });
 }

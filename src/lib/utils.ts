@@ -92,8 +92,17 @@ export function toQueryArray({
 }
 
 export function keyToLabel(key: string) {
-  return key
-    .split(/[_$]/)
-    .map((item) => toCapCase(item))
-    .join(' ');
+  return convertToWords(key);
+}
+
+function convertToWords(input: string): string {
+  // Handle camelCase or PascalCase
+  const words = input
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // Split on lowercase-to-uppercase transitions
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle consecutive capitals (e.g., "XML")
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .split(' ');
+
+  return words.map((item) => toCapCase(item)).join(' ');
 }
