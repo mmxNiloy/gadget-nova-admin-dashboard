@@ -27,12 +27,22 @@ export async function POST(req: NextRequest) {
 
     const mHeaders = { Authorization: `Bearer ${token}` };
 
+    const formData = new FormData();
+    formData.append('title', fd.get('title') ?? '');
+    formData.append('subTitle', fd.get('subTitle') ?? '');
+    formData.append('startDate', fd.get('startDate') ?? '');
+    formData.append('endDate', fd.get('endDate') ?? '');
+    formData.append('promotionImage', fd.get('promotionImage') ?? '');
+    formData.append('product_id', fd.get('product_id') ?? '');
+
     const response = await fetch(
-      [process.env.API_BASE_URL, process.env.API_VERSION, 'products'].join('/'),
+      [process.env.API_BASE_URL, process.env.API_VERSION, 'promotions'].join(
+        '/'
+      ),
       {
         method: 'POST',
         headers: mHeaders,
-        body: fd
+        body: formData
       }
     );
 
@@ -98,14 +108,25 @@ export async function PATCH(req: NextRequest) {
 
     const mHeaders = { Authorization: `Bearer ${token}` };
 
+    const formData = new FormData();
+    formData.append('title', fd.get('title') ?? '');
+    formData.append('subTitle', fd.get('subTitle') ?? '');
+    formData.append('startDate', fd.get('startDate') ?? '');
+    formData.append('endDate', fd.get('endDate') ?? '');
+    formData.append('promotionImage', fd.get('promotionImage') ?? '');
+    formData.append('product_id', fd.get('product_id') ?? '');
+
     const response = await fetch(
-      [process.env.API_BASE_URL, process.env.API_VERSION, 'products', id].join(
-        '/'
-      ),
+      [
+        process.env.API_BASE_URL,
+        process.env.API_VERSION,
+        'promotions',
+        id
+      ].join('/'),
       {
         method: 'PATCH',
         headers: mHeaders,
-        body: fd
+        body: formData
       }
     );
 

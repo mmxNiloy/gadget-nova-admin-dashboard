@@ -8,6 +8,7 @@ import SessionError from 'types/error/SessionError';
 export async function POST(req: NextRequest) {
   try {
     const fd = await req.formData();
+    fd.delete('product_id');
 
     if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
       throw new EnvironmentError();
@@ -79,6 +80,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const fd = await req.formData();
     const id = fd.get('product_id');
+    fd.delete('product_id');
 
     if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
       throw new EnvironmentError();
