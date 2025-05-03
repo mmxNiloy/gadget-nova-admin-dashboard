@@ -3,6 +3,9 @@
 
 import { auth } from '@/lib/auth';
 import ActionResponseBuilder from 'types/ActionResponseBuilder';
+import EnvironmentError from 'types/error/EnvironmentError';
+import RefreshAccessTokenError from 'types/error/RefreshAccessTokenError';
+import SessionError from 'types/error/SessionError';
 import { IErrorResponseBase, IResponseBase } from 'types/schema/base.schema';
 
 interface RequestAPIProps extends RequestInit {
@@ -49,9 +52,7 @@ export default async function requestAPI<T = IResponseBase>({
     );
 
     if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
-      throw new Error('API URL Environment not set.', {
-        cause: 'Missing API_BASE_URL or API_VERSION in environment.'
-      });
+      throw new EnvironmentError();
     }
 
     let token = '';
@@ -59,13 +60,11 @@ export default async function requestAPI<T = IResponseBase>({
       const session = await auth();
       console.log('Session:', session);
       if (!session || !session.accessToken) {
-        throw new Error('Token not found or has expired.', {
-          cause: 'Session not found or token expired. Please login again.'
-        });
+        throw new SessionError();
       }
 
       if (session.error === 'RefreshAccessTokenError') {
-        throw new Error('Unable to refresh token. Please login again.');
+        throw new RefreshAccessTokenError();
       }
 
       token = session.accessToken;
@@ -138,7 +137,7 @@ export default async function requestAPI<T = IResponseBase>({
     return ActionResponseBuilder.error({
       error: true,
       message: 'An unknown error occured.',
-      status: 500
+      statusCode: 500
     }).toJSON();
   }
 }

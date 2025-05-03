@@ -7,6 +7,7 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import { SiteConfig } from '@/constants/site-config';
 import OrdersListingPage from '@/features/orders/components/order-listing';
+import OrderTableAction from '@/features/orders/components/order-tables/order-table-action';
 
 export const metadata = {
   title: SiteConfig.siteTitle.order.list
@@ -37,7 +38,7 @@ export default async function Page(props: pageProps) {
           </Link> */}
         </div>
         <Separator />
-        {/* <ProductTableAction /> */}
+        <OrderTableAction />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
