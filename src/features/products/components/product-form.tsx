@@ -25,13 +25,13 @@ import {
 import * as z from 'zod';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import updateProduct from '@/app/(server)/actions/product/update-product.controller';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import TiptapEditor from '@/components/NextTiptap/TiptapEditor';
+import updateProduct from '@/lib/util/update-product.util';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;

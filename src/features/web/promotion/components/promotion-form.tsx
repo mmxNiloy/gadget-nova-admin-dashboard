@@ -20,12 +20,12 @@ import { useRouter } from 'next/navigation';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import { IPromotion } from 'types/schema/promotion.schema';
 import { SiteConfig } from '@/constants/site-config';
-import updatePromotion from '@/app/(server)/actions/web/promotion/update-promotion.controller';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from '@/components/file-uploader';
 import { RangedDatePicker } from '@/components/ui/ranged-date-picker';
 import { DateRange, isDateRange } from 'react-day-picker';
 import ProductSearchCombobox from '@/components/product-search-combobox';
+import updatePromotion from '@/lib/util/update-promotion.util';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;

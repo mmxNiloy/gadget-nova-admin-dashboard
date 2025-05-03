@@ -12,8 +12,12 @@ class ActionErrorResponse {
     if (this._error?.message && typeof this._error.message === 'string') {
       eMessage = this._error?.message ?? '';
     } else {
-      // @ts-ignore
-      eMessage = this._error.message.message.join();
+      try {
+        // @ts-ignore
+        eMessage = this._error.message.message.join();
+      } catch (err) {
+        eMessage = `${this._error}`;
+      }
     }
 
     return { error: { ...this._error, message: eMessage }, ok: false };
