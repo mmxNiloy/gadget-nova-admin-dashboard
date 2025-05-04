@@ -43,7 +43,9 @@ export default function ProductTableAction({
     titleQuery,
     setTitleQuery,
     productCodeQuery,
-    setProductCodeQuery
+    setProductCodeQuery,
+    tagsQuery,
+    setTagsQuery
   } = useProductTableFilters();
 
   const sentinelProduct = useMemo(
@@ -79,7 +81,8 @@ export default function ProductTableAction({
       brand: {} as IBrand,
       questions: [],
       ratings: [],
-      productAttributes: []
+      productAttributes: [],
+      isBestSeller: false
     }),
     []
   );
@@ -129,6 +132,19 @@ export default function ProductTableAction({
             options={brands.map((br) => ({ value: br.id, label: br.name }))}
             setFilterValue={setBrandsFilter}
             filterValue={brandsFilter}
+          />
+
+          <DataTableFilterBox
+            filterKey='tags'
+            title='Tags'
+            options={[
+              { label: 'Trending', value: 'isTrending' },
+              { label: 'Featured', value: 'isFeatured' },
+              { label: 'Best Seller', value: 'isBestSeller' },
+              { label: 'In Stock', value: 'isInStock' }
+            ]}
+            setFilterValue={setTagsQuery}
+            filterValue={tagsQuery}
           />
           <DataTableFilterBox
             filterKey='sort'

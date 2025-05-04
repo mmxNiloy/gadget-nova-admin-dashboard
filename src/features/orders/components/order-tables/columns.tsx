@@ -1,16 +1,15 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
 import { IOrder } from 'types/schema/order.schema';
-import CartPreviewDialog from './cart-preview-dialog';
 import { CurrencySymbols } from '@/constants/currency-symbol';
+import TextCapsule from '@/components/text-capsule';
+import ViewAction from './view-action';
 
 export const columns: ColumnDef<IOrder>[] = [
   {
     accessorKey: 'id',
-    header: 'ID',
+    header: 'ORDER ID',
     cell: ({ row }) => (
       <p
         title={row.original.id}
@@ -21,27 +20,21 @@ export const columns: ColumnDef<IOrder>[] = [
     )
   },
   {
-    id: 'customer',
-    header: 'Customer',
-    cell: ({ row }) => row.original.user.name
-  },
-  {
-    accessorKey: 'totalPrice',
-    header: 'Amount',
+    accessorKey: 'created_at',
+    header: 'DATE',
     cell: ({ row }) => (
-      <>
-        <CurrencySymbols.default /> {row.original.totalPrice}
-      </>
+      <>{new Date(row.original.created_at).toLocaleDateString('en-GB')}</>
     )
   },
   {
-    id: 'cart',
-    header: 'Cart',
+    accessorKey: 'totalPrice',
+    header: 'TOTAL',
     cell: ({ row }) => (
-      <CartPreviewDialog
-        totalPrice={row.original.totalPrice}
-        data={row.original.carts}
-      />
+      <>
+        <CurrencySymbols.default /> {row.original.totalPrice} (
+        {row.original.cart.items.length} Product
+        {row.original.cart.items.length > 1 ? 's' : ''})
+      </>
     )
   },
   {
@@ -64,6 +57,6 @@ export const columns: ColumnDef<IOrder>[] = [
 
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <ViewAction data={row.original} />
   }
 ];

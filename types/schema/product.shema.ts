@@ -38,6 +38,7 @@ export interface IProduct {
   specifications: string;
   isTrending: boolean;
   isFeatured: boolean;
+  isBestSeller: boolean;
   isInStock: boolean;
   trendingStartDate: string;
   trendingEndDate: string;

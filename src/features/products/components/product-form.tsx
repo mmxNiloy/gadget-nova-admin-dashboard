@@ -75,6 +75,7 @@ const baseSchema = z.object({
   subcategory_id: z.string().optional().nullable(),
   isTrending: z.boolean(),
   isFeatured: z.boolean(),
+  isBestSeller: z.boolean(),
   isInStock: z.boolean(),
   trendingStartDate: z.string().optional(),
   trendingEndDate: z.string().optional(),
@@ -177,6 +178,7 @@ export default function ProductForm({
       })) ?? undefined,
     isTrending: initialData?.isTrending ?? false,
     isFeatured: initialData?.isFeatured ?? false,
+    isBestSeller: initialData?.isBestSeller ?? false,
     isInStock: initialData?.isInStock ?? true,
     trendingStartDate: initialData?.trendingStartDate,
     trendingEndDate: initialData?.trendingEndDate,
@@ -618,6 +620,40 @@ export default function ProductForm({
                 render={({ field }) => (
                   <FormItem className='space-y-3'>
                     <FormLabel>In Stock</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === 'true')
+                        }
+                        defaultValue={field.value.toString()}
+                        className='flex space-x-4'
+                        disabled={loading}
+                      >
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='true' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>Yes</FormLabel>
+                        </FormItem>
+                        <FormItem className='flex items-center space-x-2'>
+                          <FormControl>
+                            <RadioGroupItem value='false' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>No</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name='isBestSeller'
+                render={({ field }) => (
+                  <FormItem className='space-y-3'>
+                    <FormLabel>Best Seller</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={(value) =>

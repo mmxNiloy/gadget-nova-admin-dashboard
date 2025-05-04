@@ -32,6 +32,7 @@ export interface IProductPaginationProps extends Omit<IFilterBase, 'name'> {
   productCode?: string;
   categories?: string;
   brands?: string;
+  tags?: string;
 }
 
 export interface ICategoryPaginationProps extends IFilterBase {

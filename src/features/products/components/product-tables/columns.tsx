@@ -5,7 +5,7 @@ import { IProduct } from 'types/schema/product.shema';
 import TextCapsule from '@/components/text-capsule';
 import { cn } from '@/lib/utils';
 import { CurrencySymbols } from '@/constants/currency-symbol';
-import { AvatarPicker } from '@/components/ui/avatar-picker';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
@@ -13,44 +13,91 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 
 export const columns: ColumnDef<IProduct>[] = [
   {
     accessorKey: 'thumbnail',
     header: 'Image',
-    cell: ({ row }) => {
-      return (
-        <AvatarPicker
+    cell: ({ row }) => (
+      <Avatar className='h-12 w-12 rounded-lg'>
+        <AvatarImage
           src={row.original.thumbnail}
           alt={row.original.title}
-          skeleton={<Skeleton className='size-full' />}
-          variant='square'
-          readOnly
-          className='size-16 rounded-lg bg-muted/20 object-contain object-center p-0.5'
+          className='object-contain'
         />
-      );
-    }
+        <AvatarFallback>
+          <Skeleton className='h-12 w-12 rounded-lg' />
+        </AvatarFallback>
+      </Avatar>
+    )
   },
   {
     accessorKey: 'title',
-    header: 'Name',
+    header: 'Product',
     cell: ({ row }) => (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className='text-start'>
-            <p className='line-clamp-2 max-w-64 overflow-clip text-ellipsis'>
-              {row.original.title}
-            </p>
+            <div className='max-w-48'>
+              <p className='line-clamp-1 font-medium'>{row.original.title}</p>
+              <p className='text-xs text-gray-500'>
+                {row.original.productCode}
+              </p>
+            </div>
           </TooltipTrigger>
-
-          <TooltipContent>{row.original.title}</TooltipContent>
+          <TooltipContent>
+            <p>{row.original.title}</p>
+            <p className='text-xs'>Code: {row.original.productCode}</p>
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     )
   },
   {
-    accessorKey: 'productCode',
-    header: 'Product Code'
+    accessorKey: 'category',
+    header: 'Category',
+    cell: ({ row }) => (
+      <div className='max-w-32'>
+        <p className='line-clamp-1'>{row.original.category.name}</p>
+        {row.original.subCategory && (
+          <p className='line-clamp-1 text-xs text-gray-500'>
+            {row.original.subCategory.name}
+          </p>
+        )}
+      </div>
+    )
+  },
+  {
+    accessorKey: 'brand',
+    header: 'Brand',
+    cell: ({ row }) => row.original.brand.name
+  },
+  {
+    accessorKey: 'price',
+    header: 'Price',
+    cell: ({ row }) => (
+      <div className='text-nowrap'>
+        <p>
+          <CurrencySymbols.default /> {row.original.regularPrice}
+        </p>
+        {row.original.discountPrice && (
+          <p className='text-xs text-green-600'>
+            <CurrencySymbols.default /> {row.original.discountPrice}
+          </p>
+        )}
+      </div>
+    )
+  },
+  {
+    accessorKey: 'stock',
+    header: 'Stock',
+    cell: ({ row }) => (
+      <div className='text-center'>
+        <p>{row.original.stockAmount}</p>
+        <p className='text-xs text-gray-500'>Hold: {row.original.holdAmount}</p>
+      </div>
+    )
   },
   {
     accessorKey: 'isInStock',
@@ -62,104 +109,40 @@ export const columns: ColumnDef<IProduct>[] = [
           row.original.isInStock && 'bg-green-500'
         )}
       >
-        {row.original.isInStock ? 'In-stock' : 'Out-of-stock'}
+        {row.original.isInStock ? 'In Stock' : 'Out of Stock'}
       </TextCapsule>
     )
   },
   {
-    accessorKey: 'category',
-    header: 'Category',
-    cell: ({ row }) => row.original.category.name
-  },
-  {
-    accessorKey: 'brand',
-    header: 'Brand',
-    cell: ({ row }) => row.original.brand.name
-  },
-  {
-    accessorKey: 'regularPrice',
-    header: () => <p className='text-nowrap'>Regular Price</p>,
+    accessorKey: 'tags',
+    header: 'Tags',
     cell: ({ row }) => (
-      <p className='text-nowrap'>
-        <CurrencySymbols.default /> {row.original.regularPrice}
-      </p>
+      <div className='flex flex-wrap gap-1'>
+        {row.original.isFeatured && (
+          <Badge variant='secondary' className='bg-purple-100 text-purple-800'>
+            Featured
+          </Badge>
+        )}
+        {row.original.isTrending && (
+          <Badge
+            variant='secondary'
+            className='bg-fuchsia-100 text-fuchsia-800'
+          >
+            Trending
+          </Badge>
+        )}
+        {row.original.isBestSeller && (
+          <Badge variant='secondary' className='bg-yellow-100 text-yellow-800'>
+            Best Seller
+          </Badge>
+        )}
+      </div>
     )
   },
   {
-    accessorKey: 'discountPrice',
-    header: () => <p className='text-nowrap'>Discount Price</p>,
-    cell: ({ row }) =>
-      row.original.discountPrice ? (
-        <p className='text-nowrap'>
-          <CurrencySymbols.default /> {row.original.discountPrice}
-        </p>
-      ) : (
-        'N/A'
-      )
-  },
-  // {
-  //   accessorKey: 'isFeatured',
-  //   header: 'Featured?',
-  //   cell: ({ row }) => (
-  //     <TextCapsule
-  //       className={row.original.isFeatured ? 'bg-purple-500 text-white' : ''}
-  //     >
-  //       {row.original.isFeatured ? 'Featured' : 'N/A'}
-  //     </TextCapsule>
-  //   )
-  // },
-  // {
-  //   accessorKey: 'featuredStartDate',
-  //   header: () => <p className='text-nowrap'>Featured Start Date</p>,
-  //   cell: ({ row }) =>
-  //     new Date(row.original.featuredStartDate).toLocaleDateString('en-GB')
-  // },
-  // {
-  //   accessorKey: 'featuredEndDate',
-  //   header: () => <p className='text-nowrap'>Featured End Date</p>,
-
-  //   cell: ({ row }) =>
-  //     new Date(row.original.featuredStartDate).toLocaleDateString('en-GB')
-  // },
-  // {
-  //   accessorKey: 'isTrending',
-  //   header: 'Trending?',
-  //   cell: ({ row }) => (
-  //     <TextCapsule
-  //       className={row.original.isFeatured ? 'bg-fuchsia-500 text-white' : ''}
-  //     >
-  //       {row.original.isTrending ? 'Trending' : 'N/A'}
-  //     </TextCapsule>
-  //   )
-  // },
-  // {
-  //   accessorKey: 'trendingStartDate',
-  //   header: () => <p className='text-nowrap'>Trending Start Date</p>,
-  //   cell: ({ row }) =>
-  //     new Date(row.original.trendingStartDate).toLocaleDateString('en-GB')
-  // },
-  // {
-  //   accessorKey: 'trendingEndDate',
-  //   header: () => <p className='text-nowrap'>Trending End Date</p>,
-
-  //   cell: ({ row }) =>
-  //     new Date(row.original.trendingEndDate).toLocaleDateString('en-GB')
-  // },
-  {
-    accessorKey: 'stockAmount',
-    header: 'Stock'
-  },
-  {
-    accessorKey: 'holdAmount',
-    header: 'Hold'
-  },
-  {
     accessorKey: 'soldAmount',
-    header: 'Sold'
-  },
-  {
-    accessorKey: 'thresholdAMount',
-    header: 'Threshold'
+    header: 'Sold',
+    cell: ({ row }) => row.original.soldAmount
   },
   {
     id: 'actions',
