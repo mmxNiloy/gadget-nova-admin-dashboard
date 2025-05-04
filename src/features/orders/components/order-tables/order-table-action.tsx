@@ -49,7 +49,21 @@ export default function OrderTableAction() {
         email: '',
         role: ''
       },
-      carts: []
+      cart: {
+        id: '',
+        is_active: EObjectStatus.ACTIVE,
+        created_at: '',
+        updated_at: '',
+        items: []
+      },
+      shippingInfo: {
+        first_name: '',
+        last_name: '',
+        company_name: '',
+        email: '',
+        phone: '',
+        address: ''
+      }
     }),
     []
   );
