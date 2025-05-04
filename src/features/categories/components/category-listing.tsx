@@ -12,7 +12,7 @@ export default async function CategoryListingPage() {
   const name = searchParamsCache.get('name') ?? '';
   const sort = searchParamsCache.get('sort') as keyof ICategory;
   const order = searchParamsCache.get('order') ?? EPaginationOrderString.DESC;
-  const isFeatured = searchParamsCache.get('isFeatured') ?? false;
+  const isFeatured = searchParamsCache.get('isFeatured') ?? undefined;
   const pageLimit = searchParamsCache.get('limit');
 
   const filters: ICategoryPaginationProps = {

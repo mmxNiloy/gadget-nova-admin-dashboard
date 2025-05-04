@@ -11,7 +11,7 @@ export default async function getPaginatedCategories({
   sort = 'created_at',
   order = EPaginationOrderString.DESC,
   name = '',
-  isFeatured = false
+  isFeatured
 }: ICategoryPaginationProps) {
   return await requestAPI<ICategoryListResponse>({
     endpoint: 'category/pagination',
@@ -22,7 +22,7 @@ export default async function getPaginatedCategories({
       ['sort', sort],
       ['order', order],
       ['name', name],
-      ['isFeatured', isFeatured ? '1' : '0']
-    ]
+      isFeatured !== undefined ? ['isFeatured', isFeatured ? '1' : '0'] : []
+    ].filter((item) => item.length > 1)
   });
 }
