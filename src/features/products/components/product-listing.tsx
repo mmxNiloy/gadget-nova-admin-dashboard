@@ -14,6 +14,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
   const page = searchParamsCache.get('page');
   const pageLimit = searchParamsCache.get('limit');
   const sort = searchParamsCache.get('sort') as keyof IProduct;
+  const tags = searchParamsCache.get('tags') ?? '';
   const order = searchParamsCache.get('order') ?? EPaginationOrderString.DESC;
   const title = searchParamsCache.get('title') ?? '';
   const productCode = searchParamsCache.get('productCode') ?? '';
@@ -28,7 +29,8 @@ export default async function ProductListingPage({}: ProductListingPage) {
     title,
     productCode,
     categories,
-    brands
+    brands,
+    tags
   };
 
   const prodData = await getPaginatedProducts({ ...filters });

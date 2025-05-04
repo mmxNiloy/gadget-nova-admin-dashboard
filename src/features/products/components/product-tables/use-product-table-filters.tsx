@@ -17,6 +17,17 @@ export function useProductTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
+
+  const [tagsQuery, setTagsQuery] = useQueryState(
+    'tags',
+    searchParams.tags
+      .withOptions({
+        shallow: false,
+        throttleMs: 1000
+      })
+      .withDefault('')
+  );
+
   const [orderQuery, setOrderQuery] = useQueryState(
     'order',
     searchParams.order
@@ -54,6 +65,7 @@ export function useProductTableFilters() {
     setProductCodeQuery(null);
     setCategoriesFilter(null);
     setBrandsFilter(null);
+    setTagsQuery(null);
 
     setPage(1);
   }, [
@@ -63,7 +75,8 @@ export function useProductTableFilters() {
     setProductCodeQuery,
     setCategoriesFilter,
     setBrandsFilter,
-    setPage
+    setPage,
+    setTagsQuery
   ]);
 
   const isAnyFilterActive = useMemo(() => {
@@ -73,7 +86,8 @@ export function useProductTableFilters() {
       !!sortQuery ||
       !!orderQuery ||
       !!productCodeQuery ||
-      !!brandsFilter
+      !!brandsFilter ||
+      !!tagsQuery
     );
   }, [
     titleQuery,
@@ -81,7 +95,8 @@ export function useProductTableFilters() {
     sortQuery,
     orderQuery,
     productCodeQuery,
-    brandsFilter
+    brandsFilter,
+    tagsQuery
   ]);
 
   return {
@@ -100,6 +115,8 @@ export function useProductTableFilters() {
     categoriesFilter,
     setCategoriesFilter,
     brandsFilter,
-    setBrandsFilter
+    setBrandsFilter,
+    tagsQuery,
+    setTagsQuery
   };
 }

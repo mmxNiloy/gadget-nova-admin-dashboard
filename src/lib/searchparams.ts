@@ -13,6 +13,7 @@ export const searchParams = {
   limit: parseAsInteger.withDefault(10),
   q: parseAsString,
   sort: parseAsString,
+  tags: parseAsString,
   order: parseAsStringEnum<EPaginationOrderString>(
     Object.values(EPaginationOrderString)
   ).withDefault(EPaginationOrderString.DESC),

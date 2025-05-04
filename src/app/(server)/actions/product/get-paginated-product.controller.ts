@@ -14,7 +14,8 @@ export default async function getPaginatedProducts({
   title = '',
   productCode = '',
   categories = '',
-  brands = ''
+  brands = '',
+  tags = ''
 }: IProductPaginationProps) {
   return await requestAPI<IProductListResponse>({
     endpoint: 'products/pagination',
@@ -27,8 +28,13 @@ export default async function getPaginatedProducts({
       ['order', order],
       ['title', title],
       ['productCode', productCode],
+      ...toQueryArray({ query: tags, paramName: 'tags' }).map(([_, param]) => [
+        param,
+        '1'
+      ]),
       ...toQueryArray({ query: categories, paramName: 'category_ids' }),
       ...toQueryArray({ query: brands, paramName: 'brand_ids' })
     ]
   });
 }
+``;

@@ -24,7 +24,8 @@ export interface IOrder {
   status: TOrderStatus;
   totalPrice: string;
   user: IUserBase;
-  carts: ICart[];
+  cart: ICart;
+  shippingInfo: IShippingInfo;
 }
 
 export interface IOrderResponse extends IResponseBase {
@@ -33,4 +34,14 @@ export interface IOrderResponse extends IResponseBase {
 
 export interface IOrderListResponse extends IPaginationBase {
   payload: IOrder[];
+}
+
+export interface IShippingInfo {
+  first_name: string;
+  last_name: string;
+  company_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  additional_info?: string;
 }
