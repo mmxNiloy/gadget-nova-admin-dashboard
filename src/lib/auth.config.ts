@@ -59,7 +59,8 @@ const authConfig = {
           ...mData.payload,
           accessToken: mData.payload.access_token,
           refreshToken: mData.payload.refresh_token,
-          expiresAt: Math.floor(new Date(mData.payload.created_at) / 1000) + 60 // Assuming 1 minutes expiry
+          expiresAt:
+            Math.floor(new Date(mData.payload.created_at) / 1000) + 15 * 60 // Assuming 15 minutes expiry
         };
       }
     })
