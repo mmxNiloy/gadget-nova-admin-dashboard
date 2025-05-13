@@ -68,21 +68,21 @@ export default async function middleware(req: NextRequest) {
     cookieStore.set(accessTokenKey, res.payload.access_token, {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       maxAge: 15 * 60
     });
 
     cookieStore.set(refreshTokenKey, res.payload.refresh_token, {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 // 7 days (refresh token expiry)
     });
 
     cookieStore.set(accessTokenExpiresAtKey, expiresAt.toString(), {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production'
+      secure: false
     });
 
     return NextResponse.next();

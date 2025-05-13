@@ -56,27 +56,27 @@ export default async function signIn({
     cookieStore.set(sessionKey, jwtData, {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production'
+      secure: false
     });
 
     // Store the access token
     cookieStore.set(accessTokenKey, res.data.payload.access_token, {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       maxAge: 15 * 60
     });
 
     cookieStore.set(accessTokenExpiresAtKey, expiresAt.toString(), {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production'
+      secure: false
     });
 
     cookieStore.set(refreshTokenKey, res.data.payload.refresh_token, {
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 // 7 days (refresh token expiry)
     });
 
