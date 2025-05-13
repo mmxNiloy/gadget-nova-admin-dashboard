@@ -32,7 +32,9 @@ export default async function Page() {
           <p className='text-h6 font-semibold'>Sign In</p>
 
           {/* Login form */}
-          <Suspense fallback={<Skeleton className='h-3/5 w-full max-w-sm' />}>
+          <Suspense
+            fallback={<Skeleton className='h-3/5 w-72 md:w-80 lg:w-96' />}
+          >
             <LoginForm />
           </Suspense>
 

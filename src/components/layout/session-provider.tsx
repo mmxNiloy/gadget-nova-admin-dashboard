@@ -1,3 +1,4 @@
+'use client';
 import getSession from '@/app/(server)/actions/auth/get-session.controller';
 import React, {
   createContext,

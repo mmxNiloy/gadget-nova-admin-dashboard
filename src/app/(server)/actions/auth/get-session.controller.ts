@@ -7,6 +7,7 @@ import { IUserAuth } from 'types/schema/user.schema';
 
 export default async function getSession() {
   try {
+    console.debug('[Start] Get session');
     const sessionKey = process.env.COOKIE_SESSION;
     const authTokenSecret = process.env.AUTH_SECRET;
 
@@ -15,12 +16,21 @@ export default async function getSession() {
         'Cannot find auth token key and auth token secret in the environment.'
       );
     }
+
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get(sessionKey);
-    if (!sessionCookie) return undefined;
+    if (!sessionCookie) {
+      console.debug('[End] Get session > No session cookie found');
+      return undefined;
+    }
 
-    return jwt.verify(sessionCookie.value, authTokenSecret) as IUserAuth;
+    const sess = jwt.verify(sessionCookie.value, authTokenSecret) as IUserAuth;
+
+    console.debug('[End] Get session > Session data:', sess);
+
+    return sess;
   } catch (error) {
+    console.debug('[Error] Get session error', error);
     return undefined;
   }
 }
