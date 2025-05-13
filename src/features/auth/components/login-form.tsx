@@ -1,5 +1,6 @@
 'use client';
 
+import signIn from '@/app/(server)/actions/auth/sign-in.controller';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -13,7 +14,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useTransition } from 'react';
@@ -44,17 +44,9 @@ export default function LoginForm() {
   const onSubmit = useCallback(
     async (data: FormType) => {
       startTransition(async () => {
-        const result = await signIn('credentials', {
-          ...data,
-          redirect: false
-        });
+        const result = await signIn(data);
 
-        console.log('Credentials Auth Response:', result);
-        if (!result) {
-          toast.error(
-            'Connection failed. Please check your internet connection.'
-          );
-        } else if (result.error) {
+        if (!result.ok) {
           toast.error('Invalid Credeintials!');
         } else {
           toast.success('Signed In Successfully!');

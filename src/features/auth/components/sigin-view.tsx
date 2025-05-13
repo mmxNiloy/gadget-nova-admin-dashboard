@@ -4,7 +4,6 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { StarIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import UserAuthForm from './user-auth-form';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -47,7 +46,7 @@ export default function SignInViewPage({ stars }: { stars: number }) {
               Enter your email below to create your account
             </p>
           </div>
-          <UserAuthForm />
+          {/* <UserAuthForm /> */}
           <p className='px-8 text-center text-sm text-muted-foreground'>
             By clicking continue, you agree to our{' '}
             <Link

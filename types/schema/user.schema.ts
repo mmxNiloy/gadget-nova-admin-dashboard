@@ -20,6 +20,8 @@ export interface IUserAuth extends IUserBase {
   reset_password_token: string;
   access_token: string;
   expires_at?: string;
+  expiresAt?: number;
+  image?: string;
 }
 
 export interface IUserResponse extends IResponseBase {

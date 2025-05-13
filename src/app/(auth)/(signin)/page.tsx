@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import Icons from '@/components/ui/icons';
 import Image from 'next/image';
 import LoginForm from '@/features/auth/components/login-form';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -30,7 +32,9 @@ export default async function Page() {
           <p className='text-h6 font-semibold'>Sign In</p>
 
           {/* Login form */}
-          <LoginForm />
+          <Suspense fallback={<Skeleton className='h-3/5 w-full max-w-sm' />}>
+            <LoginForm />
+          </Suspense>
 
           {/* Registration section */}
           <p className='text-xs text-primary-foreground sm:text-sm'>

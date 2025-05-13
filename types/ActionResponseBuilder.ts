@@ -20,7 +20,16 @@ class ActionErrorResponse {
       }
     }
 
-    return { error: { ...this._error, message: eMessage }, ok: false };
+    return {
+      error: {
+        message: eMessage,
+        statusCode: this._error?.statusCode ?? 500,
+        error: true,
+        timestamp: this._error?.timestamp ?? new Date().toString(),
+        path: this._error?.path
+      } satisfies IErrorResponseBase,
+      ok: false as false
+    };
   }
 }
 
@@ -31,7 +40,7 @@ class ActionSuccessResponse<T = IResponseBase> {
   }
 
   public toJSON() {
-    return { data: { ...this._data }, ok: true };
+    return { data: { ...this._data }, ok: true as true };
   }
 }
 

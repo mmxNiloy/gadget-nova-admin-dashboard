@@ -1,12 +1,10 @@
-//@ts-nocheck
 'use server';
 
-import { auth } from '@/lib/auth';
 import ActionResponseBuilder from 'types/ActionResponseBuilder';
 import EnvironmentError from 'types/error/EnvironmentError';
-import RefreshAccessTokenError from 'types/error/RefreshAccessTokenError';
 import SessionError from 'types/error/SessionError';
 import { IErrorResponseBase, IResponseBase } from 'types/schema/base.schema';
+import getSession from './auth/get-session.controller';
 
 interface RequestAPIProps extends RequestInit {
   method:
@@ -57,17 +55,13 @@ export default async function requestAPI<T = IResponseBase>({
 
     let token = '';
     if (authenticate) {
-      const session = await auth();
+      const session = await getSession();
       console.log('Session:', session);
-      if (!session || !session.accessToken) {
+      if (!session) {
         throw new SessionError();
       }
 
-      if (session.error === 'RefreshAccessTokenError') {
-        throw new RefreshAccessTokenError();
-      }
-
-      token = session.accessToken;
+      token = session.access_token;
     }
 
     const mHeaders = asFormData

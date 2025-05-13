@@ -39,17 +39,35 @@ import {
   CreditCard,
   LogOut
 } from 'lucide-react';
-import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { SiteEmblem, SiteLogo } from '@/constants/site-config';
+import { useCallback, useTransition } from 'react';
+import signOut from '@/app/(server)/actions/auth/sign-out.controller';
+import { toast } from 'sonner';
+import useSession from '@/hooks/use-session';
 
 export default function AppSidebar() {
-  const { data: session } = useSession();
+  const { session } = useSession();
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
+
+  const router = useRouter();
+  const [loading, startSignOut] = useTransition();
+
+  const handleSignOut = useCallback(() => {
+    startSignOut(async () => {
+      const res = await signOut();
+      if (res.ok) {
+        toast.success('Signed out successfully');
+        router.replace('/');
+      } else {
+        toast.error('Failed to sign out.');
+      }
+    });
+  }, [router]);
 
   return (
     <Sidebar collapsible='icon'>
@@ -139,19 +157,19 @@ export default function AppSidebar() {
                 >
                   <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage
-                      src={session?.user?.image || ''}
-                      alt={session?.user?.name || ''}
+                      src={session?.image || ''}
+                      alt={session?.name || ''}
                     />
                     <AvatarFallback className='rounded-lg'>
-                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
+                      {session?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
                     <span className='truncate font-semibold'>
-                      {session?.user?.name || ''}
+                      {session?.name || ''}
                     </span>
                     <span className='truncate text-xs'>
-                      {session?.user?.email || ''}
+                      {session?.email || ''}
                     </span>
                   </div>
                   <ChevronsUpDown className='ml-auto size-4' />
@@ -167,21 +185,20 @@ export default function AppSidebar() {
                   <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                     <Avatar className='h-8 w-8 rounded-lg'>
                       <AvatarImage
-                        src={session?.user?.image || ''}
-                        alt={session?.user?.name || ''}
+                        src={session?.image || ''}
+                        alt={session?.name || ''}
                       />
                       <AvatarFallback className='rounded-lg'>
-                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
-                          'CN'}
+                        {session?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
                       </AvatarFallback>
                     </Avatar>
                     <div className='grid flex-1 text-left text-sm leading-tight'>
                       <span className='truncate font-semibold'>
-                        {session?.user?.name || ''}
+                        {session?.name || ''}
                       </span>
                       <span className='truncate text-xs'>
                         {' '}
-                        {session?.user?.email || ''}
+                        {session?.email || ''}
                       </span>
                     </div>
                   </div>
@@ -203,7 +220,7 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem disabled={loading} onClick={handleSignOut}>
                   <LogOut />
                   Log out
                 </DropdownMenuItem>

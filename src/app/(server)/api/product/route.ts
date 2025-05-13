@@ -1,30 +1,33 @@
-import { auth } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import ActionResponseBuilder from 'types/ActionResponseBuilder';
 import EnvironmentError from 'types/error/EnvironmentError';
-import RefreshAccessTokenError from 'types/error/RefreshAccessTokenError';
 import SessionError from 'types/error/SessionError';
+import getSession from '../../actions/auth/get-session.controller';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
     const fd = await req.formData();
+
     fd.delete('product_id');
 
-    if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
+    const accessTokenKey = process.env.COOKIE_ACCESS_TOKEN;
+    if (
+      !process.env.API_BASE_URL ||
+      !process.env.API_VERSION ||
+      !accessTokenKey
+    ) {
       throw new EnvironmentError();
     }
 
     let token = '';
-    const session = await auth();
-    if (!session || !session.accessToken) {
+    const session = await getSession();
+    if (!session) {
       throw new SessionError();
     }
 
-    if (session.error === 'RefreshAccessTokenError') {
-      throw new RefreshAccessTokenError();
-    }
-
-    token = session.accessToken;
+    const cookieStore = await cookies();
+    token = cookieStore.get(accessTokenKey)?.value ?? '';
 
     const mHeaders = { Authorization: `Bearer ${token}` };
 
@@ -82,21 +85,24 @@ export async function PATCH(req: NextRequest) {
     const id = fd.get('product_id');
     fd.delete('product_id');
 
-    if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
+    const accessTokenKey = process.env.COOKIE_ACCESS_TOKEN;
+    if (
+      !process.env.API_BASE_URL ||
+      !process.env.API_VERSION ||
+      !accessTokenKey
+    ) {
       throw new EnvironmentError();
     }
 
     let token = '';
-    const session = await auth();
-    if (!session || !session.accessToken) {
+    const session = await getSession();
+    if (!session) {
       throw new SessionError();
     }
 
-    if (session.error === 'RefreshAccessTokenError') {
-      throw new RefreshAccessTokenError();
-    }
+    const cookieStore = await cookies();
 
-    token = session.accessToken;
+    token = cookieStore.get(accessTokenKey)?.value ?? '';
 
     const mHeaders = { Authorization: `Bearer ${token}` };
 
