@@ -2,7 +2,6 @@
 // auth.ts
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
-import { cookies } from 'next/headers';
 import { IUserAuthResponse } from 'types/schema/user.schema';
 
 const authConfig = {
@@ -47,20 +46,21 @@ const authConfig = {
           mData
         );
 
-        const mCookies = await cookies();
-        if (process.env.COOKIE_AUTH_TOKEN) {
-          mCookies.set(
-            process.env.COOKIE_AUTH_TOKEN,
-            mData.payload.access_token
-          );
-        }
+        // const mCookies = await cookies();
+        // if (process.env.COOKIE_AUTH_TOKEN) {
+        //   mCookies.set(
+        //     process.env.COOKIE_AUTH_TOKEN,
+        //     mData.payload.access_token
+        //   );
+        // }
 
         return {
           ...mData.payload,
           accessToken: mData.payload.access_token,
           refreshToken: mData.payload.refresh_token,
           expiresAt:
-            Math.floor(new Date(mData.payload.created_at) / 1000) + 15 * 60 // Assuming 15 minutes expiry
+            Math.floor(new Date(mData.payload.created_at).getTime() / 1000) +
+            15 * 60 // Assuming 15 minutes expiry
         };
       }
     })
@@ -94,7 +94,8 @@ const authConfig = {
         condition: now + 60 >= token.expiresAt,
         fullCondition: token.expiresAt && now + 60 >= token.expiresAt
       });
-      if (token.expiresAt && now + 60 >= token.expiresAt) {
+      const buffer = 60 + Math.floor(Math.random() * 10);
+      if (token.expiresAt && now + buffer >= token.expiresAt) {
         console.log('[Auth Config] JWT Callback: Trying to refresh token');
         try {
           console.log('Trying to refresh token');
@@ -113,7 +114,13 @@ const authConfig = {
             '[Auth Config] JWT Callback > Token refresh failed:',
             error
           );
-          return { ...token, error: 'RefreshAccessTokenError' };
+
+          return {
+            ...token,
+            accessToken: undefined,
+            refreshToken: undefined,
+            error: 'RefreshAccessTokenError'
+          };
         }
       }
 
@@ -121,51 +128,80 @@ const authConfig = {
       return token;
     },
     async session({ session, token }) {
+      console.log('[Auth Config] Session Callback: Start', { token, session });
+
+      if (token.error === 'RefreshAccessTokenError') {
+        // Invalidate session to force sign-out
+        console.log(
+          '[Auth Config] Session Callback: Invalidating session due to refresh error'
+        );
+        session.user = undefined;
+        session.expires = undefined;
+        session.sessionToken = undefined;
+        session.userId = undefined;
+        return session; // Returning null invalidates the session
+      }
+
       session.accessToken = token.accessToken;
       session.error = token.error;
+
+      console.log('[Auth Config] Session Callback: End', { session });
+
       return session;
     }
   },
   pages: {
-    signIn: '/'
+    signIn: '/signin'
   }
 } satisfies NextAuthConfig;
 
+let refreshing: Promise<any> | null = null;
+
 async function refreshAccessToken(refreshToken: string, accessToken: string) {
-  console.log('[Auth Config] Refresh Token > Data >', {
-    accessToken,
-    refreshToken
-  });
+  if (!refreshing) {
+    refreshing = (async () => {
+      try {
+        console.log('[Auth Config] Refresh Token > Data >', {
+          accessToken,
+          refreshToken
+        });
 
-  const response = await fetch(
-    [
-      process.env.API_BASE_URL,
-      process.env.API_VERSION,
-      'auth',
-      'refresh-token'
-    ].join('/'),
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      },
-      body: JSON.stringify({ refreshToken })
-    }
-  );
+        const response = await fetch(
+          [
+            process.env.API_BASE_URL,
+            process.env.API_VERSION,
+            'auth',
+            'refresh-token'
+          ].join('/'),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ refreshToken })
+          }
+        );
 
-  if (!response.ok) {
-    const data = await response.json();
-    console.log('Refresh Token Provider > Refresh Token Error >', data);
-    throw new Error('Failed to refresh token');
+        if (!response.ok) {
+          const data = await response.json();
+          console.log('Refresh Token Provider > Refresh Token Error >', data);
+          throw new Error('Failed to refresh token');
+        }
+
+        const data = await response.json();
+        return {
+          accessToken: data.payload.access_token,
+          refreshToken: data.payload.refresh_token || refreshToken,
+          expiresAt: Math.floor(Date.now() / 1000) + 1800
+        };
+      } finally {
+        refreshing = null;
+      }
+    })();
   }
 
-  const data = await response.json();
-  return {
-    accessToken: data.payload.access_token,
-    refreshToken: data.payload.refresh_token || refreshToken, // Keep old refresh token if new one isn't provided
-    expiresAt: Math.floor(Date.now() / 1000) + 600 // 10 minutes
-  };
+  return refreshing;
 }
 
 export default authConfig;
