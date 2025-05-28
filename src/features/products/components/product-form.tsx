@@ -268,9 +268,11 @@ export default function ProductForm({
 
   const filteredBrands = useMemo(() => {
     return brands.filter((brn) =>
-      brn.categories?.find((cat) => cat.id === subcategoryValue)
+      brn.categories?.find(
+        (cat) => cat.id === subcategoryValue || cat.id === categoryValue
+      )
     );
-  }, [brands, subcategoryValue]);
+  }, [brands, subcategoryValue, categoryValue]);
 
   // Reset subcategory and brand when category changes
   useEffect(() => {
@@ -544,9 +546,7 @@ export default function ProductForm({
                       <LabelledComboBox
                         key={`Brand-${field.value}`}
                         disabled={
-                          loading ||
-                          !subcategoryValue ||
-                          filteredBrands.length < 1
+                          loading || !categoryValue || filteredBrands.length < 1
                         }
                         className='w-full'
                         label='Select Brand'
@@ -647,7 +647,7 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name='isBestSeller'
