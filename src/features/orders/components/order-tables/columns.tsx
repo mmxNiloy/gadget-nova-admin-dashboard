@@ -38,13 +38,39 @@ export const columns: ColumnDef<IOrder>[] = [
     )
   },
   {
+    accessorKey: 'paymentMethod',
+    header: 'Payment Method',
+    cell: ({ row }) => (
+      <TextCapsule
+        className={cn(
+          'bg-green-500 text-white',
+          row.original.paymentMethod === 'BKASH' && 'bg-red-400',
+          row.original.paymentMethod === 'SSL' && 'bg-blue-500'
+        )}
+      >
+        {row.original.paymentMethod === 'BKASH' ? (
+          'BKash'
+        ) : row.original.paymentMethod === 'SSL' ? (
+          'SSLCommerz'
+        ) : (
+          <>
+            <span className='hidden md:inline'>Cash on Delivery</span>
+            <span className='md:hidden'>Cash</span>
+          </>
+        )}
+      </TextCapsule>
+    )
+  },
+  {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
       <TextCapsule
         className={cn(
           'bg-red-500 text-white',
-          row.original.status === 'Confirmed' && 'bg-purple-500',
+          (row.original.status === 'Confirmed' ||
+            row.original.status === 'Paid') &&
+            'bg-purple-500',
           row.original.status === 'Delivered' && 'bg-green-500',
           row.original.status === 'On The Way' && 'bg-blue-500',
           row.original.status === 'Pending' && 'bg-yellow-500'

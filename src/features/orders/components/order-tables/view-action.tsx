@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -5,7 +6,7 @@ import {
   DialogContent,
   DialogTrigger
 } from '@/components/ui/dialog';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -20,17 +21,28 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Package, Truck } from 'lucide-react';
+import { Package, Rocket, Truck } from 'lucide-react';
 import { CurrencySymbols } from '@/constants/currency-symbol';
 import { IOrder } from 'types/schema/order.schema';
+import ActionsForm from './actions-form';
+import { useRouter } from 'next/navigation';
 
 interface IViewActionProps {
   data: IOrder;
 }
 
 export default function ViewAction({ data }: IViewActionProps) {
+  const [open, setOpen] = React.useState(false);
+
+  const router = useRouter();
+
+  const handleStatusUpdate = useCallback(() => {
+    setOpen(false);
+    router.refresh();
+  }, [router]);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant='link'
@@ -83,6 +95,13 @@ export default function ViewAction({ data }: IViewActionProps) {
                     </p>
                   </div>
                 </div>
+
+                <div className='flex items-center gap-2'>
+                  <Rocket className='h-5 w-5 text-orange-500' />
+                  <p className='text-xl font-semibold'>Actions</p>
+                </div>
+
+                <ActionsForm data={data} onSuccess={handleStatusUpdate} />
               </div>
             </div>
           </div>
@@ -166,7 +185,7 @@ export default function ViewAction({ data }: IViewActionProps) {
                                   {item.product.title}
                                 </p>
                                 <p className='text-xs text-gray-500'>
-                                  {item.product.productCode}
+                                  Product Code: {item.product.productCode}
                                 </p>
                               </div>
                             </div>
