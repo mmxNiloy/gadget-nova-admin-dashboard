@@ -62,8 +62,11 @@ export default function OrderTableAction() {
         company_name: '',
         email: '',
         phone: '',
-        address: ''
-      }
+        address: '',
+        district_id: ''
+      },
+      delivery_charge: '',
+      payments: []
     }),
     []
   );
