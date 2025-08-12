@@ -3,6 +3,7 @@ import { IUserBase } from './user.schema';
 import { IResponseBase } from './base.schema';
 import { IPaginationBase } from './pagination.schema';
 import { ICart } from './cart.schema';
+import { PaymentMethod } from '@/constants/site-payment-methods';
 
 export type TOrderStatus =
   | 'Pending'
@@ -13,8 +14,8 @@ export type TOrderStatus =
 export const OrderStatusValues: TOrderStatus[] = [
   'Pending',
   'Confirmed',
-  'On The Way',
   'Delivered',
+  'On The Way',
   'Paid'
 ];
 
@@ -31,8 +32,9 @@ export interface IOrder {
   totalPrice: string;
   user: IUserBase;
   cart: ICart;
-  paymentMethod?: 'COD' | 'BKASH' | 'SSL';
   shippingInfo: IShippingInfo;
+  delivery_charge: string;
+  payments: IPayment[];
 }
 
 export interface IOrderResponse extends IResponseBase {
@@ -51,4 +53,39 @@ export interface IShippingInfo {
   phone: string;
   address: string;
   additional_info?: string;
+  district_id: string;
+}
+
+export interface IDistrict {
+  id: string;
+  name: string;
+  is_active: number;
+  delivery_charge: string;
+}
+
+export interface IDistrictListResponse extends IResponseBase {
+  payload: IDistrict[];
+}
+
+export interface IPayment {
+  id: string;
+  is_active: number;
+  created_by: string;
+  created_user_name: string;
+  updated_by?: string;
+  updated_user_name?: string;
+  created_at: string;
+  updated_at?: string;
+  paymentMethod: PaymentMethod;
+  providerResponse: string;
+  paymentId?: string;
+  paymentStatus: string;
+  executeResponse?: string;
+  payerReference?: string;
+  paymentTime?: string;
+  paidAmount?: string;
+  orderAmount: string;
+  transactionId?: string;
+  transactionStatus?: string;
+  merchantInvoiceNumber?: string;
 }

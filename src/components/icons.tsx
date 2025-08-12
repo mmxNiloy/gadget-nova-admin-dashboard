@@ -25,6 +25,7 @@ import {
   Pizza,
   Plus,
   Settings,
+  Store,
   SunMedium,
   SVGAttributes,
   TagIcon,
@@ -80,6 +81,7 @@ const CategoryIcon = React.forwardRef<SVGElement, SVGAttributes>(
 CategoryIcon.displayName = 'CategoryIcon';
 
 export const Icons = {
+  shop: Store,
   tag: TagIcon,
   globe: GlobeIcon,
   package: PackageIcon,
