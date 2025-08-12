@@ -47,7 +47,9 @@ export default function OrderTableAction() {
         is_active: 0,
         name: '',
         email: '',
-        role: ''
+        role: '',
+        phone: '',
+        is_verified: false
       },
       cart: {
         id: '',
