@@ -21,11 +21,12 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Package, Rocket, Truck } from 'lucide-react';
+import { CreditCard, Info, Package, Rocket, Truck } from 'lucide-react';
 import { CurrencySymbols } from '@/constants/currency-symbol';
 import { IOrder } from 'types/schema/order.schema';
 import ActionsForm from './actions-form';
 import { useRouter } from 'next/navigation';
+import { getPaymentMethodTitle } from '@/constants/site-payment-methods';
 
 interface IViewActionProps {
   data: IOrder;
@@ -52,11 +53,11 @@ export default function ViewAction({ data }: IViewActionProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='max-w-4xl p-0'>
+      <DialogContent className='max-w-4xl overflow-x-clip overflow-y-scroll p-0'>
         <div className='flex h-[600px] flex-col md:flex-row'>
           {/* Sidebar */}
-          <div className='w-full bg-gradient-to-b from-orange-50 to-white p-6 md:w-1/3'>
-            <div className='space-y-6'>
+          <div className='h-full w-full bg-gradient-to-b from-orange-50 to-white p-6 md:w-1/3'>
+            <div className='flex grow flex-col gap-6'>
               <div>
                 <h2 className='text-2xl font-bold text-gray-800'>
                   Order #{data.id.slice(0, 8)}
@@ -74,13 +75,13 @@ export default function ViewAction({ data }: IViewActionProps) {
                 </Badge>
               </div>
 
-              <div className='space-y-2'>
+              <div className='flex grow flex-col gap-2'>
                 <div className='flex items-center gap-2'>
                   <CurrencySymbols.default className='h-5 w-5 text-orange-500' />
 
                   <div>
                     <p className='text-sm font-medium'>Total</p>
-                    <p className='text-lg font-semibold'>
+                    <p className='font-semibold'>
                       <CurrencySymbols.default />
                       {parseFloat(data.totalPrice).toFixed(2)}
                     </p>
@@ -90,11 +91,33 @@ export default function ViewAction({ data }: IViewActionProps) {
                   <Package className='h-5 w-5 text-orange-500' />
                   <div>
                     <p className='text-sm font-medium'>Items</p>
-                    <p className='text-lg font-semibold'>
-                      {data.cart.items.length}
+                    <p className='font-semibold'>x{data.cart.items.length}</p>
+                  </div>
+                </div>
+
+                <div className='flex items-center gap-2'>
+                  <CreditCard className='h-5 w-5 text-orange-500' />
+                  <div>
+                    <p className='text-sm font-medium'>Payment Method</p>
+                    <p className='font-semibold'>
+                      {getPaymentMethodTitle(
+                        data.payments.at(0)?.paymentMethod
+                      )}
                     </p>
                   </div>
                 </div>
+
+                <div className='flex items-center gap-2'>
+                  <Info className='h-5 w-5 text-orange-500' />
+                  <div>
+                    <p className='text-sm font-medium'>Payment Status</p>
+                    <p className='font-semibold'>
+                      {data.payments.at(0)?.paymentStatus}
+                    </p>
+                  </div>
+                </div>
+
+                <span className='grow' />
 
                 <div className='flex items-center gap-2'>
                   <Rocket className='h-5 w-5 text-orange-500' />
@@ -148,6 +171,62 @@ export default function ViewAction({ data }: IViewActionProps) {
                       Notes: {data.shippingInfo.additional_info}
                     </p>
                   )}
+                </div>
+
+                <Separator />
+
+                {/* Payment details */}
+                <div className='flex items-center gap-2'>
+                  <CreditCard className='h-5 w-5 text-orange-500' />
+                  <span className='text-xl font-semibold'>Payment Details</span>
+                </div>
+
+                <div className='gird-cols-1 grid gap-x-8 gap-y-4 text-xs sm:text-sm md:grid-cols-2'>
+                  <div>
+                    <p className='font-medium text-gray-500'>Payment Method</p>
+                    <p className='text-gray-800'>
+                      {getPaymentMethodTitle(
+                        data.payments.at(0)?.paymentMethod
+                      )}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className='font-medium text-gray-500'>Payment Status</p>
+                    <p className='text-gray-800'>
+                      {data.payments.at(0)?.paymentStatus}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className='font-medium text-gray-500'>Order Amount</p>
+                    <p className='flex gap-0.5 text-gray-800'>
+                      <CurrencySymbols.default />
+                      {data.payments.at(0)?.orderAmount}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className='font-medium text-gray-500'>Paid Amount</p>
+                    <p className='flex gap-0.5 text-gray-800'>
+                      <CurrencySymbols.default />
+                      {data.payments.at(0)?.paidAmount ?? '0.00'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className='font-medium text-gray-500'>Transaction ID</p>
+                    <p className='text-gray-800'>
+                      {data.payments.at(0)?.transactionId ?? 'N/A'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className='font-medium text-gray-500'>Payment Time</p>
+                    <p className='text-gray-800'>
+                      {data.payments.at(0)?.paymentTime ?? 'N/A'}
+                    </p>
+                  </div>
                 </div>
 
                 <Separator />

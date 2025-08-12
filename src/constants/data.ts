@@ -71,9 +71,9 @@ export const navItems: NavItem[] = [
     icon: 'package'
   },
   {
-    title: 'Web',
+    title: 'Shop',
     url: '/dashboard/web',
-    icon: 'globe',
+    icon: 'shop',
     items: [
       {
         title: 'Promotions',
