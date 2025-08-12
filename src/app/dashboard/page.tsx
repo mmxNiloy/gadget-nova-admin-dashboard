@@ -1,13 +1,13 @@
 import { SiteConfig } from '@/constants/site-config';
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+import React from 'react';
 
-export default async function Dashboard() {
-  const session = await auth();
+export const metadata: Metadata = {
+  title: SiteConfig.siteTitle.dashboard,
+  description: SiteConfig.siteDescription.default
+};
 
-  if (!session?.user && !SiteConfig.featureFlags.disableAuth) {
-    return redirect('/');
-  } else {
-    redirect('/dashboard/overview');
-  }
+export default function DashboardPage() {
+  console.log('DashboardPage');
+  return <div>DashboardPage</div>;
 }

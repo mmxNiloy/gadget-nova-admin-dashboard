@@ -1,14 +1,11 @@
 //@ts-nocheck
 'use server';
 
-import { auth } from '@/lib/auth';
+import { getAccessToken } from '@/lib/session';
 import ActionResponseBuilder from 'types/ActionResponseBuilder';
-import EnvironmentError from 'types/error/EnvironmentError';
-import RefreshAccessTokenError from 'types/error/RefreshAccessTokenError';
-import SessionError from 'types/error/SessionError';
 import { IErrorResponseBase, IResponseBase } from 'types/schema/base.schema';
 
-interface RequestAPIProps extends RequestInit {
+interface RequestAPIProps extends Omit<RequestInit, 'headers'> {
   method:
     | 'GET'
     | 'POST'
@@ -23,6 +20,8 @@ interface RequestAPIProps extends RequestInit {
   authenticate?: boolean;
   query?: string[][];
   asFormData?: boolean;
+  overrideHeaders?: boolean;
+  headers?: Record<string, string>;
 }
 
 export default async function requestAPI<T = IResponseBase>({
@@ -32,42 +31,43 @@ export default async function requestAPI<T = IResponseBase>({
   authenticate = false,
   query = [],
   headers,
-  asFormData = false
+  asFormData = false,
+  overrideHeaders = false
 }: RequestAPIProps): Promise<
   { data: T; ok: true } | { ok: false; error: IErrorResponseBase }
 > {
   const reqTime = new Date();
   try {
-    console.info(
-      `[Request ${reqTime} | ${method}] > Actions > Begin Request API >`,
-      {
-        method,
-        url: [process.env.API_BASE_URL, process.env.API_VERSION, endpoint].join(
-          '/'
-        ),
-        query,
-        authenticate,
-        body
-      }
-    );
+    // console.debug(
+    //   `[Request ${reqTime} | ${method}] > Actions > Begin Request API >`,
+    //   {
+    //     method,
+    //     url: [process.env.API_BASE_URL, process.env.API_VERSION, endpoint].join(
+    //       '/'
+    //     ),
+    //     query,
+    //     authenticate,
+    //     body
+    //   }
+    // );
 
     if (!process.env.API_BASE_URL || !process.env.API_VERSION) {
-      throw new EnvironmentError();
+      throw new Error('API URL Environment not set.', {
+        cause: 'Missing API_BASE_URL or API_VERSION in environment.'
+      });
     }
 
     let token = '';
     if (authenticate) {
-      const session = await auth();
-      console.log('Session:', session);
-      if (!session || !session.accessToken) {
-        throw new SessionError();
+      const accessToken = await getAccessToken();
+      // console.debug('Session:', session);
+      if (!accessToken) {
+        throw new Error('Token not found or has expired.', {
+          cause: 'Session not found or token expired. Please login again.'
+        });
       }
 
-      if (session.error === 'RefreshAccessTokenError') {
-        throw new RefreshAccessTokenError();
-      }
-
-      token = session.accessToken;
+      token = accessToken;
     }
 
     const mHeaders = asFormData
@@ -78,13 +78,20 @@ export default async function requestAPI<T = IResponseBase>({
           ...headers
         };
 
+    console.log(
+      'Requesting API >',
+      [process.env.API_BASE_URL, process.env.API_VERSION, endpoint]
+        .join('/')
+        .concat(`?${query.map((item) => item.join('=')).join('&')}`)
+    );
+
     const response = await fetch(
       [process.env.API_BASE_URL, process.env.API_VERSION, endpoint]
         .join('/')
         .concat(`?${query.map((item) => item.join('=')).join('&')}`),
       {
         method,
-        headers: mHeaders,
+        headers: overrideHeaders ? headers : mHeaders,
         body
       }
     );
@@ -97,28 +104,28 @@ export default async function requestAPI<T = IResponseBase>({
       result = await response.text();
     }
 
-    console.log(
-      `[Request ${reqTime} | ${method}] > Actions > Request API > Response >`,
-      result
-    );
-    console.log(
-      `[Request ${reqTime} | ${method}] > Actions > Request API > Status >`,
-      response.status
-    );
+    // console.debug(
+    //   `[Request ${reqTime} | ${method}] > Actions > Request API > Response >`,
+    //   result
+    // );
+    // console.debug(
+    //   `[Request ${reqTime} | ${method}] > Actions > Request API > Status >`,
+    //   response.status
+    // );
 
     if (!response.ok) {
-      console.warn(
-        `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with an error.`
-      );
+      // console.warn(
+      //   `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with an error.`
+      // );
       return ActionResponseBuilder.error(result).toJSON();
     }
 
-    console.log(
-      `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with a success.`
-    );
-    console.info(
-      `[Request ${reqTime} | ${method}] > Actions > End Request API`
-    );
+    // console.debug(
+    //   `[Request ${reqTime} | ${method}] > Actions > Request API > API Responded with a success.`
+    // );
+    // console.debug(
+    //   `[Request ${reqTime} | ${method}] > Actions > End Request API`
+    // );
 
     return ActionResponseBuilder.success(result).toJSON();
   } catch (error) {

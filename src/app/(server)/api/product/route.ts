@@ -1,9 +1,8 @@
-import { auth } from '@/lib/auth';
+import { getAccessToken, updateSession } from '@/lib/session';
 import { NextRequest, NextResponse } from 'next/server';
 import ActionResponseBuilder from 'types/ActionResponseBuilder';
 import EnvironmentError from 'types/error/EnvironmentError';
 import RefreshAccessTokenError from 'types/error/RefreshAccessTokenError';
-import SessionError from 'types/error/SessionError';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,19 +13,16 @@ export async function POST(req: NextRequest) {
       throw new EnvironmentError();
     }
 
-    let token = '';
-    const session = await auth();
-    if (!session || !session.accessToken) {
-      throw new SessionError();
+    let session = await getAccessToken();
+    if (!session) {
+      session = await updateSession();
     }
 
-    if (session.error === 'RefreshAccessTokenError') {
+    if (!session) {
       throw new RefreshAccessTokenError();
     }
 
-    token = session.accessToken;
-
-    const mHeaders = { Authorization: `Bearer ${token}` };
+    const mHeaders = { Authorization: `Bearer ${session}` };
 
     const response = await fetch(
       [process.env.API_BASE_URL, process.env.API_VERSION, 'products'].join('/'),
@@ -86,19 +82,16 @@ export async function PATCH(req: NextRequest) {
       throw new EnvironmentError();
     }
 
-    let token = '';
-    const session = await auth();
-    if (!session || !session.accessToken) {
-      throw new SessionError();
+    let session = await getAccessToken();
+    if (!session) {
+      session = await updateSession();
     }
 
-    if (session.error === 'RefreshAccessTokenError') {
+    if (!session) {
       throw new RefreshAccessTokenError();
     }
 
-    token = session.accessToken;
-
-    const mHeaders = { Authorization: `Bearer ${token}` };
+    const mHeaders = { Authorization: `Bearer ${session}` };
 
     const response = await fetch(
       [process.env.API_BASE_URL, process.env.API_VERSION, 'products', id].join(

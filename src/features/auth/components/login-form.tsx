@@ -1,5 +1,7 @@
 'use client';
 
+import login from '@/app/(server)/actions/auth/login.controller';
+import { useAuth } from '@/components/layout/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -12,10 +14,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
+import makeErrorMessage from '@/lib/util/make-error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -30,39 +32,50 @@ const FormSchema = z.object({
 type FormType = z.infer<typeof FormSchema>;
 
 export default function LoginForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
   const [loading, startTransition] = useTransition();
   const router = useRouter();
   const form = useForm<FormType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      remember_me: 'false'
+      remember_me: 'false',
+      email: '',
+      password: ''
     }
   });
 
   const onSubmit = useCallback(
     async (data: FormType) => {
       startTransition(async () => {
-        const result = await signIn('credentials', {
-          ...data,
-          redirect: false
-        });
+        try {
+          const result = await login({
+            email: data.email,
+            password: data.password
+          });
 
-        console.log('Credentials Auth Response:', result);
-        if (!result) {
-          toast.error(
-            'Connection failed. Please check your internet connection.'
-          );
-        } else if (result.error) {
-          toast.error('Invalid Credeintials!');
-        } else {
-          toast.success('Signed In Successfully!');
-          router.replace(callbackUrl ?? '/dashboard');
+          if (!result) {
+            toast.error(
+              'Connection failed. Please check your internet connection.'
+            );
+          } else if (!result.ok) {
+            const message = makeErrorMessage(result.error.message);
+            console.log('Error', result);
+
+            toast.error(`Login Failed! ${message}`);
+
+            if (message.includes('verify')) {
+              router.push('/verify');
+            }
+          } else {
+            toast.success('Signed In Successfully!');
+            router.push('/dashboard/overview');
+          }
+        } catch (err) {
+          toast.error('Something went wrong! Please try again.');
+          console.error('Failed to login user. Error:', err);
         }
       });
     },
-    [callbackUrl, router]
+    [router]
   );
   return (
     <Form {...form}>
