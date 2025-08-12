@@ -4,12 +4,18 @@ import { IResponseBase } from './base.schema';
 import { IPaginationBase } from './pagination.schema';
 import { ICart } from './cart.schema';
 
-export type TOrderStatus = 'Pending' | 'Confirmed' | 'Delivered' | 'On The Way';
+export type TOrderStatus =
+  | 'Pending'
+  | 'Confirmed'
+  | 'Delivered'
+  | 'On The Way'
+  | 'Paid';
 export const OrderStatusValues: TOrderStatus[] = [
   'Pending',
   'Confirmed',
+  'On The Way',
   'Delivered',
-  'On The Way'
+  'Paid'
 ];
 
 export interface IOrder {
@@ -25,6 +31,7 @@ export interface IOrder {
   totalPrice: string;
   user: IUserBase;
   cart: ICart;
+  paymentMethod?: 'COD' | 'BKASH' | 'SSL';
   shippingInfo: IShippingInfo;
 }
 
