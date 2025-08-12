@@ -121,6 +121,10 @@ export const columns: ColumnDef<IOrder>[] = [
 ];
 
 function PaymentStatusCapsule({ data }: { data?: IPayment }) {
+  if (data?.paymentMethod === 'COD') {
+    return <TextCapsule>N/A</TextCapsule>;
+  }
+
   return (
     <TextCapsule
       className={cn(
