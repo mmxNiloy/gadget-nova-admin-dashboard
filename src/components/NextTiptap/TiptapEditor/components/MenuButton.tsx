@@ -114,7 +114,9 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
     if (type === 'dropdown') {
       return (
         <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>{renderContent}</DropdownMenuTrigger>
+          <DropdownMenuTrigger type='button' asChild>
+            {renderContent}
+          </DropdownMenuTrigger>
           <DropdownMenuContent className={cn('w-fit', dropdownClass)}>
             {children}
           </DropdownMenuContent>
@@ -125,7 +127,9 @@ const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
     if (type === 'popover') {
       return (
         <Popover modal={false}>
-          <PopoverTrigger asChild>{renderContent}</PopoverTrigger>
+          <PopoverTrigger type='button' asChild>
+            {renderContent}
+          </PopoverTrigger>
           <PopoverContent className={cn('w-fit', dropdownClass)}>
             {children}
           </PopoverContent>

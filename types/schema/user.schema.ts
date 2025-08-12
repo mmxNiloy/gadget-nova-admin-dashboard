@@ -11,7 +11,10 @@ export interface IUserBase {
   updated_at?: string;
   name: string;
   email: string;
+  phone: string;
   role: string;
+  image?: string;
+  is_verified: boolean;
 }
 
 export interface IUserAuth extends IUserBase {
@@ -32,4 +35,38 @@ export interface IUserListResponse extends IResponseBase {
 
 export interface IUserAuthResponse extends IResponseBase {
   payload: IUserAuth;
+}
+
+export type TUserProfile = Pick<
+  IUserBase,
+  | 'id'
+  | 'is_active'
+  | 'name'
+  | 'email'
+  | 'is_verified'
+  | 'role'
+  | 'image'
+  | 'phone'
+>;
+
+export interface IUserProfile extends IResponseBase {
+  payload: TUserProfile;
+}
+
+export interface ISignUpResponseBase {
+  success: boolean;
+  message:
+    | string
+    | {
+        message: string | string[];
+      };
+  data: {
+    phone: string;
+    otpSent: boolean;
+    session: IUserAuth;
+  };
+}
+
+export interface ISignUpResponse extends IResponseBase {
+  payload: ISignUpResponseBase;
 }

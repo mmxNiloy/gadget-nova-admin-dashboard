@@ -16,7 +16,7 @@ const StatusBar = () => {
   });
 
   return (
-    <div className='flex items-center justify-between border-t border-secondary px-2'>
+    <div className='flex items-center justify-between border-t border-secondary bg-background px-2'>
       <Toolbar dense>
         <IconToggleButton onClick={toggleSourceMode} title='Source Code'>
           <CodeIcon className='size-5' />

@@ -28,6 +28,7 @@ const IconToggleButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              type='button'
               data-toggle={isToggled ? 'true' : 'false'}
               size={'icon'}
               variant={'ghost'}

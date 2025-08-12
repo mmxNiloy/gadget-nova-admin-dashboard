@@ -60,7 +60,11 @@ export const SiteConfig = {
     maxFileSize: 5000000,
     acceptedImageTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
     stagingURL: 'http://www.revolohr.com:6020/'
-  }
+  },
+  // 25 minutes; 5 minutes of wiggle room
+  sessionTTL: 25 * 60 * 1000,
+  // a week; Store the refresh token for a week
+  refreshTTL: 7 * 24 * 60 * 60 * 1000
   // TODO: Add more items here
 };
 
