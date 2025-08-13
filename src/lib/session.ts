@@ -60,7 +60,7 @@ export async function createSession({
   access_token: string;
   refresh_token: string;
 }) {
-  console.log('[Session] > [createSession()] > Creating session');
+  // console.log('[Session] > [createSession()] > Creating session');
 
   const expiresAt = new Date(Date.now() + SiteConfig.sessionTTL);
   const refreshExpiresAt = new Date(Date.now() + SiteConfig.refreshTTL);
@@ -92,58 +92,58 @@ export async function createSession({
     path: '/'
   });
 
-  console.log('[Session] > [createSession()] > Session created');
+  // console.log('[Session] > [createSession()] > Session created');
 }
 
 export async function getAccessToken() {
-  console.log('[Session] > [getAccessToken()] > Getting access token');
+  // console.log('[Session] > [getAccessToken()] > Getting access token');
   const session = (await cookies()).get(ACCESS_TOKEN_KEY)?.value;
   const payload = await decrypt(session, encodedKey);
 
   if (!session || !payload) {
-    console.log('[Session] > [getAccessToken()] > No access token found');
+    // console.log('[Session] > [getAccessToken()] > No access token found');
     return null;
   }
 
-  console.log('[Session] > [getAccessToken()] > Access token found');
+  // console.log('[Session] > [getAccessToken()] > Access token found');
 
   return payload.access_token as string;
 }
 
 export async function getRefreshToken() {
-  console.log('[Session] > [getRefreshToken()] > Getting refresh token');
+  // console.log('[Session] > [getRefreshToken()] > Getting refresh token');
   const session = (await cookies()).get(REFRESH_TOKEN_KEY)?.value;
   const payload = await decrypt(session, refreshEncodedKey);
 
   if (!session || !payload) {
-    console.log('[Session] > [getRefreshToken()] > No refresh token found');
+    // console.log('[Session] > [getRefreshToken()] > No refresh token found');
     return null;
   }
 
-  console.log('[Session] > [getRefreshToken()] > Refresh token found');
+  // console.log('[Session] > [getRefreshToken()] > Refresh token found');
 
   return payload.refresh_token as string;
 }
 
 export async function hasSession() {
-  console.log('[Session] > [hasSession()] > Checking session');
+  // console.log('[Session] > [hasSession()] > Checking session');
 
   const session = (await cookies()).get(ACCESS_TOKEN_KEY)?.value;
   const payload = await decrypt(session, encodedKey);
 
   if (!session || !payload) {
-    console.log('[Session] > [hasSession()] > No session found');
+    // console.log('[Session] > [hasSession()] > No session found');
     return false;
   }
 
-  console.log('[Session] > [hasSession()] > Session found');
+  // console.log('[Session] > [hasSession()] > Session found');
 
   return true;
 }
 
 export async function updateSession() {
   return refreshMutex.runExclusive(async () => {
-    console.log('[Session] > [updateSession()] > Updating session');
+    // console.log('[Session] > [updateSession()] > Updating session');
 
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
@@ -168,7 +168,7 @@ export async function updateSession() {
     const diff = accessTokenExpires.getTime() - now;
     const diffInMinutes = diff / (60 * 1000);
     if (diffInMinutes > 5) {
-      console.log('[Session] > [updateSession()] > Access token not expired');
+      // console.log('[Session] > [updateSession()] > Access token not expired');
       return null;
     }
 
@@ -219,7 +219,7 @@ export async function updateSession() {
           path: '/'
         });
 
-        console.log('[Session] > Updated session');
+        // console.log('[Session] > Updated session');
 
         return newTokens.access_token;
       } else {
@@ -237,9 +237,9 @@ export async function updateSession() {
 }
 
 export async function deleteSession() {
-  console.log('[Session] > Deleting session');
+  // console.log('[Session] > Deleting session');
   const cookieStore = await cookies();
   cookieStore.delete(ACCESS_TOKEN_KEY);
   cookieStore.delete(REFRESH_TOKEN_KEY);
-  console.log('[Session] > Session deleted');
+  // console.log('[Session] > Session deleted');
 }

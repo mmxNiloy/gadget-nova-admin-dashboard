@@ -51,15 +51,19 @@ export async function POST(req: NextRequest) {
     }
 
     if (!response.ok) {
+      console.log('[Promotion] > [POST] > Failed to create promotion');
       return NextResponse.json(ActionResponseBuilder.error(result).toJSON(), {
         status: response.status
       });
     }
 
+    console.log('[Promotion] > [POST] > Successfully created promotion');
+
     return NextResponse.json(ActionResponseBuilder.success(result).toJSON(), {
       status: response.status
     });
   } catch (error) {
+    console.log('[Promotion] > [POST] > Error', error);
     if (error instanceof Error)
       return NextResponse.json(
         ActionResponseBuilder.error({
@@ -132,15 +136,18 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (!response.ok) {
+      console.log('[Promotion] > [PATCH] > Result error', result);
       return NextResponse.json(ActionResponseBuilder.error(result).toJSON(), {
         status: response.status
       });
     }
 
+    console.log('[Promotion] > [PATCH] > Result', result);
     return NextResponse.json(ActionResponseBuilder.success(result).toJSON(), {
       status: response.status
     });
   } catch (error) {
+    console.log('[Promotion] > [PATCH] > Error', error);
     if (error instanceof Error)
       return NextResponse.json(
         ActionResponseBuilder.error({
