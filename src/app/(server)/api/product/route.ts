@@ -42,15 +42,18 @@ export async function POST(req: NextRequest) {
     }
 
     if (!response.ok) {
+      console.log('[API] > Product > POST > Response Error', result);
       return NextResponse.json(ActionResponseBuilder.error(result).toJSON(), {
         status: response.status
       });
     }
 
+    console.log('[API] > Product > POST > Response', result);
     return NextResponse.json(ActionResponseBuilder.success(result).toJSON(), {
       status: response.status
     });
   } catch (error) {
+    console.log('[API] > Product > POST > Error', error);
     if (error instanceof Error)
       return NextResponse.json(
         ActionResponseBuilder.error({
@@ -113,15 +116,18 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (!response.ok) {
+      console.log('[API] > Product > PATCH > Response Error', result);
       return NextResponse.json(ActionResponseBuilder.error(result).toJSON(), {
         status: response.status
       });
     }
 
+    console.log('[API] > Product > PATCH > Response', result);
     return NextResponse.json(ActionResponseBuilder.success(result).toJSON(), {
       status: response.status
     });
   } catch (error) {
+    console.log('[API] > Product > PATCH > Error', error);
     if (error instanceof Error)
       return NextResponse.json(
         ActionResponseBuilder.error({
