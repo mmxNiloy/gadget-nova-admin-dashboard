@@ -15,7 +15,7 @@ export default async function updateProduct({
 }: IUpdateProductActionProps) {
   try {
     if (id) {
-      data.append('product_id', id);
+      data.append('product_id', id); // Conditionally add the id
     }
     const result = await fetch('/api/product', {
       method,
