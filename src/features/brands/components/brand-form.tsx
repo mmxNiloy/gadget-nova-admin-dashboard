@@ -33,7 +33,7 @@ const brandSchema = z.object({
   category_ids: z.array(z.string()).optional(),
   main_categories: z.z
     .array(z.string())
-    .length(1, 'Please select at least one category')
+    .min(1, 'Please select at least one category')
     .default([])
 });
 
