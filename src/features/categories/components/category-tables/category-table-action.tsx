@@ -54,91 +54,92 @@ export default function CategoryTableAction() {
   );
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button className='group w-full gap-1 self-end md:max-w-72'>
-          <div className='relative'>
-            <Icons.filter className='absolute size-4 rotate-0 opacity-100 transition-all group-data-[state=open]:rotate-180 group-data-[state=open]:opacity-0' />
-            <Icons.close className='size-4 rotate-180 opacity-0 transition-all group-data-[state=open]:rotate-0 group-data-[state=open]:opacity-100' />
-          </div>
-          Filter
-        </Button>
-      </PopoverTrigger>
+    <div className='flex flex-col items-center justify-between gap-2 sm:flex-row'>
+      <DataTableSearch
+        searchKey='name'
+        searchQuery={nameQuery}
+        setSearchQuery={setNameQuery}
+        setPage={setPage}
+      />
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button className='group w-full gap-1 self-end sm:w-fit md:max-w-72'>
+            <div className='relative'>
+              <Icons.filter className='absolute size-4 rotate-0 opacity-100 transition-all group-data-[state=open]:rotate-180 group-data-[state=open]:opacity-0' />
+              <Icons.close className='size-4 rotate-180 opacity-0 transition-all group-data-[state=open]:rotate-0 group-data-[state=open]:opacity-100' />
+            </div>
+            Filter
+          </Button>
+        </PopoverTrigger>
 
-      <PopoverContent
-        align='start'
-        className='w-full max-w-screen-sm md:max-w-72'
-      >
-        <div className='flex flex-col gap-4'>
-          <DataTableSearch
-            searchKey='name'
-            searchQuery={nameQuery}
-            setSearchQuery={setNameQuery}
-            setPage={setPage}
-          />
+        <PopoverContent
+          align='end'
+          className='w-full max-w-screen-sm md:max-w-72'
+        >
+          <div className='flex flex-col gap-4'>
+            <DataTableFilterBox
+              filterKey='sort'
+              title='Sort'
+              options={Object.keys(sentinelCategory).map((sortKey) => ({
+                value: sortKey,
+                label: keyToLabel(sortKey)
+              }))}
+              setFilterValue={setSortQuery}
+              filterValue={sortQuery}
+            />
 
-          <DataTableFilterBox
-            filterKey='sort'
-            title='Sort'
-            options={Object.keys(sentinelCategory).map((sortKey) => ({
-              value: sortKey,
-              label: keyToLabel(sortKey)
-            }))}
-            setFilterValue={setSortQuery}
-            filterValue={sortQuery}
-          />
-
-          <div className='flex flex-col gap-2'>
-            <Label>Order</Label>
-            <DataTableFilterSelect
-              key={orderQuery}
-              filterKey='order'
-              title='Order'
-              options={[
-                {
-                  value: EPaginationOrderString.DESC,
-                  label: 'DESC'
-                },
-                {
-                  value: EPaginationOrderString.ASC,
-                  label: 'ASC'
+            <div className='flex flex-col gap-2'>
+              <Label>Order</Label>
+              <DataTableFilterSelect
+                key={orderQuery}
+                filterKey='order'
+                title='Order'
+                options={[
+                  {
+                    value: EPaginationOrderString.DESC,
+                    label: 'DESC'
+                  },
+                  {
+                    value: EPaginationOrderString.ASC,
+                    label: 'ASC'
+                  }
+                ]}
+                setFilterValue={(val) =>
+                  setOrderQuery(val as EPaginationOrderString)
                 }
-              ]}
-              setFilterValue={(val) =>
-                setOrderQuery(val as EPaginationOrderString)
-              }
-              filterValue={orderQuery}
-            />
-          </div>
+                filterValue={orderQuery}
+              />
+            </div>
 
-          <div className='flex flex-col gap-2'>
-            <Label>Filter Featured</Label>
-            <DataTableFilterSelect
-              key={isFeaturedQuery ? 'true' : 'false'}
-              filterKey='isFeatured'
-              title='Filter featured'
-              options={[
-                {
-                  value: 'true',
-                  label: 'Yes'
-                },
-                {
-                  value: 'false',
-                  label: 'No'
-                }
-              ]}
-              setFilterValue={(val) => setIsFeaturedQuery(val === 'true')}
-              filterValue={isFeaturedQuery ? 'true' : 'false'}
-            />
+            <div className='flex flex-col gap-2'>
+              <Label>Filter Featured</Label>
+              <DataTableFilterSelect
+                key={isFeaturedQuery ? 'true' : 'false'}
+                filterKey='isFeatured'
+                title='Filter featured'
+                options={[
+                  {
+                    value: 'true',
+                    label: 'Yes'
+                  },
+                  {
+                    value: 'false',
+                    label: 'No'
+                  }
+                ]}
+                setFilterValue={(val) => setIsFeaturedQuery(val === 'true')}
+                filterValue={isFeaturedQuery ? 'true' : 'false'}
+              />
+            </div>
+            <PopoverClose asChild>
+              <DataTableResetFilter
+                isFilterActive={isAnyFilterActive}
+                onReset={resetFilters}
+              />
+            </PopoverClose>
           </div>
-          <PopoverClose asChild>
-            <DataTableResetFilter
-              isFilterActive={isAnyFilterActive}
-              onReset={resetFilters}
-            />
-          </PopoverClose>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }

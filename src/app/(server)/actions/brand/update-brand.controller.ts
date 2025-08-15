@@ -9,7 +9,7 @@ interface IUpdateBrandActionProps {
     metaTitle?: string;
     metaDescription?: string;
     category_ids?: string[];
-    category_id?: string | null;
+    main_categories: string[];
   };
   method: 'POST' | 'PATCH';
   id?: string;
@@ -22,9 +22,10 @@ export default async function updateBrand({
 }: IUpdateBrandActionProps) {
   const mData = {
     ...data,
-    category_ids: [...(data.category_ids ?? []), data.category_id].filter(
-      (item) => Boolean(item)
-    )
+    category_ids: [
+      ...(data.category_ids ?? []),
+      ...data.main_categories
+    ].filter((item) => Boolean(item))
   };
 
   return await requestAPI({

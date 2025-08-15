@@ -22,7 +22,6 @@ import { useRouter } from 'next/navigation';
 import { IBrand, ICategory } from 'types/schema/product.shema';
 import { MultiSelect } from '@/components/ui/multi-select';
 import updateBrand from '@/app/(server)/actions/brand/update-brand.controller';
-import { LabelledComboBox } from '@/components/ui/combobox';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 
 // Zod schema for UpdateBrandDto
@@ -32,7 +31,10 @@ const brandSchema = z.object({
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   category_ids: z.array(z.string()).optional(),
-  category_id: z.string({ message: 'Please select a category.' })
+  main_categories: z.z
+    .array(z.string())
+    .length(1, 'Please select at least one category')
+    .default([])
 });
 
 interface BrandFormProps {
@@ -42,6 +44,8 @@ interface BrandFormProps {
   pageTitle: string;
 }
 
+type FormType = z.infer<typeof brandSchema>;
+
 export default function BrandForm({
   initialData,
   categories,
@@ -50,21 +54,36 @@ export default function BrandForm({
 }: BrandFormProps) {
   const [open, setOpen] = useState<boolean>(false);
 
-  const defaultValues = {
+  const defaultValues: FormType = {
     name: initialData?.name ?? '',
     slug: initialData?.slug ?? '',
     metaTitle: initialData?.metaTitle ?? '',
     metaDescription: initialData?.metaDescription ?? '',
-    category_ids: initialData?.categories?.map((cat) => cat.id) ?? []
+    category_ids:
+      initialData?.categories
+        ?.filter((cat) => !!subCategories.find((mCat) => mCat.id === cat.id))
+        .map((item) => item.id) ?? [],
+    main_categories:
+      initialData?.categories
+        ?.filter((cat) => !!categories.find((mCat) => mCat.id === cat.id))
+        .map((item) => item.id) ?? []
   };
 
+  console.log(
+    'Subcategories',
+    initialData?.categories?.filter(
+      (cat) => !!subCategories.find((mCat) => mCat.id === cat.id)
+    )
+  );
+
+  const [loading, startAPICall] = useTransition();
   const form = useForm<z.infer<typeof brandSchema>>({
     resolver: zodResolver(brandSchema),
-    defaultValues
+    defaultValues,
+    disabled: loading
   });
 
   const router = useRouter();
-  const [loading, startAPICall] = useTransition();
 
   const onSubmit = async (values: z.infer<typeof brandSchema>) => {
     startAPICall(async () => {
@@ -82,19 +101,19 @@ export default function BrandForm({
     });
   };
 
-  const categoryValue = form.watch('category_id');
+  const categoryValues = form.watch('main_categories');
 
   const filteredSubcategories = useMemo(() => {
     return subCategories.filter(
-      (cat) => cat.parentCategory?.id === categoryValue
+      (cat) => !!categoryValues?.find((mCat) => mCat === cat.parentCategory?.id)
     );
-  }, [categoryValue, subCategories]);
+  }, [categoryValues, subCategories]);
 
   useEffect(() => {
-    if (categoryValue) {
+    if (categoryValues) {
       form.resetField('category_ids', { defaultValue: undefined });
     }
-  }, [categoryValue, form]);
+  }, [categoryValues, form]);
 
   return (
     <>
@@ -151,17 +170,18 @@ export default function BrandForm({
 
               <FormField
                 control={form.control}
-                name='category_id'
+                name='main_categories'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <LabelledComboBox
+                    <MultiSelect
+                      key={field.value?.join('.') ?? ''}
                       disabled={loading}
                       className='w-full'
-                      label='Select Category'
+                      title='Select Categories'
                       defaultValue={field.value ?? undefined}
                       onValueChange={field.onChange}
-                      items={categories.map((cat) => ({
+                      options={categories.map((cat) => ({
                         label: cat.name,
                         value: cat.id
                       }))}
@@ -182,7 +202,7 @@ export default function BrandForm({
                         key={field.value?.join('.') ?? ''}
                         disabled={
                           loading ||
-                          !categoryValue ||
+                          !categoryValues ||
                           filteredSubcategories.length < 1
                         }
                         options={
