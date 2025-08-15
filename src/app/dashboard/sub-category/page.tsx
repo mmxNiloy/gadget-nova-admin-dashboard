@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import CategoryListingPage from '@/features/categories/components/category-listing';
 import { SiteConfig } from '@/constants/site-config';
 import SubcategoryListingPage from '@/features/sub-category/components/sub-category-listing';
+import CategoryTableAction from '@/features/categories/components/category-tables/category-table-action';
 
 export const metadata = {
   title: SiteConfig.siteTitle.subCategory.list
@@ -42,7 +43,7 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        {/* <ProductTableAction /> */}
+        <CategoryTableAction />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}

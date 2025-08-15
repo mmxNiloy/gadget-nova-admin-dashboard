@@ -9,11 +9,10 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import ProductListingPage from '@/features/products/components/product-listing';
-import ProductTableAction from '@/features/products/components/product-tables/product-table-action';
 import BrandsListingPage from '@/features/brands/components/brand-listing';
 import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import { SiteConfig } from '@/constants/site-config';
+import BrandTableAction from '@/features/brands/components/brand-tables/brand-table-action';
 
 export const metadata = {
   title: SiteConfig.siteTitle.brand.list
@@ -31,7 +30,10 @@ export default async function Page(props: pageProps) {
   // This key is used for invoke suspense if any of the search params changed (used for filters).
   const key = serialize({ ...searchParams });
 
-  const categoriesData = await getCategories();
+  const [categoriesData, subcategories] = await Promise.all([
+    getCategories(),
+    getCategories({ getSubcategories: true })
+  ]);
 
   return (
     <PageContainer scrollable={false}>
@@ -46,9 +48,10 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        {/* <ProductTableAction
+        <BrandTableAction
           categories={categoriesData.ok ? categoriesData.data.payload : []}
-        /> */}
+          subcategories={subcategories.ok ? subcategories.data.payload : []}
+        />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
