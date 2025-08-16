@@ -4,6 +4,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
 import React, { useCallback } from 'react';
@@ -47,20 +50,27 @@ export default function ViewAction({ data }: IViewActionProps) {
       <DialogTrigger asChild>
         <Button
           variant='link'
-          className='text-orange-500 transition-colors hover:text-orange-600'
+          size='sm'
+          className='text-xs text-orange-500 transition-colors hover:text-orange-600'
         >
           View Details
         </Button>
       </DialogTrigger>
 
       <DialogContent className='max-w-4xl overflow-x-clip overflow-y-scroll p-0'>
+        <DialogHeader className='sr-only'>
+          <DialogTitle>Order Details</DialogTitle>
+          <DialogDescription>
+            Order# {data.id} | Customer Phone: {data.shippingInfo?.phone}
+          </DialogDescription>
+        </DialogHeader>
         <div className='flex h-[600px] flex-col md:flex-row'>
           {/* Sidebar */}
           <div className='h-full w-full bg-gradient-to-b from-orange-50 to-white p-6 md:w-1/3'>
             <div className='flex grow flex-col gap-6'>
               <div>
                 <h2 className='text-2xl font-bold text-gray-800'>
-                  Order #{data.id.slice(0, 8)}
+                  Order #{data.orderId ?? data.id.slice(0, 8)}
                 </h2>
                 <p className='text-sm text-gray-500'>
                   Placed on {format(new Date(data.created_at), 'PPP')}

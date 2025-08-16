@@ -14,7 +14,14 @@ export default async function OrdersListingPage() {
   const sort = searchParamsCache.get('sort') as keyof IOrder;
   const order = searchParamsCache.get('order') ?? EPaginationOrderString.DESC;
   const name = searchParamsCache.get('name') ?? '';
+  const email = searchParamsCache.get('email') ?? '';
+  const phone = searchParamsCache.get('phone') ?? '';
+  let orderId = Number.parseInt(searchParamsCache.get('orderId') ?? '0');
   const status = searchParamsCache.get('status') as TOrderStatus | undefined;
+
+  if (!Number.isInteger(orderId)) {
+    orderId = 0;
+  }
 
   const filters: IOrderPaginationProps = {
     page,
@@ -22,6 +29,9 @@ export default async function OrdersListingPage() {
     sort,
     order,
     name,
+    email,
+    phone,
+    orderId,
     status
   };
 

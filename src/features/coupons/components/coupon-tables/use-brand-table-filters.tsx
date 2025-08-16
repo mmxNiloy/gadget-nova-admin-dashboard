@@ -5,7 +5,7 @@ import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 import { EPaginationOrderString } from 'types/enum/pagination.enum';
 
-export function useOrderTableFilters() {
+export function useBrandTableFilters() {
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -17,6 +17,7 @@ export function useOrderTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
+
   const [orderQuery, setOrderQuery] = useQueryState(
     'order',
     searchParams.order
@@ -29,44 +30,43 @@ export function useOrderTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
-  const [emailQuery, setEmailQuery] = useQueryState(
-    'email',
-    searchParams.email
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
-  );
-  const [phoneQuery, setPhoneQuery] = useQueryState(
-    'phone',
-    searchParams.phone
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
-  );
-  const [orderIdQuery, setOrderIdQuery] = useQueryState(
-    'orderId',
-    searchParams.orderId
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
+
+  const [categoriesFilter, setCategoriesFilter] = useQueryState(
+    'categories',
+    searchParams.categories.withOptions({ shallow: false }).withDefault('')
   );
 
-  const [statusQuery, setStatusQuery] = useQueryState(
-    'status',
-    searchParams.status
-      .withOptions({ shallow: false, throttleMs: 1000 })
-      .withDefault('')
+  const [brandsFilter, setBrandsFilter] = useQueryState(
+    'brands',
+    searchParams.categories.withOptions({ shallow: false }).withDefault('')
   );
 
   const resetFilters = useCallback(() => {
     setSortQuery(null);
     setOrderQuery(null);
     setNameQuery(null);
-    setStatusQuery(null);
+    setCategoriesFilter(null);
+    setBrandsFilter(null);
 
     setPage(1);
-  }, [setSortQuery, setOrderQuery, setNameQuery, setStatusQuery, setPage]);
+  }, [
+    setSortQuery,
+    setOrderQuery,
+    setCategoriesFilter,
+    setBrandsFilter,
+    setPage,
+    setNameQuery
+  ]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!nameQuery || !!sortQuery || !!orderQuery || !!statusQuery;
-  }, [nameQuery, sortQuery, orderQuery, statusQuery]);
+    return (
+      !!nameQuery ||
+      !!categoriesFilter ||
+      !!sortQuery ||
+      !!orderQuery ||
+      !!brandsFilter
+    );
+  }, [nameQuery, categoriesFilter, sortQuery, orderQuery, brandsFilter]);
 
   return {
     page,
@@ -77,15 +77,11 @@ export function useOrderTableFilters() {
     setSortQuery,
     nameQuery,
     setNameQuery,
-    statusQuery,
-    setStatusQuery,
     resetFilters,
     isAnyFilterActive,
-    emailQuery,
-    setEmailQuery,
-    phoneQuery,
-    setPhoneQuery,
-    orderIdQuery,
-    setOrderIdQuery
+    categoriesFilter,
+    setCategoriesFilter,
+    brandsFilter,
+    setBrandsFilter
   };
 }

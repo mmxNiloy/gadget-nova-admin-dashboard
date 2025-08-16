@@ -22,6 +22,10 @@ export const SiteConfig = {
       list: `Dashboard | Brands`,
       view: `Dashboard | Brand View`
     },
+    coupon: {
+      list: `Dashboard | Coupons`,
+      view: `Dashboard | Coupon View`
+    },
     category: {
       list: `Dashboard | Categories`,
       view: `Dashboard | Category View`

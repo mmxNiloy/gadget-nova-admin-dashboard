@@ -78,6 +78,10 @@ export const navItems: NavItem[] = [
       {
         title: 'Promotions',
         url: '/dashboard/web/promotion'
+      },
+      {
+        title: 'Coupons',
+        url: '/dashboard/coupon'
       }
     ]
   },

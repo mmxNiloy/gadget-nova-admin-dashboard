@@ -10,17 +10,27 @@ export type TOrderStatus =
   | 'Confirmed'
   | 'Delivered'
   | 'On The Way'
-  | 'Paid';
+  | 'Paid'
+  | 'Failed'
+  | 'Cancelled'
+  | 'On Hold';
+
+export type PaymentStatus = 'Pending' | 'Initiated' | 'Paid' | 'Failed';
+
 export const OrderStatusValues: TOrderStatus[] = [
   'Pending',
   'Confirmed',
   'Delivered',
   'On The Way',
-  'Paid'
+  'Paid',
+  'Failed',
+  'Cancelled',
+  'On Hold'
 ];
 
 export interface IOrder {
   id: string;
+  orderId?: string;
   is_active: EObjectStatus;
   created_by?: string;
   created_user_name?: string;
@@ -79,7 +89,7 @@ export interface IPayment {
   paymentMethod: PaymentMethod;
   providerResponse: string;
   paymentId?: string;
-  paymentStatus: string;
+  paymentStatus: PaymentStatus;
   executeResponse?: string;
   payerReference?: string;
   paymentTime?: string;

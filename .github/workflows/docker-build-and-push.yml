@@ -1,9 +1,9 @@
-name: Build and Push Staging Docker Image
+name: Build and Push Docker Image
 
 on:
   push:
     branches:
-      - stage
+      - main
 
 jobs:
   build-and-push:
@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/mmxniloy/gadget-nova-admin-dashboard:stage
+          tags: ghcr.io/mmxniloy/gadget-nova-admin-dashboard:latest
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -41,4 +41,4 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "${{ secrets.SSH_SUDO_PASSWORD }}" | sudo -S ~/restage.sh
+            echo "${{ secrets.SSH_SUDO_PASSWORD }}" | sudo -S ~/redeploy.sh
