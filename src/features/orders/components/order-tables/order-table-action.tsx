@@ -132,7 +132,7 @@ export default function OrderTableAction() {
 
   return (
     <div className='flex flex-col items-center justify-between gap-2 sm:flex-row'>
-      <div className='flex items-end gap-4'>
+      <div className='flex w-full items-end gap-4 sm:w-fit'>
         <DataTableSearch
           searchKey={searchBy}
           searchQuery={searchQuery}
@@ -160,7 +160,7 @@ export default function OrderTableAction() {
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button className='group w-fit gap-1 self-end'>
+          <Button className='group w-full gap-1 self-end sm:w-fit'>
             <div className='relative'>
               <Icons.filter className='absolute size-4 rotate-0 opacity-100 transition-all group-data-[state=open]:rotate-180 group-data-[state=open]:opacity-0' />
               <Icons.close className='size-4 rotate-180 opacity-0 transition-all group-data-[state=open]:rotate-0 group-data-[state=open]:opacity-100' />
