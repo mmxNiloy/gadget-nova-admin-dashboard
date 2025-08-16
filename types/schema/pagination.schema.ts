@@ -48,6 +48,9 @@ export interface IBrandPaginationProps extends IFilterBase {
 export interface IOrderPaginationProps extends IFilterBase {
   sort?: keyof IOrder;
   status?: TOrderStatus;
+  email?: string;
+  phone?: string;
+  orderId?: number;
 }
 
 export interface IPromotionPaginationProps extends Omit<IFilterBase, 'name'> {

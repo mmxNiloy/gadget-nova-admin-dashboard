@@ -11,6 +11,9 @@ export default async function getPaginatedOrders({
   sort = 'created_at',
   order = EPaginationOrderString.DESC,
   name = '',
+  email = '',
+  phone = '',
+  orderId = 0,
   status
 }: IOrderPaginationProps) {
   const orders = await requestAPI<IOrderListResponse>({
@@ -23,6 +26,9 @@ export default async function getPaginatedOrders({
       ['sort', sort],
       ['order', order],
       ['name', name],
+      ['email', email],
+      ['phone', phone],
+      ['orderId', orderId.toString()],
       status ? ['status', status] : []
     ].filter((arr) => arr.length > 0)
   });
