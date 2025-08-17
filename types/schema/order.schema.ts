@@ -4,6 +4,7 @@ import { IResponseBase } from './base.schema';
 import { IPaginationBase } from './pagination.schema';
 import { ICart } from './cart.schema';
 import { PaymentMethod } from '@/constants/site-payment-methods';
+import { z } from 'zod';
 
 export type TOrderStatus =
   | 'Pending'
@@ -78,6 +79,17 @@ export interface IDistrict {
 export interface IDistrictListResponse extends IResponseBase {
   payload: IDistrict[];
 }
+
+export interface IDistrictResponse extends IResponseBase {
+  payload: IDistrict;
+}
+
+export const DeliveryChargeSchema = z.object({
+  delivery_charge: z.coerce
+    .number()
+    .nonnegative()
+    .transform((val) => val.toString())
+});
 
 export interface IPayment {
   id: string;
