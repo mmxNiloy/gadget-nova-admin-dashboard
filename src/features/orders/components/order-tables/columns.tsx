@@ -95,7 +95,7 @@ export const columns: ColumnDef<IOrder>[] = [
     cell: ({ row }) => (
       <TextCapsule
         className={cn(
-          'bg-indigo-100 text-xs text-indigo-800',
+          'whitespace-nowrap bg-indigo-100 text-xs text-indigo-800',
           row.original.payments?.at(0)?.paymentMethod === 'BKASH'
             ? 'bg-rose-100 text-rose-800'
             : 'bg-emerald-100 text-emerald-800'
@@ -111,7 +111,7 @@ export const columns: ColumnDef<IOrder>[] = [
     cell: ({ row }) => (
       <TextCapsule
         className={cn(
-          'whitespace-nowrap bg-red-100 text-xs text-red-800',
+          'bg-red-100 text-xs text-red-800',
           (row.original.status === 'Confirmed' ||
             row.original.status === 'Paid') &&
             'bg-fuchsia-100 text-fuchsia-800',
