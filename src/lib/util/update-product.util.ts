@@ -19,6 +19,9 @@ export default async function updateProduct({
     } else {
       data.delete('product_id');
     }
+
+    console.log('Product Form Data', data);
+
     const result = await fetch('/api/product', {
       method,
       body: data
