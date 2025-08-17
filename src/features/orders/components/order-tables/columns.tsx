@@ -120,7 +120,8 @@ export const columns: ColumnDef<IOrder>[] = [
           row.original.status === 'On The Way' &&
             'bg-indigo-100 text-indigo-800',
           (row.original.status === 'Pending' ||
-            row.original.status === 'On Hold') &&
+            row.original.status === 'On Hold' ||
+            row.original.status === 'ON_PROCESSING') &&
             'bg-amber-100 text-amber-800'
         )}
       >
