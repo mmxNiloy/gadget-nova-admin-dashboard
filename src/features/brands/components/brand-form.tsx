@@ -16,7 +16,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition
+} from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { IBrand, ICategory } from 'types/schema/product.shema';
@@ -24,6 +30,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import updateBrand from '@/app/(server)/actions/brand/update-brand.controller';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import SlugSchema from 'types/slug.schema';
+import formatSlug from '@/lib/util/format-slug.util';
 
 // Zod schema for UpdateBrandDto
 const brandSchema = z.object({
@@ -70,13 +77,6 @@ export default function BrandForm({
         .map((item) => item.id) ?? []
   };
 
-  console.log(
-    'Subcategories',
-    initialData?.categories?.filter(
-      (cat) => !!subCategories.find((mCat) => mCat.id === cat.id)
-    )
-  );
-
   const [loading, startAPICall] = useTransition();
   const form = useForm<z.infer<typeof brandSchema>>({
     resolver: zodResolver(brandSchema),
@@ -88,8 +88,23 @@ export default function BrandForm({
 
   const onSubmit = async (values: z.infer<typeof brandSchema>) => {
     startAPICall(async () => {
+      const {
+        name,
+        slug,
+        metaTitle,
+        metaDescription,
+        category_ids,
+        main_categories
+      } = values;
       const data = await updateBrand({
-        data: values,
+        data: {
+          name,
+          slug: formatSlug(slug, true),
+          metaTitle,
+          metaDescription,
+          category_ids,
+          main_categories
+        },
         method: initialData ? 'PATCH' : 'POST',
         id: initialData?.id
       });
@@ -115,6 +130,14 @@ export default function BrandForm({
       form.resetField('category_ids', { defaultValue: undefined });
     }
   }, [categoryValues, form]);
+
+  const handleSlugChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, cb: (val: string) => void) => {
+      const slug = e.target.value;
+      cb(formatSlug(slug));
+    },
+    []
+  );
 
   return (
     <>
@@ -157,11 +180,26 @@ export default function BrandForm({
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder='Enter brand slug'
-                          {...field}
-                        />
+                        <div className='flex flex-row gap-2'>
+                          <Input
+                            disabled={loading}
+                            placeholder='Enter brand slug'
+                            value={field.value}
+                            onChange={(e) =>
+                              handleSlugChange(e, field.onChange)
+                            }
+                          />
+
+                          <Button
+                            size='sm'
+                            type='button'
+                            onClick={() =>
+                              field.onChange(formatSlug(field.value, true))
+                            }
+                          >
+                            Format
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

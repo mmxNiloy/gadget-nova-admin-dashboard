@@ -36,7 +36,8 @@ import {
   Bell,
   ChevronRight,
   ChevronsUpDown,
-  CreditCard
+  CreditCard,
+  Trash2
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -45,6 +46,17 @@ import { Icons } from '../icons';
 import { SiteEmblem, SiteLogo } from '@/constants/site-config';
 import LogoutButton from '../logout-button';
 import { TUserProfile } from 'types/schema/user.schema';
+import { Button } from '../ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger
+} from '../ui/alert-dialog';
 
 export default function AppSidebar({ user }: { user?: TUserProfile | null }) {
   const pathname = usePathname();
@@ -191,10 +203,45 @@ export default function AppSidebar({ user }: { user?: TUserProfile | null }) {
                     <BadgeCheck />
                     Account
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant='ghost'
+                        className='w-full justify-start px-3'
+                      >
+                        <Icons.redis className='mr-2 size-4' />
+                        Clear Cache
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        Are you sure you want to clear the cache?
+                      </AlertDialogHeader>
+                      <AlertDialogDescription>
+                        This action will <strong>clear all cached</strong> data
+                        made by the server. This may{' '}
+                        <strong>decrease performance</strong>. This may have{' '}
+                        <strong>unintended consequences</strong>. This may{' '}
+                        <strong>nottemporarily fix some issues</strong> due to
+                        bad data in the cache. This action is{' '}
+                        <strong>irreversible</strong>. Do you want to proceed?
+                      </AlertDialogDescription>
+
+                      <AlertDialogFooter>
+                        <AlertDialogAction asChild>
+                          <Button
+                            variant={'destructive'}
+                            className='gap-1 bg-red-300 text-white hover:bg-red-300/90 hover:text-white'
+                          >
+                            <Trash2 />
+                            <span>Clear Cache</span>
+                          </Button>
+                        </AlertDialogAction>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <DropdownMenuItem>
                     <Bell />
                     Notifications
