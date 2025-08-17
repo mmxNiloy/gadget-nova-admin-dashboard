@@ -13,6 +13,7 @@ export type TOrderStatus =
   | 'Paid'
   | 'Failed'
   | 'Cancelled'
+  | 'ON_PROCESSING'
   | 'On Hold';
 
 export type PaymentStatus = 'Pending' | 'Initiated' | 'Paid' | 'Failed';
@@ -25,6 +26,7 @@ export const OrderStatusValues: TOrderStatus[] = [
   'Paid',
   'Failed',
   'Cancelled',
+  'ON_PROCESSING',
   'On Hold'
 ];
 
