@@ -111,7 +111,7 @@ export const columns: ColumnDef<IOrder>[] = [
     cell: ({ row }) => (
       <TextCapsule
         className={cn(
-          'bg-red-100 text-xs text-red-800',
+          'whitespace-nowrap bg-red-100 text-xs text-red-800',
           (row.original.status === 'Confirmed' ||
             row.original.status === 'Paid') &&
             'bg-fuchsia-100 text-fuchsia-800',
