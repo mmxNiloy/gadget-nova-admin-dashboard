@@ -23,11 +23,12 @@ import { IBrand, ICategory } from 'types/schema/product.shema';
 import { MultiSelect } from '@/components/ui/multi-select';
 import updateBrand from '@/app/(server)/actions/brand/update-brand.controller';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
+import SlugSchema from 'types/slug.schema';
 
 // Zod schema for UpdateBrandDto
 const brandSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  slug: z.string().min(1, { message: 'Slug is required.' }),
+  slug: SlugSchema,
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   category_ids: z.array(z.string()).optional(),

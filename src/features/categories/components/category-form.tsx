@@ -24,11 +24,12 @@ import updateCategory from '@/app/(server)/actions/category/update-category.cont
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import SlugSchema from 'types/slug.schema';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  slug: z.string().min(1, { message: 'Slug is required.' }),
+  slug: SlugSchema,
   isFeatured: z.boolean().default(false),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional()

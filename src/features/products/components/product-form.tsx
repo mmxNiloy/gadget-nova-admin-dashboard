@@ -32,6 +32,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import TiptapEditor from '@/components/NextTiptap/TiptapEditor';
 import updateProduct from '@/lib/util/update-product.util';
+import SlugSchema from 'types/slug.schema';
+import { format, isDate } from 'date-fns';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -43,7 +45,7 @@ interface IFileWithPreview extends File {
 // Base schema without thumbnail/gallery validation
 const baseSchema = z.object({
   title: z.string().min(2, { message: 'Title must be at least 2 characters.' }),
-  slug: z.string().min(1, { message: 'Slug is required.' }),
+  slug: SlugSchema,
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   productCode: z.string().min(1, { message: 'Product code is required.' }),
@@ -180,10 +182,18 @@ export default function ProductForm({
     isFeatured: initialData?.isFeatured ?? false,
     isBestSeller: initialData?.isBestSeller ?? false,
     isInStock: initialData?.isInStock ?? true,
-    trendingStartDate: initialData?.trendingStartDate,
-    trendingEndDate: initialData?.trendingEndDate,
-    featuredStartDate: initialData?.featuredStartDate,
+    trendingStartDate: initialData?.trendingStartDate
+      ? format(new Date(initialData.trendingStartDate), 'yyyy-MM-dd')
+      : undefined,
+    trendingEndDate: initialData?.trendingEndDate
+      ? format(new Date(initialData.trendingEndDate), 'yyyy-MM-dd')
+      : undefined,
+    featuredStartDate: initialData?.featuredStartDate
+      ? format(new Date(initialData.featuredStartDate), 'yyyy-MM-dd')
+      : undefined,
     featuredEndDate: initialData?.featuredEndDate
+      ? format(new Date(initialData.featuredEndDate), 'yyyy-MM-dd')
+      : undefined
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -208,7 +218,15 @@ export default function ProductForm({
         } else if (value && typeof value === 'object') {
           formData.append(key, JSON.stringify(value));
         } else if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
+          let mVal: string | undefined = String(value);
+          if (key.includes('Date') && !isDate(new Date(mVal))) {
+            console.log('Invalid Date', mVal);
+            mVal = undefined;
+          }
+
+          if (mVal) {
+            formData.append(key, mVal);
+          }
         }
       }
     });
