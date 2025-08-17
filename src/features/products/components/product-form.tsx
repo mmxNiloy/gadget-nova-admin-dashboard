@@ -23,7 +23,13 @@ import {
   IProduct
 } from 'types/schema/product.shema';
 import * as z from 'zod';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition
+} from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
@@ -34,6 +40,7 @@ import TiptapEditor from '@/components/NextTiptap/TiptapEditor';
 import updateProduct from '@/lib/util/update-product.util';
 import SlugSchema from 'types/slug.schema';
 import { format, isDate } from 'date-fns';
+import formatSlug from '@/lib/util/format-slug.util';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -224,6 +231,10 @@ export default function ProductForm({
             mVal = undefined;
           }
 
+          if (key === 'slug' && mVal) {
+            mVal = formatSlug(mVal, true);
+          }
+
           if (mVal) {
             formData.append(key, mVal);
           }
@@ -291,6 +302,14 @@ export default function ProductForm({
       )
     );
   }, [brands, subcategoryValue, categoryValue]);
+
+  const handleSlugChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, cb: (val: string) => void) => {
+      const slug = e.target.value;
+      cb(formatSlug(slug));
+    },
+    []
+  );
 
   // Reset subcategory and brand when category changes
   useEffect(() => {
@@ -399,11 +418,25 @@ export default function ProductForm({
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder='Enter product slug'
-                          {...field}
-                        />
+                        <div className='flex flex-row gap-2'>
+                          <Input
+                            disabled={loading}
+                            placeholder='Enter product slug'
+                            value={field.value}
+                            onChange={(e) =>
+                              handleSlugChange(e, field.onChange)
+                            }
+                          />
+                          <Button
+                            type='button'
+                            size='sm'
+                            onClick={() =>
+                              field.onChange(formatSlug(field.value, true))
+                            }
+                          >
+                            Format
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
