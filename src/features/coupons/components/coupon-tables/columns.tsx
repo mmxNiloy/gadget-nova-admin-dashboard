@@ -1,9 +1,5 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import TextCapsule from '@/components/text-capsule';
-import { cn } from '@/lib/utils';
-import BrandCategoryPopover from './brand-category-popover';
 import { ICoupon } from 'types/schema/coupon.schema';
 
 export const columns: ColumnDef<ICoupon>[] = [
