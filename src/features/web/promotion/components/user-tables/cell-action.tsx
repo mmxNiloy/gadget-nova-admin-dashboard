@@ -34,7 +34,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <Link href={SiteConfig.featureFlags.stagingURL} passHref>
+          <Link href={'https://www.gadgetnovabd.com/'} passHref>
             <DropdownMenuItem>
               <EyeIcon className='mr-2 h-4 w-4' /> Preview
             </DropdownMenuItem>
