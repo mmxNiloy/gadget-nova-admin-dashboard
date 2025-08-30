@@ -261,6 +261,8 @@ export default function ProductForm({
       });
     }
 
+    formData.set('quantity', String(values.stockAmount));
+
     startAPICall(async () => {
       try {
         const data = await updateProduct({
@@ -519,28 +521,6 @@ export default function ProductForm({
                             BDT
                           </p>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='quantity'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Quantity</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          type='number'
-                          step='1'
-                          placeholder='Enter quantity'
-                          value={field.value}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value, 10))
-                          }
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

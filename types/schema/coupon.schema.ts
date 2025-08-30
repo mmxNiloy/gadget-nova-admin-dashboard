@@ -11,11 +11,16 @@ export enum CouponUsageTypeEnum {
   MULTI_USAGE = 'MULTI_USAGE'
 }
 
+export type CouponType = 'PERCENTAGE' | 'FLAT' | 'DELIVERY_CHARGE';
+
+export type CouponUsageType = 'SINGLE_USAGE' | 'MULTI_USAGE';
+
 export interface ICoupon {
   /* Capitalized Coupon Code */
+  id: string;
   couponCode: string;
   description: string;
-  couponType: CouponTypeEnum;
+  couponType: CouponType;
   couponValue: number;
   maximumDiscountLimit: number;
   minimumOrderAmount: number;
@@ -26,7 +31,7 @@ export interface ICoupon {
   applicableCategoryIds: string[];
   applicableSubCategoryIds: string[];
   applicableBrandIds: string[];
-  couponUsageType: CouponUsageTypeEnum;
+  couponUsageType: CouponUsageType;
   userId: string;
 }
 
