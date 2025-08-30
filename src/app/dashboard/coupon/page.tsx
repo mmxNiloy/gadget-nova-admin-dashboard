@@ -13,6 +13,7 @@ import BrandsListingPage from '@/features/brands/components/brand-listing';
 import getCategories from '@/app/(server)/actions/category/get-categories.controller';
 import { SiteConfig } from '@/constants/site-config';
 import BrandTableAction from '@/features/brands/components/brand-tables/brand-table-action';
+import CouponsListingPage from '@/features/coupons/components/coupon-listing';
 
 export const metadata = {
   title: SiteConfig.siteTitle.coupon.list
@@ -51,7 +52,7 @@ export default async function CouponPage(props: pageProps) {
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
         >
-          <BrandsListingPage />
+          <CouponsListingPage />
         </Suspense>
       </div>
     </PageContainer>
