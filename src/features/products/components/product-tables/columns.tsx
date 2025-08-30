@@ -94,7 +94,7 @@ export const columns: ColumnDef<IProduct>[] = [
     header: 'Stock',
     cell: ({ row }) => (
       <div className='text-center'>
-        <p>{row.original.stockAmount}</p>
+        <p>{row.original.quantity}</p>
         <p className='text-xs text-gray-500'>Hold: {row.original.holdAmount}</p>
       </div>
     )

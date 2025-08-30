@@ -67,6 +67,10 @@ const baseSchema = z.object({
     .number()
     .int()
     .min(0, { message: 'Quantity must be a non-negative integer.' }),
+  stockAmount: z
+    .number()
+    .int()
+    .min(0, { message: 'Stock Amount must be a non-negative integer.' }),
   description: z
     .string()
     .min(10, { message: 'Description must be at least 10 characters.' }),
@@ -160,6 +164,7 @@ export default function ProductForm({
     regularPrice: Number.parseFloat(initialData?.regularPrice ?? '0'),
     discountPrice: Number.parseFloat(initialData?.discountPrice ?? '0'),
     quantity: initialData?.quantity ?? 0,
+    stockAmount: initialData?.stockAmount ?? 0,
     description: initialData?.description ?? '',
     keyFeatures: initialData?.keyFeatures ?? '',
     specifications: initialData?.specifications ?? '',
@@ -531,6 +536,28 @@ export default function ProductForm({
                           type='number'
                           step='1'
                           placeholder='Enter quantity'
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='stockAmount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          type='number'
+                          step='1'
+                          placeholder='Enter stock amount'
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(parseInt(e.target.value, 10))

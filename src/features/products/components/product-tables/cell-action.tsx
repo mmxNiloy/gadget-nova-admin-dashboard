@@ -38,7 +38,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <Link
             passHref
             target='_blank'
-            href={`${SiteConfig.featureFlags.stagingURL}/product/${data.id}?preview=true`}
+            href={`https://www.gadgetnovabd.com/product/${data.slug}`}
           >
             <DropdownMenuItem>
               <Icons.visible className='mr-2 h-4 w-4' /> Preview
