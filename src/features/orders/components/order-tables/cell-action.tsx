@@ -25,15 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {};
 
   return (
-    <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-      />
-
-      <DropdownMenu onOpenChange={setOpenDropdown} open={openDropdown}>
+    <DropdownMenu onOpenChange={setOpenDropdown} open={openDropdown}>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
             <span className='sr-only'>Open menu</span>
@@ -43,18 +35,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <DropdownMenuItem asChild>
-            <OrderStatusEditorDialog
-              setOpenDropdown={setOpenDropdown}
-              order={data}
-            />
-          </DropdownMenuItem>
+          {/* View action */}
 
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className='mr-2 h-4 w-4' /> Delete
-          </DropdownMenuItem>
+          {/* Print invoice action */}
         </DropdownMenuContent>
       </DropdownMenu>
-    </>
+    
   );
 };

@@ -1,4 +1,4 @@
-name: Build and Push Staging Docker Image
+name: Build and Stage Docker Image
 
 on:
   push:

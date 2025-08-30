@@ -63,7 +63,7 @@ export const SiteConfig = {
     disableAuth: false,
     maxFileSize: 5000000,
     acceptedImageTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-    stagingURL: 'http://www.revolohr.com:6020/'
+    stagingURL: 'http://www.gadgetnovabd.com/'
   },
   // 25 minutes; 5 minutes of wiggle room
   sessionTTL: 25 * 60 * 1000,

@@ -23,7 +23,13 @@ import {
   IProduct
 } from 'types/schema/product.shema';
 import * as z from 'zod';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition
+} from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/components/ui/multi-select';
@@ -34,6 +40,7 @@ import TiptapEditor from '@/components/NextTiptap/TiptapEditor';
 import updateProduct from '@/lib/util/update-product.util';
 import SlugSchema from 'types/slug.schema';
 import { format, isDate } from 'date-fns';
+import formatSlug from '@/lib/util/format-slug.util';
 
 const MAX_FILE_SIZE = SiteConfig.featureFlags.maxFileSize;
 const ACCEPTED_IMAGE_TYPES = SiteConfig.featureFlags.acceptedImageTypes;
@@ -60,6 +67,10 @@ const baseSchema = z.object({
     .number()
     .int()
     .min(0, { message: 'Quantity must be a non-negative integer.' }),
+  stockAmount: z
+    .number()
+    .int()
+    .min(0, { message: 'Stock Amount must be a non-negative integer.' }),
   description: z
     .string()
     .min(10, { message: 'Description must be at least 10 characters.' }),
@@ -153,6 +164,7 @@ export default function ProductForm({
     regularPrice: Number.parseFloat(initialData?.regularPrice ?? '0'),
     discountPrice: Number.parseFloat(initialData?.discountPrice ?? '0'),
     quantity: initialData?.quantity ?? 0,
+    stockAmount: initialData?.stockAmount ?? 0,
     description: initialData?.description ?? '',
     keyFeatures: initialData?.keyFeatures ?? '',
     specifications: initialData?.specifications ?? '',
@@ -224,6 +236,10 @@ export default function ProductForm({
             mVal = undefined;
           }
 
+          if (key === 'slug' && mVal) {
+            mVal = formatSlug(mVal, true);
+          }
+
           if (mVal) {
             formData.append(key, mVal);
           }
@@ -291,6 +307,14 @@ export default function ProductForm({
       )
     );
   }, [brands, subcategoryValue, categoryValue]);
+
+  const handleSlugChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, cb: (val: string) => void) => {
+      const slug = e.target.value;
+      cb(formatSlug(slug));
+    },
+    []
+  );
 
   // Reset subcategory and brand when category changes
   useEffect(() => {
@@ -399,11 +423,25 @@ export default function ProductForm({
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder='Enter product slug'
-                          {...field}
-                        />
+                        <div className='flex flex-row gap-2'>
+                          <Input
+                            disabled={loading}
+                            placeholder='Enter product slug'
+                            value={field.value}
+                            onChange={(e) =>
+                              handleSlugChange(e, field.onChange)
+                            }
+                          />
+                          <Button
+                            type='button'
+                            size='sm'
+                            onClick={() =>
+                              field.onChange(formatSlug(field.value, true))
+                            }
+                          >
+                            Format
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -498,6 +536,28 @@ export default function ProductForm({
                           type='number'
                           step='1'
                           placeholder='Enter quantity'
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value, 10))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='stockAmount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          type='number'
+                          step='1'
+                          placeholder='Enter stock amount'
                           value={field.value}
                           onChange={(e) =>
                             field.onChange(parseInt(e.target.value, 10))

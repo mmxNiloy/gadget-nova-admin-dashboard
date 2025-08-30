@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ICategory } from 'types/schema/product.shema';
@@ -25,6 +25,7 @@ import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import SlugSchema from 'types/slug.schema';
+import formatSlug from '@/lib/util/format-slug.util';
 
 // Zod schema for UpdateCategoryDto
 const categorySchema = z.object({
@@ -64,8 +65,15 @@ export default function CategoryForm({
 
   const onSubmit = async (values: z.infer<typeof categorySchema>) => {
     startAPICall(async () => {
+      const { name, slug, isFeatured, metaTitle, metaDescription } = values;
       const data = await updateCategory({
-        data: values,
+        data: {
+          name,
+          slug: formatSlug(slug, true),
+          isFeatured,
+          metaTitle,
+          metaDescription
+        },
         method: initialData ? 'PATCH' : 'POST',
         id: initialData?.id
       });
@@ -77,6 +85,14 @@ export default function CategoryForm({
       }
     });
   };
+
+  const handleSlugChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, cb: (val: string) => void) => {
+      const slug = e.target.value;
+      cb(formatSlug(slug));
+    },
+    []
+  );
 
   return (
     <>
@@ -117,11 +133,26 @@ export default function CategoryForm({
                     <FormItem>
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder='Enter category slug'
-                          {...field}
-                        />
+                        <div className='flex flex-row gap-2'>
+                          <Input
+                            disabled={loading}
+                            placeholder='Enter category slug'
+                            value={field.value}
+                            onChange={(e) =>
+                              handleSlugChange(e, field.onChange)
+                            }
+                          />
+
+                          <Button
+                            type='button'
+                            size={'sm'}
+                            onClick={() =>
+                              field.onChange(formatSlug(field.value, true))
+                            }
+                          >
+                            Format
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

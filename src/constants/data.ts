@@ -68,7 +68,19 @@ export const navItems: NavItem[] = [
   {
     title: 'Orders',
     url: '/dashboard/order',
-    icon: 'package'
+    icon: 'package',
+    items: [
+      {
+        title: 'Orders',
+        url: '/dashboard/order',
+        icon: 'package'
+      },
+      {
+        title: 'Districts',
+        url: '/dashboard/district',
+        icon: 'truck'
+      }
+    ]
   },
   {
     title: 'Shop',
