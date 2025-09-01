@@ -101,6 +101,7 @@
     "input-otp": "^1.4.2",
     "jose": "^6.0.12",
     "kbar": "^0.1.0-beta.45",
+    "lottie-react": "^2.4.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.468.0",
     "match-sorter": "^8.0.0",

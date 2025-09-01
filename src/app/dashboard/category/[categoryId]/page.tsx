@@ -15,7 +15,6 @@ type PageProps = {
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
-  const sParams = await props.searchParams;
 
   return (
     <PageContainer scrollable>
