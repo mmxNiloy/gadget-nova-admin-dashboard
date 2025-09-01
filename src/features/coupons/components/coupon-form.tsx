@@ -91,10 +91,14 @@ export default function CouponForm({
     startDate: initialData?.startDate || '',
     endDate: initialData?.endDate || '',
     usageLimitPerUser: initialData?.usageLimitPerUser || 0,
-    applicableProductIds: initialData?.applicableProductIds || [],
-    applicableCategoryIds: initialData?.applicableCategoryIds || [],
-    applicableSubCategoryIds: initialData?.applicableSubCategoryIds || [],
-    applicableBrandIds: initialData?.applicableBrandIds || [],
+    applicableProductIds:
+      initialData?.applicableProducts?.map((item) => item.id) || [],
+    applicableCategoryIds:
+      initialData?.applicableCategories?.map((item) => item.id) || [],
+    applicableSubCategoryIds:
+      initialData?.applicableSubCategories?.map((item) => item.id) || [],
+    applicableBrandIds:
+      initialData?.applicableBrands?.map((item) => item.id) || [],
     couponUsageType: initialData?.couponUsageType || 'SINGLE_USAGE',
     userId: initialData?.userId || ''
   };
