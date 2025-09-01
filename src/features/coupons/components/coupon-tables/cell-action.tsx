@@ -1,5 +1,5 @@
 'use client';
-import deleteBrand from '@/app/(server)/actions/brand/delete-brand.controller';
+import deleteCoupon from '@/app/(server)/actions/coupon/delete-coupon.controller';
 import DeleteItemAlertDialog from '@/components/delete-item-alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,10 +12,10 @@ import {
 import { Edit, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { IBrand } from 'types/schema/product.shema';
+import { ICoupon } from 'types/schema/coupon.schema';
 
 interface CellActionProps {
-  data: IBrand;
+  data: ICoupon;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -33,7 +33,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <Link href={`/dashboard/brand/${data.id}`} passHref>
+          <Link href={`/dashboard/coupon/${data.id}`} passHref>
             <DropdownMenuItem>
               <Edit className='mr-2 h-4 w-4' /> Update
             </DropdownMenuItem>
@@ -42,8 +42,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem asChild>
             <DeleteItemAlertDialog
               itemId={data.id}
-              itemName='Brand'
-              action={deleteBrand}
+              itemName='Coupon'
+              action={deleteCoupon}
               onSuccess={() => setOpen(false)}
             />
           </DropdownMenuItem>

@@ -1,4 +1,5 @@
 import { IResponseBase } from './base.schema';
+import { IBrand, ICategory, IProduct } from './product.shema';
 
 export enum CouponTypeEnum {
   PERCENTAGE = 'PERCENTAGE',
@@ -17,6 +18,7 @@ export type CouponUsageType = 'SINGLE_USAGE' | 'MULTI_USAGE';
 
 export interface ICoupon {
   /* Capitalized Coupon Code */
+  is_active?: number;
   id: string;
   couponCode: string;
   description: string;
@@ -31,6 +33,10 @@ export interface ICoupon {
   applicableCategoryIds: string[];
   applicableSubCategoryIds: string[];
   applicableBrandIds: string[];
+  applicableProducts?: IProduct[];
+  applicableCategories?: ICategory[];
+  applicableSubCategories?: ICategory[];
+  applicableBrands?: IBrand[];
   couponUsageType: CouponUsageType;
   userId: string;
 }

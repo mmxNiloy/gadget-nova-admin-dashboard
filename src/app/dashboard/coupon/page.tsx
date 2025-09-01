@@ -35,7 +35,7 @@ export default async function CouponPage(props: pageProps) {
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
-          <Heading title='Brand' description='Manage brands' />
+          <Heading title='Coupon' description='Manage Coupons' />
           <Link
             href='/dashboard/coupon/new'
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
@@ -44,10 +44,7 @@ export default async function CouponPage(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        {/* <BrandTableAction
-          categories={categoriesData.ok ? categoriesData.data.payload : []}
-          subcategories={subcategories.ok ? subcategories.data.payload : []}
-        /> */}
+
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}

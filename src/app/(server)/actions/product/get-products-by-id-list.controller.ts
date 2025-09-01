@@ -3,10 +3,10 @@
 import { IProductListResponse } from 'types/schema/product.shema';
 import requestAPI from '../request-api.controller';
 
-export default async function getProducts() {
+export default async function getProductsByIdList(idList: string[]) {
   return await requestAPI<IProductListResponse>({
-    endpoint: 'products',
+    endpoint: 'products/id/list',
     method: 'GET',
-    authenticate: false
+    query: idList.map((id) => ['ids', id])
   });
 }

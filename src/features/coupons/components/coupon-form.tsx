@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,29 +16,30 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useCallback, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import FormErrorAlertDialog from '@/components/form-error-alert-dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import formatSlug from '@/lib/util/format-slug.util';
 import { ICoupon } from 'types/schema/coupon.schema';
-import UUIDSchema from 'types/uuid.schema';
 import updateCoupon from '@/app/(server)/actions/coupon/update-coupon.controller';
 import { CurrencySymbols } from '@/constants/currency-symbol';
-import { PercentCircle } from 'lucide-react';
+import { ChevronsUpDown, PercentCircle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { format } from 'date-fns';
-import { Switch } from '@/components/ui/switch';
+import { format, isDate } from 'date-fns';
 import UserSearchCombobox from '@/components/user-search-combobox';
-import { cn } from '@/lib/utils';
+import { ProductMultiselect } from '@/components/product-multiselect';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { IBrand, ICategory } from 'types/schema/product.shema';
 
 // Zod schema for UpdateCategoryDto
 const couponSchema = z.object({
   couponCode: z
     .string()
-    .min(3, { message: 'Coupon Code must be at least 3 characters' }),
+    .min(3, { message: 'Coupon Code must be at least 3 characters' })
+    .regex(/^[A-Za-z0-9]+$/, 'Coupon Code must be alphanumeric')
+    .toUpperCase(),
   description: z
     .string()
     .min(3, { message: 'Description must be at least 3 characters' }),
@@ -47,18 +49,17 @@ const couponSchema = z.object({
   couponValue: z.coerce.number().positive(),
   maximumDiscountLimit: z.coerce.number().positive(),
   minimumOrderAmount: z.coerce.number().positive(),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
+  startDate: z.string().date(),
+  endDate: z.string().date(),
   usageLimitPerUser: z.coerce.number().positive().default(1),
-  applicableProductIds: z.array(UUIDSchema).default([]).optional(),
-  applicableCategoryIds: z.array(UUIDSchema).default([]).optional(),
-  applicableSubCategoryIds: z.array(UUIDSchema).default([]).optional(),
-  applicableBrandIds: z.array(UUIDSchema).default([]).optional(),
+  applicableProductIds: z.array(z.string()).default([]).optional(),
+  applicableCategoryIds: z.array(z.string()).default([]).optional(),
+  applicableSubCategoryIds: z.array(z.string()).default([]).optional(),
+  applicableBrandIds: z.array(z.string()).default([]).optional(),
   couponUsageType: z
     .enum(['SINGLE_USAGE', 'MULTI_USAGE'])
     .default('SINGLE_USAGE'),
-  userId: UUIDSchema.optional(),
-  isUserSpecific: z.boolean().default(false)
+  userId: z.string().optional()
 });
 
 type FormType = z.infer<typeof couponSchema>;
@@ -66,11 +67,17 @@ type FormType = z.infer<typeof couponSchema>;
 interface CategoryFormProps {
   initialData?: ICoupon;
   pageTitle: string;
+  categories: ICategory[];
+  subcategories: ICategory[];
+  brands: IBrand[];
 }
 
 export default function CouponForm({
   initialData,
-  pageTitle
+  pageTitle,
+  categories,
+  subcategories,
+  brands
 }: CategoryFormProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -81,16 +88,19 @@ export default function CouponForm({
     couponValue: initialData?.couponValue || 0,
     maximumDiscountLimit: initialData?.maximumDiscountLimit || 0,
     minimumOrderAmount: initialData?.minimumOrderAmount || 0,
-    startDate: initialData?.startDate || new Date().toString(),
-    endDate: initialData?.endDate || new Date().toString(),
+    startDate: initialData?.startDate || '',
+    endDate: initialData?.endDate || '',
     usageLimitPerUser: initialData?.usageLimitPerUser || 0,
-    applicableProductIds: initialData?.applicableProductIds || [],
-    applicableCategoryIds: initialData?.applicableCategoryIds || [],
-    applicableSubCategoryIds: initialData?.applicableSubCategoryIds || [],
-    applicableBrandIds: initialData?.applicableBrandIds || [],
+    applicableProductIds:
+      initialData?.applicableProducts?.map((item) => item.id) || [],
+    applicableCategoryIds:
+      initialData?.applicableCategories?.map((item) => item.id) || [],
+    applicableSubCategoryIds:
+      initialData?.applicableSubCategories?.map((item) => item.id) || [],
+    applicableBrandIds:
+      initialData?.applicableBrands?.map((item) => item.id) || [],
     couponUsageType: initialData?.couponUsageType || 'SINGLE_USAGE',
-    userId: initialData?.userId || '',
-    isUserSpecific: !!initialData?.userId
+    userId: initialData?.userId || ''
   };
 
   const [loading, startAPICall] = useTransition();
@@ -101,7 +111,6 @@ export default function CouponForm({
   });
 
   const couponType = form.watch('couponType');
-  const isUserSpecific = form.watch('isUserSpecific');
 
   const router = useRouter();
 
@@ -303,7 +312,11 @@ export default function CouponForm({
                         <Input
                           type='date'
                           disabled={loading}
-                          value={format(new Date(field.value), 'yyyy-MM-dd')}
+                          value={
+                            isDate(field.value)
+                              ? format(new Date(field.value), 'yyyy-MM-dd')
+                              : undefined
+                          }
                           onChange={field.onChange}
                         />
                       </FormControl>
@@ -322,7 +335,11 @@ export default function CouponForm({
                         <Input
                           type='date'
                           disabled={loading}
-                          value={format(new Date(field.value), 'yyyy-MM-dd')}
+                          value={
+                            isDate(field.value)
+                              ? format(new Date(field.value), 'yyyy-MM-dd')
+                              : undefined
+                          }
                           onChange={field.onChange}
                         />
                       </FormControl>
@@ -407,35 +424,14 @@ export default function CouponForm({
                     </FormItem>
                   )}
                 />
-                {/* Who is the coupon applicable for */}
-                <FormField
-                  control={form.control}
-                  name='isUserSpecific'
-                  render={({ field }) => (
-                    <FormItem className='col-span-full flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
-                      <FormLabel>Apply for a specific user?</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+
+                <h5 className='col-span-full font-semibold'>Applicable To</h5>
 
                 <FormField
                   control={form.control}
                   name='userId'
                   render={({ field }) => (
-                    <FormItem
-                      className={cn(
-                        '',
-                        isUserSpecific
-                          ? 'animate-accordion-down ease-in'
-                          : 'animate-accordion-up ease-out'
-                      )}
-                    >
+                    <FormItem>
                       <FormLabel>User</FormLabel>
                       <FormControl>
                         <UserSearchCombobox
@@ -445,13 +441,128 @@ export default function CouponForm({
                         />
                       </FormControl>
                       <FormMessage />
+                      <FormDescription>
+                        Leave blank to apply to all users
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <span></span>
+
+                <FormField
+                  control={form.control}
+                  name='applicableProductIds'
+                  render={({ field }) => (
+                    <FormItem className='col-span-full lg:col-span-1'>
+                      <FormLabel>Applicable Products</FormLabel>
+                      <FormControl>
+                        <ProductMultiselect
+                          type='button'
+                          className='h-10 w-full justify-between text-muted-foreground [&_svg]:size-4'
+                          placeholder='Applies to all products'
+                          value={field.value}
+                          onValueChanged={field.onChange}
+                          variant='outline'
+                        >
+                          Select Products
+                          <ChevronsUpDown />
+                        </ProductMultiselect>
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Leave blank to apply to all products
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='applicableCategoryIds'
+                  render={({ field }) => (
+                    <FormItem className='col-span-full lg:col-span-1'>
+                      <FormLabel>Applicable Categories</FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          key={field.value?.join('.') ?? ''}
+                          disabled={loading}
+                          className='w-full'
+                          title='Select Categories'
+                          defaultValue={field.value ?? undefined}
+                          onValueChange={field.onChange}
+                          options={categories.map((cat) => ({
+                            label: cat.name,
+                            value: cat.id
+                          }))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Leave blank to apply to all categories
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='applicableSubCategoryIds'
+                  render={({ field }) => (
+                    <FormItem className='col-span-full lg:col-span-1'>
+                      <FormLabel>Applicable Subcategories</FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          key={field.value?.join('.') ?? ''}
+                          disabled={loading}
+                          className='w-full'
+                          title='Select Subcategories'
+                          defaultValue={field.value ?? undefined}
+                          onValueChange={field.onChange}
+                          options={subcategories.map((cat) => ({
+                            label: cat.name,
+                            value: cat.id
+                          }))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Leave blank to apply to all subcategories
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='applicableBrandIds'
+                  render={({ field }) => (
+                    <FormItem className='col-span-full lg:col-span-1'>
+                      <FormLabel>Applicable Brands</FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          key={field.value?.join('.') ?? ''}
+                          disabled={loading}
+                          className='w-full'
+                          title='Select Brands'
+                          defaultValue={field.value ?? undefined}
+                          onValueChange={field.onChange}
+                          options={brands.map((b) => ({
+                            label: b.name,
+                            value: b.id
+                          }))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Leave blank to apply to all brands
+                      </FormDescription>
                     </FormItem>
                   )}
                 />
               </div>
 
               <Button disabled={loading} type='submit'>
-                {initialData ? 'Update Category' : 'Create Category'}
+                {initialData ? 'Update' : 'Create'} Coupon
               </Button>
             </form>
           </Form>
