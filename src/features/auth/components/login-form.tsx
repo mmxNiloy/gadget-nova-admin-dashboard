@@ -1,7 +1,6 @@
 'use client';
 
 import login from '@/app/(server)/actions/auth/login.controller';
-import { useAuth } from '@/components/layout/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {

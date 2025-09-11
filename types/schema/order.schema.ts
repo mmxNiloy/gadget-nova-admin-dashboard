@@ -48,6 +48,8 @@ export interface IOrder {
   shippingInfo: IShippingInfo;
   delivery_charge: string;
   payments: IPayment[];
+  couponCode?: string;
+  couponDiscountValue?: string;
 }
 
 export interface IOrderResponse extends IResponseBase {

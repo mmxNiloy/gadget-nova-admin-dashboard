@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -30,6 +30,7 @@ import { IOrder } from 'types/schema/order.schema';
 import ActionsForm from './actions-form';
 import { useRouter } from 'next/navigation';
 import { getPaymentMethodTitle } from '@/constants/site-payment-methods';
+import { cn } from '@/lib/utils';
 
 interface IViewActionProps {
   data: IOrder;
@@ -44,6 +45,11 @@ export default function ViewAction({ data }: IViewActionProps) {
     setOpen(false);
     router.refresh();
   }, [router]);
+
+  const discount = useMemo(
+    () => Number.parseFloat(data.couponDiscountValue ?? '0'),
+    [data.couponDiscountValue]
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -173,7 +179,7 @@ export default function ViewAction({ data }: IViewActionProps) {
                 </div>
                 <div>
                   <p className='text-sm font-medium'>Address</p>
-                  <p className='text-sm text-gray-500'>
+                  <p className='max-w-96 text-wrap break-words text-sm text-gray-500'>
                     {data.shippingInfo.address}
                   </p>
                   {data.shippingInfo.additional_info && (
@@ -223,6 +229,29 @@ export default function ViewAction({ data }: IViewActionProps) {
                       {data.payments.at(0)?.paidAmount ?? '0.00'}
                     </p>
                   </div>
+
+                  {data.couponCode && (
+                    <div>
+                      <p className='font-medium text-gray-500'>
+                        Applied Coupon
+                      </p>
+                      <p className='text-gray-800'>{data.couponCode}</p>
+                    </div>
+                  )}
+
+                  {data.couponCode && (
+                    <div>
+                      <p className='font-medium text-gray-500'>
+                        Coupon Discount
+                      </p>
+                      <p className='flex gap-0.5 text-gray-800'>
+                        <CurrencySymbols.default
+                          className={cn('', discount > 0.0 ? '' : 'hidden')}
+                        />
+                        {discount > 0.0 ? data.couponDiscountValue : 'N/A'}
+                      </p>
+                    </div>
+                  )}
 
                   <div>
                     <p className='font-medium text-gray-500'>Transaction ID</p>
