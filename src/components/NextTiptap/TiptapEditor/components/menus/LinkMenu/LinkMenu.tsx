@@ -75,15 +75,7 @@ export const LinkMenu = () => {
         onHidden: () => setIsEditing(false)
       }}
     >
-      {isEditing ? (
-        <LinkEdit
-          initialUrl={link?.url}
-          initialText={link?.text}
-          isCreate={mode.current === -1}
-          onApply={applyLink}
-          onCancel={cancelEdit}
-        />
-      ) : (
+      {isEditing ? null : (
         <LinkView url={link?.url} onEdit={startEdit} onRemove={removeLink} />
       )}
     </BubbleMenu>
