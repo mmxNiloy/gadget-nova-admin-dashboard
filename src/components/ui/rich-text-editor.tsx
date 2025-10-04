@@ -707,8 +707,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                               editor is empty.
                             </li>
                             <li>
-                              Disabled buttons indicate that a format can’t be
-                              applied to the current selection.
+                              Disabled buttons indicate that a format can&apos;t
+                              be applied to the current selection.
                             </li>
                             <li>
                               Tables are fixed at two columns with predefined

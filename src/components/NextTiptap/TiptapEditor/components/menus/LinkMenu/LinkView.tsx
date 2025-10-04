@@ -1,7 +1,8 @@
-import React from "react";
-import { Toolbar } from "../../ui/Toolbar";
-import MenuButton from "../../MenuButton";
-import useCopyToClipboard from "../../../hooks/useCopyToClipboard";
+import React from 'react';
+import { Toolbar } from '../../ui/Toolbar';
+import MenuButton from '../../MenuButton';
+import useCopyToClipboard from '../../../hooks/useCopyToClipboard';
+import LinkButton from '../../controls/LinkButton';
 
 interface LinkViewProps {
   url: string;
@@ -14,18 +15,18 @@ const LinkView = ({ url, onEdit, onRemove }: LinkViewProps) => {
 
   return (
     <Toolbar>
-      <MenuButton text="Edit link" hideText={false} onClick={onEdit} />
+      <LinkButton text='Edit link' />
       <MenuButton
-        icon="ExternalLink"
-        text="Open in new tab"
-        onClick={() => window.open(url, "_blank")}
+        icon='ExternalLink'
+        text='Open in new tab'
+        onClick={() => window.open(url, '_blank')}
       />
       <MenuButton
-        icon={isCopied ? "Check" : "Clipboard"}
-        text={isCopied ? "Copied" : "Copy link"}
+        icon={isCopied ? 'Check' : 'Clipboard'}
+        text={isCopied ? 'Copied' : 'Copy link'}
         onClick={() => copy(url)}
       />
-      <MenuButton icon="Unlink" text="Remove link" onClick={onRemove} />
+      <MenuButton icon='Unlink' text='Remove link' onClick={onRemove} />
     </Toolbar>
   );
 };

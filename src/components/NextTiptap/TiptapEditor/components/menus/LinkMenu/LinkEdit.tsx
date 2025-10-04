@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React, { useEffect, useState } from 'react';
+import { PopoverClose } from '../../ui/Popover';
 
 interface LinkEditProps {
   initialUrl?: string;
@@ -24,6 +25,7 @@ const LinkEdit = ({
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    event.stopPropagation();
 
     if (canSubmit) {
       onApply(url!, text);
@@ -60,16 +62,20 @@ const LinkEdit = ({
         />
       </div>
       <div className='flex items-center justify-end gap-2'>
-        <Button variant='outline' onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          type='submit'
-          className='bg-blue-500 text-white hover:bg-blue-500 hover:text-white'
-          disabled={!canSubmit}
-        >
-          Apply
-        </Button>
+        <PopoverClose asChild>
+          <Button type='button' variant='outline' onClick={onCancel}>
+            Cancel
+          </Button>
+        </PopoverClose>
+        <PopoverClose asChild>
+          <Button
+            type='submit'
+            className='bg-blue-500 text-white hover:bg-blue-500 hover:text-white'
+            disabled={!canSubmit}
+          >
+            Apply
+          </Button>
+        </PopoverClose>
       </div>
     </form>
   );
